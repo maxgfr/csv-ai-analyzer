@@ -121,10 +121,19 @@ export default function RootLayout({
         <div className="relative z-10">{children}</div>
 
         {/* Footer with legal link */}
-        <footer className="relative z-10 text-center py-6 text-sm text-gray-500">
+        <footer className="relative z-10 text-center py-6 text-sm text-gray-500 flex items-center justify-center gap-4">
           <Link href="/legal" className="hover:text-violet-400 transition-colors">
             Privacy & Legal
           </Link>
+          <span className="text-gray-600">•</span>
+          <a
+            href="https://github.com/maxgfr/csv-ai-analyzer"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-violet-400 transition-colors"
+          >
+            GitHub
+          </a>
         </footer>
       </body>
     </html>
