@@ -1,10 +1,14 @@
 # 📊 CSV AI Analyzer
 
-A modern, elegant application to analyze your CSV files with Artificial Intelligence. Everything stays local in your browser.
+[![Live Demo](https://img.shields.io/badge/demo-live-brightgreen.svg)](https://csv-ai-analyzer.vercel.app)
+[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/maxgfr/csv-ai-analyzer)
+[![Next.js](https://img.shields.io/badge/Next.js-15-black.svg)](https://nextjs.org/)
+[![TailwindCSS](https://img.shields.io/badge/TailwindCSS-4-38bdf8.svg)](https://tailwindcss.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
-![Next.js](https://img.shields.io/badge/Next.js-15-black.svg)
-![TailwindCSS](https://img.shields.io/badge/TailwindCSS-4-38bdf8.svg)
+> 🚀 **[Try it live →](https://csv-ai-analyzer.vercel.app)**
+
+A modern, elegant application to analyze your CSV files with Artificial Intelligence. **100% private** - everything stays local in your browser.
 
 ## ✨ Features
 
@@ -34,7 +38,7 @@ A modern, elegant application to analyze your CSV files with Artificial Intellig
 
 ```bash
 # Clone the repo
-git clone https://github.com/your-username/csv-ai-analyzer.git
+git clone https://github.com/maxgfr/csv-ai-analyzer.git
 cd csv-ai-analyzer
 
 # Install dependencies
@@ -45,6 +49,8 @@ pnpm dev
 ```
 
 The application will be accessible at [http://localhost:3000](http://localhost:3000)
+
+Or use the **[live version](https://csv-ai-analyzer.vercel.app)** directly!
 
 ## 🎮 Usage
 
@@ -111,4 +117,4 @@ MIT - Use as you wish!
 
 ---
 
-Made with ❤️ and ☕
+Made with ❤️ by [Maxime Music](https://github.com/maxgfr)

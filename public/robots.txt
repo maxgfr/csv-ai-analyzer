@@ -1,0 +1,8 @@
+# Robots.txt for CSV AI Analyzer
+# https://csv-ai-analyzer.vercel.app
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://csv-ai-analyzer.vercel.app/sitemap.xml

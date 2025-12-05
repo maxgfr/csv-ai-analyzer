@@ -4,23 +4,59 @@ import { type Metadata } from "next";
 import { Geist } from "next/font/google";
 import Link from "next/link";
 
+const siteUrl = "https://csv-ai-analyzer.vercel.app";
+
 export const metadata: Metadata = {
-  title: "CSV AI Analyzer | Analyze your data with AI",
+  title: {
+    default: "CSV AI Analyzer | Analyze your data with AI",
+    template: "%s | CSV AI Analyzer",
+  },
   description:
-    "Upload your CSV files and generate intelligent charts with AI. 100% local, your data stays in your browser.",
+    "Free online tool to analyze CSV files with AI. Generate intelligent charts, detect anomalies, and get insights. 100% private - your data stays in your browser.",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
-  keywords: ["CSV", "AI", "analysis", "charts", "visualization", "data", "OpenAI", "GPT"],
-  authors: [{ name: "CSV AI Analyzer" }],
+  keywords: [
+    "CSV analyzer",
+    "AI data analysis",
+    "CSV to chart",
+    "data visualization",
+    "OpenAI GPT",
+    "free CSV tool",
+    "online CSV viewer",
+    "data anomaly detection",
+    "chart generator",
+    "privacy-first analytics",
+  ],
+  authors: [{ name: "Maxime Music", url: "https://github.com/maxgfr" }],
+  creator: "Maxime Music",
+  metadataBase: new URL(siteUrl),
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
-    title: "CSV AI Analyzer | Analyze your data with AI",
-    description: "Upload your CSV files and generate intelligent charts with AI. 100% local processing.",
+    title: "CSV AI Analyzer | Free AI-Powered Data Analysis",
+    description:
+      "Upload CSV files and instantly generate intelligent charts with AI. Detect anomalies, get insights, and visualize your data. 100% private - runs in your browser.",
     type: "website",
     locale: "en_US",
+    url: siteUrl,
+    siteName: "CSV AI Analyzer",
   },
   twitter: {
     card: "summary_large_image",
-    title: "CSV AI Analyzer",
-    description: "Analyze your CSV data with AI. 100% local, privacy-first.",
+    title: "CSV AI Analyzer | Free AI-Powered Data Analysis",
+    description:
+      "Upload CSV files and instantly generate intelligent charts with AI. 100% private, runs in your browser.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 
@@ -29,12 +65,13 @@ const geist = Geist({
   variable: "--font-geist-sans",
 });
 
-// JSON-LD structured data
+// JSON-LD structured data for SEO
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "WebApplication",
   "name": "CSV AI Analyzer",
-  "description": "Upload your CSV files and generate intelligent charts with AI. 100% local, your data stays in your browser.",
+  "url": "https://csv-ai-analyzer.vercel.app",
+  "description": "Free online tool to analyze CSV files with AI. Generate intelligent charts, detect anomalies, and get insights. 100% private - your data stays in your browser.",
   "applicationCategory": "BusinessApplication",
   "operatingSystem": "Any",
   "offers": {
@@ -44,12 +81,20 @@ const jsonLd = {
   },
   "featureList": [
     "AI-powered data analysis",
-    "Automatic chart generation",
-    "Anomaly detection",
-    "Custom queries",
-    "Privacy-first: data stays in browser"
+    "Automatic chart generation from CSV",
+    "Anomaly and outlier detection",
+    "Natural language data queries",
+    "Privacy-first: all data stays in your browser",
+    "Support for OpenAI GPT models",
+    "Multiple chart types: Bar, Line, Pie, Scatter, Area"
   ],
-  "browserRequirements": "Requires JavaScript. Works on modern browsers.",
+  "browserRequirements": "Requires JavaScript. Works on Chrome, Firefox, Safari, Edge.",
+  "author": {
+    "@type": "Person",
+    "name": "Maxime Music",
+    "url": "https://github.com/maxgfr"
+  },
+  "softwareVersion": "1.0.0"
 };
 
 export default function RootLayout({
