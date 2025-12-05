@@ -114,7 +114,3 @@ The application uses a modern design with:
 ## 📝 License
 
 MIT - Use as you wish!
-
----
-
-Made with ❤️ by [Maxime Music](https://github.com/maxgfr)
