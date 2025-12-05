@@ -1,6 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
+export const dynamic = "force-static";
 
 export const alt = "CSV AI Analyzer - Analyze your data with AI";
 export const size = {
