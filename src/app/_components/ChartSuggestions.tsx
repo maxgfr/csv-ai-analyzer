@@ -91,6 +91,14 @@ export function ChartSuggestions({
     }
   }, [externalSuggestions, data.headers]);
 
+  // Auto-apply charts whenever selection or suggestions change
+  useEffect(() => {
+    if (suggestions.length > 0) {
+      const selected = suggestions.filter((s) => selectedCharts.has(s.id));
+      onChartsGenerated(selected);
+    }
+  }, [selectedCharts, suggestions, onChartsGenerated]);
+
   const getConfig = (): AIServiceConfig | null => {
     if (!apiSettings?.apiKey) return null;
     return {
@@ -122,8 +130,8 @@ export function ChartSuggestions({
       });
 
       setSuggestions(validCharts);
-      // Auto-select first 2 valid charts
-      setSelectedCharts(new Set(validCharts.slice(0, 2).map((c) => c.id)));
+      // Auto-select all valid charts
+      setSelectedCharts(new Set(validCharts.map((c) => c.id)));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error generating charts");
     } finally {
@@ -182,10 +190,7 @@ export function ChartSuggestions({
     });
   };
 
-  const handleApply = () => {
-    const selected = suggestions.filter((s) => selectedCharts.has(s.id));
-    onChartsGenerated(selected);
-  };
+
 
   const removeChart = (chartId: string) => {
     setSuggestions((prev) => prev.filter((s) => s.id !== chartId));
@@ -226,16 +231,9 @@ export function ChartSuggestions({
       },
     };
 
-    // Add to suggestions and select it
-    const updatedSuggestions = [...suggestions, newChart];
-    setSuggestions(updatedSuggestions);
+    // Add to suggestions and select it (auto-apply via useEffect)
+    setSuggestions((prev) => [...prev, newChart]);
     setSelectedCharts((prev) => new Set([...prev, newChart.id]));
-    
-    // Auto-apply the new chart immediately
-    const allSelected = updatedSuggestions.filter((s) => 
-      selectedCharts.has(s.id) || s.id === newChart.id
-    );
-    onChartsGenerated(allSelected);
     
     setShowManualCreate(false);
     setManualConfig({
@@ -574,15 +572,9 @@ export function ChartSuggestions({
                 </>
               )}
             </button>
-            <button
-              type="button"
-              onClick={handleApply}
-              disabled={selectedCharts.size === 0}
-              className="btn-primary inline-flex items-center gap-2 disabled:opacity-50"
-            >
-              <Check className="w-4 h-4" />
-              Apply {selectedCharts.size} Chart{selectedCharts.size !== 1 ? "s" : ""}
-            </button>
+            <span className="text-sm text-gray-400">
+              {selectedCharts.size} chart{selectedCharts.size !== 1 ? "s" : ""} selected
+            </span>
           </div>
         </div>
       )}

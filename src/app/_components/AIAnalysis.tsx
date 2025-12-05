@@ -24,6 +24,7 @@ import {
   type AIServiceConfig,
 } from "~/lib/ai-service";
 import type { StoredSettings } from "~/lib/storage";
+import { useChatStore } from "~/lib/chat-store";
 
 interface AIAnalysisProps {
   data: CSVData;
@@ -32,8 +33,6 @@ interface AIAnalysisProps {
   externalAnomalies?: AnomalyResult[] | null;
   disabled?: boolean;
 }
-
-type AnalysisTab = "summary" | "anomalies" | "custom";
 
 const SEVERITY_COLORS = {
   low: "bg-blue-500/20 text-blue-400 border-blue-500/30",
@@ -54,12 +53,9 @@ export function AIAnalysis({
   externalAnomalies,
   disabled = false,
 }: AIAnalysisProps) {
-  const [activeTab, setActiveTab] = useState<AnalysisTab>("summary");
-
   // Independent loading states for each analysis type
   const [isLoadingSummary, setIsLoadingSummary] = useState(false);
   const [isLoadingAnomalies, setIsLoadingAnomalies] = useState(false);
-  const [isLoadingCustom, setIsLoadingCustom] = useState(false);
 
   const [error, setError] = useState<string | null>(null);
 
@@ -69,13 +65,22 @@ export function AIAnalysis({
   // Anomalies state
   const [anomaliesResult, setAnomaliesResult] = useState<AnomalyResult[] | null>(null);
 
-  // Custom analysis state
-  const [customPrompt, setCustomPrompt] = useState("");
+  // Custom analysis state and active tab - using global store to persist across fullscreen toggle
+  const {
+    history: customHistory,
+    streamingResponse,
+    currentPrompt: customPrompt,
+    activeTab,
+    isLoading: isLoadingCustom,
+    pendingPrompt,
+    addMessage,
+    setStreaming,
+    appendStreaming,
+    setPrompt: setCustomPrompt,
+    setActiveTab,
+    setLoading: setLoadingCustom,
+  } = useChatStore();
   const chatContainerRef = useRef<HTMLDivElement>(null);
-  const [customHistory, setCustomHistory] = useState<
-    Array<{ prompt: string; response: string }>
-  >([]);
-  const [streamingResponse, setStreamingResponse] = useState<string>("");
 
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     insights: true,
@@ -174,11 +179,10 @@ export function AIAnalysis({
       return;
     }
 
-    setIsLoadingCustom(true);
-    setError(null);
-    setStreamingResponse("");
-
     const currentPrompt = customPrompt;
+    setLoadingCustom(true, currentPrompt);
+    setError(null);
+    setStreaming("");
     setCustomPrompt("");
 
     try {
@@ -190,23 +194,18 @@ export function AIAnalysis({
         csvSummary,
         // onChunk - called for each text chunk
         (chunk) => {
-          setStreamingResponse((prev) => prev + chunk);
+          appendStreaming(chunk);
         },
         // onComplete - called when streaming is done
         (fullText) => {
-          setCustomHistory((prev) => [
-            ...prev,
-            { prompt: currentPrompt, response: fullText },
-          ]);
-          setStreamingResponse("");
-          setIsLoadingCustom(false);
+          addMessage({ prompt: currentPrompt, response: fullText });
         },
         customHistory // Pass current history
       );
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error during analysis");
-      setStreamingResponse("");
-      setIsLoadingCustom(false);
+      setStreaming("");
+      setLoadingCustom(false);
     }
   };
 
@@ -531,6 +530,18 @@ export function AIAnalysis({
                 {/* Streaming response - shown while generating */}
                 {isLoadingCustom && (
                   <div className="space-y-2">
+                    {/* Show the pending prompt */}
+                    {pendingPrompt && (
+                      <div className="flex items-start gap-3">
+                        <div className="p-2 rounded-lg bg-violet-500/20">
+                          <MessageSquare className="w-4 h-4 text-violet-400" />
+                        </div>
+                        <div className="flex-1 p-3 rounded-xl bg-violet-500/10 border border-violet-500/20">
+                          <p className="text-sm text-gray-300">{pendingPrompt}</p>
+                        </div>
+                      </div>
+                    )}
+                    {/* Show the streaming response */}
                     <div className="flex items-start gap-3">
                       <div className="p-2 rounded-lg bg-emerald-500/20">
                         <Brain className="w-4 h-4 text-emerald-400 animate-pulse" />

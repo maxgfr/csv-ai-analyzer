@@ -102,54 +102,69 @@ export default function HomePage() {
     if (!csvData || !apiSettings?.apiKey) return;
 
     setIsAnalyzingAll(true);
+    // Reset results before starting
+    setAnalysisResults({ summary: null, anomalies: null, charts: null });
+    setGeneratedCharts([]);
 
-    try {
-      const config = {
-        apiKey: apiSettings.apiKey,
-        model: apiSettings.model,
-        language: apiSettings.language,
-      };
+    const config = {
+      apiKey: apiSettings.apiKey,
+      model: apiSettings.model,
+      language: apiSettings.language,
+    };
 
-      const csvSummary = generateCSVSummary(csvData);
+    const csvSummary = generateCSVSummary(csvData);
 
-      // Prepare anomaly detection sample
-      const headers = csvData.headers.join(",");
-      const rows = csvData.rows
-        .slice(0, 50)
-        .map((row) => row.join(","))
-        .join("\n");
-      const sampleCSV = `${headers}\n${rows}`;
+    // Prepare anomaly detection sample
+    const headers = csvData.headers.join(",");
+    const rows = csvData.rows
+      .slice(0, 50)
+      .map((row) => row.join(","))
+      .join("\n");
+    const sampleCSV = `${headers}\n${rows}`;
 
-      // Run all in parallel
-      const [summary, anomalies, charts] = await Promise.all([
-        generateDataSummary(config, csvSummary),
-        detectAnomalies(config, csvSummary, sampleCSV),
-        generateChartSuggestions(config, csvSummary, csvData.headers),
-      ]);
-
-      setAnalysisResults({
-        summary,
-        anomalies,
-        charts,
+    // Run all in parallel but update UI as each completes
+    const summaryPromise = generateDataSummary(config, csvSummary)
+      .then((summary) => {
+        setAnalysisResults((prev) => ({ ...prev, summary }));
+        return summary;
+      })
+      .catch((error) => {
+        console.error("Summary failed:", error);
+        return null;
       });
 
-      // Auto-generate all suggested charts
-      if (charts && charts.length > 0) {
-        // Filter valid charts and auto-apply them
-        const validCharts = charts.filter(chart => {
-          const hasValidX = csvData.headers.includes(chart.xAxis);
-          const hasValidY = csvData.headers.includes(chart.yAxis);
-          return hasValidX && hasValidY;
-        });
-        setGeneratedCharts(validCharts);
-      }
+    const anomaliesPromise = detectAnomalies(config, csvSummary, sampleCSV)
+      .then((anomalies) => {
+        setAnalysisResults((prev) => ({ ...prev, anomalies }));
+        return anomalies;
+      })
+      .catch((error) => {
+        console.error("Anomalies failed:", error);
+        return null;
+      });
 
-    } catch (error) {
-      console.error("Analysis failed:", error);
-      alert("Analysis failed: " + (error instanceof Error ? error.message : "Unknown error"));
-    } finally {
-      setIsAnalyzingAll(false);
-    }
+    const chartsPromise = generateChartSuggestions(config, csvSummary, csvData.headers)
+      .then((charts) => {
+        setAnalysisResults((prev) => ({ ...prev, charts }));
+        // Auto-generate all suggested charts
+        if (charts && charts.length > 0) {
+          const validCharts = charts.filter(chart => {
+            const hasValidX = csvData.headers.includes(chart.xAxis);
+            const hasValidY = csvData.headers.includes(chart.yAxis);
+            return hasValidX && hasValidY;
+          });
+          setGeneratedCharts(validCharts);
+        }
+        return charts;
+      })
+      .catch((error) => {
+        console.error("Charts failed:", error);
+        return null;
+      });
+
+    // Wait for all to complete before removing loading state
+    await Promise.all([summaryPromise, anomaliesPromise, chartsPromise]);
+    setIsAnalyzingAll(false);
   };
 
   const handleRegenerateChart = async (failedChart: ChartSuggestion) => {
