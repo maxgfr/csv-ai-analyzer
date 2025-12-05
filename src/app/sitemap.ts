@@ -3,7 +3,7 @@ import type { MetadataRoute } from "next";
 export const dynamic = "force-static";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://csv-ai-analyzer.vercel.app";
+  const baseUrl = "https://maxgfr.github.io/csv-ai-analyzer";
 
   return [
     {

@@ -1,12 +1,12 @@
 # 📊 CSV AI Analyzer
 
-[![Live Demo](https://img.shields.io/badge/demo-live-brightgreen.svg)](https://csv-ai-analyzer.vercel.app)
+[![Live Demo](https://img.shields.io/badge/demo-live-brightgreen.svg)](https://maxgfr.github.io/csv-ai-analyzer)
 [![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/maxgfr/csv-ai-analyzer)
 [![Next.js](https://img.shields.io/badge/Next.js-15-black.svg)](https://nextjs.org/)
 [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-4-38bdf8.svg)](https://tailwindcss.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-> 🚀 **[Try it live →](https://csv-ai-analyzer.vercel.app)**
+> 🚀 **[Try it live →](https://maxgfr.github.io/csv-ai-analyzer)**
 
 A modern, elegant application to analyze your CSV files with Artificial Intelligence. **100% private** - everything stays local in your browser.
 
@@ -50,7 +50,7 @@ pnpm dev
 
 The application will be accessible at [http://localhost:3000](http://localhost:3000)
 
-Or use the **[live version](https://csv-ai-analyzer.vercel.app)** directly!
+Or use the **[live version](https://maxgfr.github.io/csv-ai-analyzer)** directly!
 
 ## 🎮 Usage
 

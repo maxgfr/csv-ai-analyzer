@@ -1,8 +1,8 @@
 # Robots.txt for CSV AI Analyzer
-# https://csv-ai-analyzer.vercel.app
+# https://maxgfr.github.io/csv-ai-analyzer
 
 User-agent: *
 Allow: /
 
 # Sitemap location
-Sitemap: https://csv-ai-analyzer.vercel.app/sitemap.xml
+Sitemap: https://maxgfr.github.io/csv-ai-analyzer/sitemap.xml

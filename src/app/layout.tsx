@@ -4,7 +4,7 @@ import { type Metadata } from "next";
 import { Geist } from "next/font/google";
 import Link from "next/link";
 
-const siteUrl = "https://csv-ai-analyzer.vercel.app";
+const siteUrl = "https://maxgfr.github.io/csv-ai-analyzer";
 
 export const metadata: Metadata = {
   title: {
@@ -70,7 +70,7 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@type": "WebApplication",
   "name": "CSV AI Analyzer",
-  "url": "https://csv-ai-analyzer.vercel.app",
+  "url": "https://maxgfr.github.io/csv-ai-analyzer",
   "description": "Free online tool to analyze CSV files with AI. Generate intelligent charts, detect anomalies, and get insights. 100% private - your data stays in your browser.",
   "applicationCategory": "BusinessApplication",
   "operatingSystem": "Any",
