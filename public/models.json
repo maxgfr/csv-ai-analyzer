@@ -620,9 +620,9 @@
           "output": 262144
         },
         "cost": {
-          "input": 1,
-          "output": 4.4,
-          "cache_read": 0.2,
+          "input": 0.85,
+          "output": 3.8,
+          "cache_read": 0.17,
           "cache_write": 0
         }
       },
@@ -703,9 +703,9 @@
           "output": 1048576
         },
         "cost": {
-          "input": 0.25,
-          "output": 0.4,
-          "cache_read": 0.1,
+          "input": 0.5,
+          "output": 0.8,
+          "cache_read": 0.2,
           "cache_write": 0
         }
       }
@@ -1103,7 +1103,7 @@
         "cost": {
           "input": 2,
           "output": 6,
-          "cache_read": 0.5,
+          "cache_read": 0.3,
           "tiers": [
             {
               "input": 4,
@@ -33089,7 +33089,7 @@
         ],
         "tool_call": true,
         "structured_output": true,
-        "temperature": true,
+        "temperature": false,
         "release_date": "2026-07-16",
         "last_updated": "2026-07-16",
         "modalities": {
@@ -34281,6 +34281,48 @@
           "output": 4.16,
           "cache_read": 0.18,
           "cache_write": 1
+        }
+      },
+      "moonshot/kimi-k3": {
+        "id": "moonshot/kimi-k3",
+        "name": "Kimi K3",
+        "description": "Multimodal Kimi model with 1M context and toggleable max-effort thinking for long-horizon agent work",
+        "family": "kimi-k3",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": false,
+        "release_date": "2026-07-16",
+        "last_updated": "2026-07-16",
+        "modalities": {
+          "input": [
+            "text",
+            "image",
+            "video"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 1048576,
+          "output": 1048576
+        },
+        "cost": {
+          "input": 3,
+          "output": 15,
+          "cache_read": 0.3,
+          "cache_write": 3
         }
       },
       "moonshot/kimi-k2.6": {
@@ -54346,7 +54388,7 @@
         "reasoning_options": [],
         "tool_call": true,
         "structured_output": true,
-        "temperature": true,
+        "temperature": false,
         "release_date": "2026-07-16",
         "last_updated": "2026-07-16",
         "modalities": {
@@ -59950,7 +59992,7 @@
         ],
         "tool_call": true,
         "structured_output": true,
-        "temperature": true,
+        "temperature": false,
         "release_date": "2026-07-16",
         "last_updated": "2026-07-16",
         "modalities": {
@@ -72365,7 +72407,7 @@
           "field": "reasoning_content"
         },
         "structured_output": true,
-        "temperature": true,
+        "temperature": false,
         "release_date": "2026-07-16",
         "last_updated": "2026-07-16",
         "modalities": {
@@ -73640,7 +73682,7 @@
         ],
         "tool_call": true,
         "structured_output": true,
-        "temperature": true,
+        "temperature": false,
         "release_date": "2026-07-16",
         "last_updated": "2026-07-17",
         "modalities": {
@@ -76152,12 +76194,12 @@
         "cost": {
           "input": 2.27,
           "output": 6.8,
-          "cache_read": 0.57,
+          "cache_read": 0.34,
           "tiers": [
             {
               "input": 4.53,
               "output": 13.6,
-              "cache_read": 1.13,
+              "cache_read": 0.68,
               "tier": {
                 "type": "context",
                 "size": 200000
@@ -76167,7 +76209,7 @@
           "context_over_200k": {
             "input": 4.53,
             "output": 13.6,
-            "cache_read": 1.13
+            "cache_read": 0.68
           }
         }
       },
@@ -101493,6 +101535,9 @@
           "context": 500000,
           "output": 500000
         },
+        "provider": {
+          "npm": "@ai-sdk/openai"
+        },
         "cost": {
           "input": 2,
           "output": 6,
@@ -114070,6 +114115,36 @@
           "cache_write": 0.375
         }
       },
+      "MiniMaxAI/MiniMax-M3": {
+        "id": "MiniMaxAI/MiniMax-M3",
+        "name": "MiniMax-M3",
+        "description": "MiniMax multimodal model for long-context coding, perception, and agent planning",
+        "family": "minimax",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [],
+        "tool_call": true,
+        "temperature": true,
+        "release_date": "2026-06-01",
+        "last_updated": "2026-06-01",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 1048576,
+          "output": 1048576
+        },
+        "cost": {
+          "input": 0.3,
+          "output": 1.2
+        }
+      },
       "MiniMaxAI/MiniMax-M2.5-fast": {
         "id": "MiniMaxAI/MiniMax-M2.5-fast",
         "name": "MiniMax-M2.5-fast",
@@ -114309,6 +114384,41 @@
           "reasoning": 2.5,
           "cache_read": 0.05,
           "cache_write": 0.625
+        }
+      },
+      "moonshotai/Kimi-K2.7-Code": {
+        "id": "moonshotai/Kimi-K2.7-Code",
+        "name": "Kimi K2.7 Code",
+        "description": "Coding-focused Kimi model, stronger on long-horizon repo work with less overthinking",
+        "family": "kimi-k2",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [],
+        "tool_call": true,
+        "interleaved": {
+          "field": "reasoning_content"
+        },
+        "structured_output": true,
+        "temperature": false,
+        "knowledge": "2025-01",
+        "release_date": "2026-06-12",
+        "last_updated": "2026-06-12",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 262144,
+          "output": 8000
+        },
+        "cost": {
+          "input": 0.95,
+          "output": 4
         }
       },
       "moonshotai/Kimi-K2.5-fast": {
@@ -119090,7 +119200,7 @@
           "field": "reasoning_content"
         },
         "structured_output": true,
-        "temperature": true,
+        "temperature": false,
         "release_date": "2026-07-16",
         "last_updated": "2026-07-16",
         "modalities": {
@@ -119240,6 +119350,9 @@
         "limit": {
           "context": 500000,
           "output": 500000
+        },
+        "provider": {
+          "npm": "@ai-sdk/openai"
         },
         "cost": {
           "input": 2,
@@ -144804,7 +144917,7 @@
           "field": "reasoning_content"
         },
         "structured_output": true,
-        "temperature": true,
+        "temperature": false,
         "release_date": "2026-07-16",
         "last_updated": "2026-07-16",
         "modalities": {
@@ -145408,9 +145521,9 @@
           "output": 131072
         },
         "cost": {
-          "input": 0.4144,
-          "output": 1.3024,
-          "cache_read": 0.07696
+          "input": 0.2576,
+          "output": 0.8096,
+          "cache_read": 0.04784
         }
       },
       "z-ai/glm-5v-turbo": {
@@ -146581,7 +146694,7 @@
         "cost": {
           "input": 2,
           "output": 6,
-          "cache_read": 0.5
+          "cache_read": 0.3
         }
       },
       "~google/gemini-pro-latest": {
@@ -150347,7 +150460,7 @@
         "cost": {
           "input": 2,
           "output": 6,
-          "cache_read": 0.5,
+          "cache_read": 0.3,
           "tiers": [
             {
               "input": 4,
@@ -150542,9 +150655,9 @@
           "output": 262144
         },
         "cost": {
-          "input": 1,
-          "output": 4.4,
-          "cache_read": 0.2
+          "input": 0.85,
+          "output": 3.8,
+          "cache_read": 0.17
         }
       },
       "moonshotai/kimi-k3": {
@@ -150686,9 +150799,9 @@
           "output": 262144
         },
         "cost": {
-          "input": 0.95,
-          "output": 4,
-          "cache_read": 0.16
+          "input": 0.684,
+          "output": 3.42,
+          "cache_read": 0.144
         }
       },
       "moonshotai/kimi-k2-0905": {
@@ -151109,8 +151222,9 @@
           "output": 131072
         },
         "cost": {
-          "input": 0.255,
-          "output": 1.02
+          "input": 0.3,
+          "output": 1.2,
+          "cache_read": 0.03
         }
       },
       "minimax/minimax-m2.1": {
@@ -152887,11 +153001,11 @@
         "open_weights": true,
         "limit": {
           "context": 131702,
-          "output": 16384
+          "output": 8192
         },
         "cost": {
-          "input": 0.12,
-          "output": 0.24
+          "input": 0.2275,
+          "output": 0.91
         }
       },
       "qwen/qwen-2.5-7b-instruct": {
@@ -153962,11 +154076,11 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 256000
+          "output": 16384
         },
         "cost": {
-          "input": 0.1,
-          "output": 0.3
+          "input": 0.07,
+          "output": 0.34
         }
       },
       "google/gemini-3.1-flash-image": {
@@ -172976,6 +173090,7 @@
           "context": 262144,
           "output": 262144
         },
+        "status": "deprecated",
         "cost": {
           "input": 0.2,
           "output": 0.6
@@ -173011,6 +173126,7 @@
           "context": 262144,
           "output": 130000
         },
+        "status": "deprecated",
         "cost": {
           "input": 0.6,
           "output": 3.6
@@ -173131,6 +173247,7 @@
           "context": 32768,
           "output": 32768
         },
+        "status": "deprecated",
         "cost": {
           "input": 0.15,
           "output": 0.15
@@ -173661,6 +173778,7 @@
           "context": 202752,
           "output": 131072
         },
+        "status": "deprecated",
         "cost": {
           "input": 1,
           "output": 3.2
@@ -173697,6 +173815,7 @@
           "context": 202752,
           "output": 131072
         },
+        "status": "deprecated",
         "cost": {
           "input": 1.4,
           "output": 4.4
@@ -175721,36 +175840,6 @@
           "output": 0.22
         }
       },
-      "meta/llama-3.2-1b": {
-        "id": "meta/llama-3.2-1b",
-        "name": "Llama 3.2 1B Instruct",
-        "description": "Open Llama instruction model for multilingual chat, reasoning, and coding",
-        "family": "llama",
-        "attachment": false,
-        "reasoning": false,
-        "tool_call": false,
-        "temperature": true,
-        "knowledge": "2023-12",
-        "release_date": "2024-09-25",
-        "last_updated": "2024-09-18",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": false,
-        "limit": {
-          "context": 128000,
-          "output": 8192
-        },
-        "cost": {
-          "input": 0.1,
-          "output": 0.1
-        }
-      },
       "meta/llama-3.1-70b": {
         "id": "meta/llama-3.1-70b",
         "name": "Llama 3.1 70B Instruct",
@@ -175825,98 +175914,6 @@
           "input": 1.25,
           "output": 4.25,
           "cache_read": 0.15
-        }
-      },
-      "meta/llama-3.2-3b": {
-        "id": "meta/llama-3.2-3b",
-        "name": "Llama 3.2 3B Instruct",
-        "description": "Open Llama instruction model for multilingual chat, reasoning, and coding",
-        "family": "llama",
-        "attachment": false,
-        "reasoning": false,
-        "tool_call": false,
-        "temperature": true,
-        "knowledge": "2023-12",
-        "release_date": "2024-09-25",
-        "last_updated": "2024-09-18",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": false,
-        "limit": {
-          "context": 128000,
-          "output": 8192
-        },
-        "cost": {
-          "input": 0.15,
-          "output": 0.15
-        }
-      },
-      "meta/llama-3.2-11b": {
-        "id": "meta/llama-3.2-11b",
-        "name": "Llama 3.2 11B Vision Instruct",
-        "description": "Open Llama multimodal model for image understanding and text reasoning",
-        "family": "llama",
-        "attachment": true,
-        "reasoning": false,
-        "tool_call": true,
-        "temperature": true,
-        "knowledge": "2023-12",
-        "release_date": "2024-09-25",
-        "last_updated": "2024-09-25",
-        "modalities": {
-          "input": [
-            "text",
-            "image"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": false,
-        "limit": {
-          "context": 128000,
-          "output": 8192
-        },
-        "cost": {
-          "input": 0.16,
-          "output": 0.16
-        }
-      },
-      "meta/llama-3.2-90b": {
-        "id": "meta/llama-3.2-90b",
-        "name": "Llama 3.2 90B Vision Instruct",
-        "description": "Open Llama multimodal model for image understanding and text reasoning",
-        "family": "llama",
-        "attachment": true,
-        "reasoning": false,
-        "tool_call": true,
-        "temperature": true,
-        "knowledge": "2023-12",
-        "release_date": "2024-09-25",
-        "last_updated": "2024-09-25",
-        "modalities": {
-          "input": [
-            "text",
-            "image"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": false,
-        "limit": {
-          "context": 128000,
-          "output": 8192
-        },
-        "cost": {
-          "input": 0.72,
-          "output": 0.72
         }
       },
       "meta/llama-4-scout": {
@@ -178767,7 +178764,7 @@
         "reasoning_options": [],
         "tool_call": true,
         "structured_output": true,
-        "temperature": true,
+        "temperature": false,
         "release_date": "2026-07-16",
         "last_updated": "2026-07-16",
         "modalities": {
@@ -187012,7 +187009,7 @@
           "field": "reasoning_content"
         },
         "structured_output": true,
-        "temperature": true,
+        "temperature": false,
         "release_date": "2026-07-16",
         "last_updated": "2026-07-16",
         "modalities": {
@@ -208357,7 +208354,7 @@
           "field": "reasoning_content"
         },
         "structured_output": true,
-        "temperature": true,
+        "temperature": false,
         "release_date": "2026-07-16",
         "last_updated": "2026-07-16",
         "modalities": {
