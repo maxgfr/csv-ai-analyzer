@@ -32995,8 +32995,8 @@
     "name": "Kimi For Coding",
     "doc": "https://www.kimi.com/code/docs/en/third-party-tools/other-coding-agents.html",
     "models": {
-      "k2p7": {
-        "id": "k2p7",
+      "kimi-for-coding": {
+        "id": "kimi-for-coding",
         "name": "Kimi K2.7 Code",
         "description": "Coding-focused Kimi model, stronger on long-horizon repo work with less overthinking",
         "family": "kimi-k2",
@@ -145521,9 +145521,9 @@
           "output": 131072
         },
         "cost": {
-          "input": 0.2576,
-          "output": 0.8096,
-          "cache_read": 0.04784
+          "input": 0.9786,
+          "output": 3.0756,
+          "cache_read": 0.18174
         }
       },
       "z-ai/glm-5v-turbo": {
@@ -145586,13 +145586,13 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 202752,
-          "output": 202752
+          "context": 204800,
+          "output": 131072
         },
         "cost": {
           "input": 0.95,
-          "output": 3.15,
-          "cache_read": 0.19
+          "output": 2.55,
+          "cache_read": 0.2
         }
       },
       "z-ai/glm-5.1": {
@@ -145827,37 +145827,6 @@
           "output": 3
         }
       },
-      "nousresearch/hermes-3-llama-3.1-405b:free": {
-        "id": "nousresearch/hermes-3-llama-3.1-405b:free",
-        "name": "Hermes 3 405B Instruct (free)",
-        "description": "Open Llama instruction model for multilingual chat, reasoning, and coding",
-        "family": "hermes",
-        "attachment": false,
-        "reasoning": false,
-        "tool_call": false,
-        "structured_output": false,
-        "temperature": true,
-        "knowledge": "2023-12-31",
-        "release_date": "2024-08-16",
-        "last_updated": "2024-08-16",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 131072,
-          "output": 131072
-        },
-        "cost": {
-          "input": 0,
-          "output": 0
-        }
-      },
       "nousresearch/hermes-3-llama-3.1-405b": {
         "id": "nousresearch/hermes-3-llama-3.1-405b",
         "name": "Hermes 3 405B Instruct",
@@ -145918,37 +145887,6 @@
         "cost": {
           "input": 0.2,
           "output": 0.9
-        }
-      },
-      "cognitivecomputations/dolphin-mistral-24b-venice-edition:free": {
-        "id": "cognitivecomputations/dolphin-mistral-24b-venice-edition:free",
-        "name": "Uncensored (free)",
-        "description": "Mistral model for multilingual chat, reasoning, and tool-assisted workflows",
-        "family": "mistral",
-        "attachment": false,
-        "reasoning": false,
-        "tool_call": false,
-        "structured_output": true,
-        "temperature": true,
-        "knowledge": "2024-04-30",
-        "release_date": "2025-07-09",
-        "last_updated": "2025-07-09",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 32768,
-          "output": 32768
-        },
-        "cost": {
-          "input": 0,
-          "output": 0
         }
       },
       "cohere/command-r-08-2024": {
@@ -147091,9 +147029,8 @@
           "output": 16384
         },
         "cost": {
-          "input": 0.21,
-          "output": 0.455,
-          "cache_read": 0.06
+          "input": 0.085,
+          "output": 0.4
         }
       },
       "nvidia/nemotron-3-ultra-550b-a55b:free": {
@@ -147341,6 +147278,8 @@
           {
             "type": "effort",
             "values": [
+              "low",
+              "high",
               "max"
             ]
           }
@@ -147625,37 +147564,6 @@
           "output": 5
         }
       },
-      "meta-llama/llama-3.3-70b-instruct:free": {
-        "id": "meta-llama/llama-3.3-70b-instruct:free",
-        "name": "Llama 3.3 70B Instruct (free)",
-        "description": "Popular open Llama workhorse for multilingual chat, coding, and self-hosting",
-        "family": "llama",
-        "attachment": false,
-        "reasoning": false,
-        "tool_call": true,
-        "structured_output": false,
-        "temperature": true,
-        "knowledge": "2023-12",
-        "release_date": "2024-12-06",
-        "last_updated": "2024-12-06",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 131072,
-          "output": 131072
-        },
-        "cost": {
-          "input": 0,
-          "output": 0
-        }
-      },
       "meta-llama/llama-4-maverick": {
         "id": "meta-llama/llama-4-maverick",
         "name": "Llama 4 Maverick",
@@ -147812,37 +147720,6 @@
         "cost": {
           "input": 0.18,
           "output": 0.18
-        }
-      },
-      "meta-llama/llama-3.2-3b-instruct:free": {
-        "id": "meta-llama/llama-3.2-3b-instruct:free",
-        "name": "Llama 3.2 3B Instruct (free)",
-        "description": "Open Llama instruction model for multilingual chat, reasoning, and coding",
-        "family": "llama",
-        "attachment": false,
-        "reasoning": false,
-        "tool_call": false,
-        "structured_output": false,
-        "temperature": true,
-        "knowledge": "2023-12-31",
-        "release_date": "2024-09-25",
-        "last_updated": "2024-09-25",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 131072,
-          "output": 131072
-        },
-        "cost": {
-          "input": 0,
-          "output": 0
         }
       },
       "meta-llama/llama-4-scout": {
@@ -150671,6 +150548,8 @@
           {
             "type": "effort",
             "values": [
+              "low",
+              "high",
               "max"
             ]
           }
@@ -152153,37 +152032,6 @@
           "output": 0.78
         }
       },
-      "qwen/qwen3-next-80b-a3b-instruct:free": {
-        "id": "qwen/qwen3-next-80b-a3b-instruct:free",
-        "name": "Qwen3 Next 80B A3B Instruct (free)",
-        "description": "Qwen instruction model for multilingual chat, reasoning, and tool use",
-        "family": "qwen",
-        "attachment": false,
-        "reasoning": false,
-        "tool_call": true,
-        "structured_output": true,
-        "temperature": true,
-        "knowledge": "2025-04",
-        "release_date": "2025-09",
-        "last_updated": "2025-09",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 262144,
-          "output": 262144
-        },
-        "cost": {
-          "input": 0,
-          "output": 0
-        }
-      },
       "qwen/qwen-2.5-coder-32b-instruct": {
         "id": "qwen/qwen-2.5-coder-32b-instruct",
         "name": "Qwen2.5 Coder 32B Instruct",
@@ -152277,37 +152125,6 @@
         "cost": {
           "input": 0.26,
           "output": 0.78
-        }
-      },
-      "qwen/qwen3-coder:free": {
-        "id": "qwen/qwen3-coder:free",
-        "name": "Qwen3 Coder 480B A35B (free)",
-        "description": "Qwen coding model for software agents, repository edits, and code reasoning",
-        "family": "qwen",
-        "attachment": false,
-        "reasoning": false,
-        "tool_call": true,
-        "structured_output": false,
-        "temperature": true,
-        "knowledge": "2025-06-30",
-        "release_date": "2025-07-23",
-        "last_updated": "2025-07-23",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 1048576,
-          "output": 262000
-        },
-        "cost": {
-          "input": 0,
-          "output": 0
         }
       },
       "qwen/qwen3-coder": {
@@ -152654,11 +152471,11 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 32768
         },
         "cost": {
-          "input": 0.1495,
-          "output": 1.495
+          "input": 0.3,
+          "output": 3
         }
       },
       "qwen/qwen3.5-397b-a17b": {
@@ -153001,11 +152818,11 @@
         "open_weights": true,
         "limit": {
           "context": 131702,
-          "output": 8192
+          "output": 16384
         },
         "cost": {
-          "input": 0.2275,
-          "output": 0.91
+          "input": 0.12,
+          "output": 0.24
         }
       },
       "qwen/qwen-2.5-7b-instruct": {
