@@ -18371,7 +18371,11 @@
         "reasoning": true,
         "reasoning_options": [
           {
-            "type": "toggle"
+            "type": "effort",
+            "values": [
+              "none",
+              "high"
+            ]
           }
         ],
         "tool_call": true,
@@ -18491,8 +18495,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 65536,
-          "input": 65536,
+          "context": 262144,
+          "input": 262144,
           "output": 32768
         },
         "cost": {
@@ -18544,7 +18548,11 @@
         "reasoning": true,
         "reasoning_options": [
           {
-            "type": "toggle"
+            "type": "effort",
+            "values": [
+              "none",
+              "high"
+            ]
           }
         ],
         "tool_call": true,
@@ -20895,12 +20903,11 @@
         "reasoning": true,
         "reasoning_options": [
           {
-            "type": "toggle"
-          },
-          {
-            "type": "budget_tokens",
-            "min": 1024,
-            "max": 81920
+            "type": "effort",
+            "values": [
+              "none",
+              "high"
+            ]
           }
         ],
         "tool_call": true,
@@ -21561,12 +21568,11 @@
         "reasoning": true,
         "reasoning_options": [
           {
-            "type": "toggle"
-          },
-          {
-            "type": "budget_tokens",
-            "min": 1024,
-            "max": 81920
+            "type": "effort",
+            "values": [
+              "none",
+              "high"
+            ]
           }
         ],
         "tool_call": true,
@@ -22848,8 +22854,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 65536,
-          "input": 65536,
+          "context": 262144,
+          "input": 262144,
           "output": 32768
         },
         "cost": {
@@ -22971,7 +22977,15 @@
         "family": "claude",
         "attachment": true,
         "reasoning": true,
-        "reasoning_options": [],
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "none",
+              "high"
+            ]
+          }
+        ],
         "tool_call": true,
         "structured_output": false,
         "release_date": "2026-05-01",
@@ -23006,7 +23020,11 @@
         "reasoning": true,
         "reasoning_options": [
           {
-            "type": "toggle"
+            "type": "effort",
+            "values": [
+              "none",
+              "high"
+            ]
           }
         ],
         "tool_call": true,
@@ -24073,7 +24091,15 @@
         "family": "glm",
         "attachment": false,
         "reasoning": true,
-        "reasoning_options": [],
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "none",
+              "high"
+            ]
+          }
+        ],
         "tool_call": true,
         "structured_output": false,
         "release_date": "2025-12-23",
@@ -24410,7 +24436,11 @@
         "reasoning": true,
         "reasoning_options": [
           {
-            "type": "toggle"
+            "type": "effort",
+            "values": [
+              "none",
+              "high"
+            ]
           }
         ],
         "tool_call": true,
@@ -26730,8 +26760,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 131072,
-          "input": 131072,
+          "context": 262144,
+          "input": 262144,
           "output": 32768
         },
         "cost": {
@@ -27047,8 +27077,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 131072,
-          "input": 131072,
+          "context": 262144,
+          "input": 262144,
           "output": 32768
         },
         "cost": {
@@ -33062,8 +33092,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 131072,
-          "input": 131072,
+          "context": 262144,
+          "input": 262144,
           "output": 32768
         },
         "cost": {
@@ -33095,8 +33125,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 131072,
-          "input": 131072,
+          "context": 262144,
+          "input": 262144,
           "output": 32768
         },
         "cost": {
@@ -33897,6 +33927,39 @@
           "cache_read": 0.3
         }
       },
+      "qwen/qwen3.8-27b-uncensored:thinking": {
+        "id": "qwen/qwen3.8-27b-uncensored:thinking",
+        "name": "Qwen 3.8 27B Uncensored Thinking",
+        "description": "Qwen 3.8 27B Uncensored with thinking enabled for more deliberate creative work, coding, multimodal analysis, tool use, and long-context problem solving.",
+        "family": "qwen",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [],
+        "tool_call": true,
+        "structured_output": true,
+        "release_date": "2026-08-25",
+        "last_updated": "2026-08-25",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 262144,
+          "input": 262144,
+          "output": 32768
+        },
+        "cost": {
+          "input": 0.18,
+          "output": 0.5,
+          "cache_read": 0.075
+        }
+      },
       "qwen/qwen3-coder-flash": {
         "id": "qwen/qwen3-coder-flash",
         "name": "Qwen3 Coder Flash",
@@ -33959,6 +34022,39 @@
           "input": 0.47,
           "output": 0.47,
           "cache_read": 0.235
+        }
+      },
+      "qwen/qwen3.8-27b-uncensored": {
+        "id": "qwen/qwen3.8-27b-uncensored",
+        "name": "Qwen 3.8 27B Uncensored",
+        "description": "Qwen 3.8 27B Uncensored is an NVFP4 open-weight multimodal model LoRA-tuned for fewer refusals across chat, coding, reasoning, tool use, and long-context work.",
+        "family": "qwen",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [],
+        "tool_call": true,
+        "structured_output": true,
+        "release_date": "2026-08-21",
+        "last_updated": "2026-08-21",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 262144,
+          "input": 262144,
+          "output": 32768
+        },
+        "cost": {
+          "input": 0.18,
+          "output": 0.5,
+          "cache_read": 0.075
         }
       },
       "qwen/qwen3.5-plus-thinking": {
@@ -34295,8 +34391,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 65536,
-          "input": 65536,
+          "context": 262144,
+          "input": 262144,
           "output": 32768
         },
         "cost": {
@@ -34362,8 +34458,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 65536,
-          "input": 65536,
+          "context": 262144,
+          "input": 262144,
           "output": 32768
         },
         "cost": {
@@ -53635,6 +53731,47 @@
           "output": 6.25
         }
       },
+      "Qwen/Qwen3.8-27B": {
+        "id": "Qwen/Qwen3.8-27B",
+        "name": "Qwen3.8 27B",
+        "description": "Qwen vision-language model for visual reasoning, documents, and agent tasks",
+        "family": "qwen",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "medium",
+              "xhigh"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2026-08-14",
+        "last_updated": "2026-08-14",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 262144,
+          "output": 32768
+        },
+        "cost": {
+          "input": 0.4,
+          "output": 3
+        }
+      },
       "Qwen/Qwen3-Next-80B-A3B-Instruct": {
         "id": "Qwen/Qwen3-Next-80B-A3B-Instruct",
         "name": "Qwen3-Next-80B-A3B-Instruct",
@@ -59771,7 +59908,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 235929
         },
         "cost": {
           "input": 0.18,
@@ -59804,7 +59941,7 @@
         "open_weights": true,
         "limit": {
           "context": 131072,
-          "output": 131072
+          "output": 117964
         },
         "cost": {
           "input": 0.14,
@@ -60107,7 +60244,7 @@
         "open_weights": false,
         "limit": {
           "context": 500000,
-          "output": 1000000
+          "output": 450000
         },
         "cost": {
           "input": 2,
@@ -60169,7 +60306,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 235929
         },
         "cost": {
           "input": 0,
@@ -60200,7 +60337,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 235929
         },
         "cost": {
           "input": 0.05,
@@ -60327,7 +60464,7 @@
         "open_weights": true,
         "limit": {
           "context": 512288,
-          "output": 16384
+          "output": 461059
         },
         "cost": {
           "input": 0.6,
@@ -60652,7 +60789,7 @@
         "open_weights": false,
         "limit": {
           "context": 32768,
-          "output": 32768
+          "output": 29491
         },
         "cost": {
           "input": 0.8,
@@ -60805,7 +60942,7 @@
         "open_weights": true,
         "limit": {
           "context": 16384,
-          "output": 16384
+          "output": 14745
         },
         "cost": {
           "input": 0.07,
@@ -60988,7 +61125,7 @@
         "open_weights": true,
         "limit": {
           "context": 256000,
-          "output": 256000
+          "output": 230400
         },
         "cost": {
           "input": 0,
@@ -61251,7 +61388,7 @@
         "open_weights": true,
         "limit": {
           "context": 204800,
-          "output": 202752
+          "output": 182476
         },
         "cost": {
           "input": 1.26,
@@ -61484,7 +61621,7 @@
         "open_weights": true,
         "limit": {
           "context": 1048576,
-          "output": 384000
+          "output": 943717
         },
         "cost": {
           "input": 1.122,
@@ -61534,9 +61671,9 @@
           "output": 384000
         },
         "cost": {
-          "input": 0.790308,
-          "output": 1.580616,
-          "cache_read": 0.065859
+          "input": 0.87,
+          "output": 1.74,
+          "cache_read": 0.0725
         }
       },
       "deepseek/deepseek-v3.2": {
@@ -61568,7 +61705,7 @@
         "open_weights": true,
         "limit": {
           "context": 163840,
-          "output": 163840
+          "output": 147456
         },
         "cost": {
           "input": 0.26,
@@ -61605,7 +61742,7 @@
         "open_weights": true,
         "limit": {
           "context": 163840,
-          "output": 161000
+          "output": 144900
         },
         "cost": {
           "input": 0.55,
@@ -61701,7 +61838,7 @@
         "open_weights": true,
         "limit": {
           "context": 163840,
-          "output": 163840
+          "output": 147456
         },
         "cost": {
           "input": 0.25,
@@ -61733,7 +61870,7 @@
         "open_weights": true,
         "limit": {
           "context": 8192,
-          "output": 8192
+          "output": 7372
         },
         "cost": {
           "input": 0.8,
@@ -61813,12 +61950,12 @@
         "open_weights": true,
         "limit": {
           "context": 1310720,
-          "output": 131072
+          "output": 943718
         },
         "cost": {
-          "input": 0.14,
-          "output": 0.28,
-          "cache_read": 0.028
+          "input": 0.06,
+          "output": 0.12,
+          "cache_read": 0.012
         }
       },
       "deepseek/deepseek-v4-flash-vision-exp": {
@@ -61890,7 +62027,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 235929
         },
         "cost": {
           "input": 0.22,
@@ -62218,7 +62355,7 @@
         "open_weights": false,
         "limit": {
           "context": 65536,
-          "output": 65536
+          "output": 58982
         },
         "cost": {
           "input": 0.25,
@@ -62469,43 +62606,12 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 16384
         },
         "cost": {
-          "input": 0.1,
+          "input": 0.09,
           "output": 0.34,
-          "cache_read": 0.1
-        }
-      },
-      "google/gemma-3n-e4b-it": {
-        "id": "google/gemma-3n-e4b-it",
-        "name": "Gemma 3n 4B",
-        "description": "Open Gemma instruction model for efficient chat and self-hosted deployments",
-        "family": "gemma",
-        "attachment": false,
-        "reasoning": false,
-        "tool_call": false,
-        "structured_output": true,
-        "temperature": true,
-        "knowledge": "2024-08-31",
-        "release_date": "2025-05-20",
-        "last_updated": "2025-05-20",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 32768,
-          "output": 32768
-        },
-        "cost": {
-          "input": 0.06,
-          "output": 0.12
+          "cache_read": 0.05
         }
       },
       "google/lyria-3-clip-preview": {
@@ -62666,7 +62772,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 131072
+          "output": 117964
         },
         "cost": {
           "input": 0.08,
@@ -63020,7 +63126,7 @@
         "open_weights": false,
         "limit": {
           "context": 65536,
-          "output": 65536
+          "output": 58982
         },
         "cost": {
           "input": 0.5,
@@ -63346,7 +63452,7 @@
         "open_weights": true,
         "limit": {
           "context": 131072,
-          "output": 131072
+          "output": 117964
         },
         "cost": {
           "input": 0.35,
@@ -63393,7 +63499,7 @@
         "open_weights": false,
         "limit": {
           "context": 1048576,
-          "output": 1048576
+          "output": 943718
         },
         "cost": {
           "input": 1.25,
@@ -63440,7 +63546,7 @@
         "open_weights": false,
         "limit": {
           "context": 1048576,
-          "output": 1048576
+          "output": 943718
         },
         "cost": {
           "input": 1.25,
@@ -63487,7 +63593,7 @@
         "open_weights": false,
         "limit": {
           "context": 1048576,
-          "output": 1048576
+          "output": 943718
         },
         "cost": {
           "input": 0.1,
@@ -63549,7 +63655,7 @@
         "open_weights": true,
         "limit": {
           "context": 8192,
-          "output": 4096
+          "output": 3686
         },
         "cost": {
           "input": 0.06,
@@ -63890,7 +63996,7 @@
         "open_weights": false,
         "limit": {
           "context": 2000000,
-          "output": 2000000
+          "output": 1800000
         },
         "cost": {
           "input": 1.25,
@@ -63951,7 +64057,7 @@
         "open_weights": false,
         "limit": {
           "context": 500000,
-          "output": 500000
+          "output": 450000
         },
         "cost": {
           "input": 2,
@@ -64010,7 +64116,7 @@
         "open_weights": false,
         "limit": {
           "context": 500000,
-          "output": 500000
+          "output": 450000
         },
         "cost": {
           "input": 2,
@@ -64071,7 +64177,7 @@
         "open_weights": false,
         "limit": {
           "context": 2000000,
-          "output": 2000000
+          "output": 1800000
         },
         "cost": {
           "input": 1.25,
@@ -64121,7 +64227,7 @@
         "open_weights": false,
         "limit": {
           "context": 256000,
-          "output": 256000
+          "output": 230400
         },
         "cost": {
           "input": 1,
@@ -64181,7 +64287,7 @@
         "open_weights": false,
         "limit": {
           "context": 1000000,
-          "output": 1000000
+          "output": 900000
         },
         "cost": {
           "input": 1.25,
@@ -64516,7 +64622,7 @@
         "open_weights": false,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 235929
         },
         "cost": {
           "input": 0.5,
@@ -64549,7 +64655,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 235929
         },
         "cost": {
           "input": 0.67,
@@ -64595,7 +64701,7 @@
         "open_weights": true,
         "limit": {
           "context": 1048576,
-          "output": 1048576
+          "output": 943718
         },
         "cost": {
           "input": 3,
@@ -64663,7 +64769,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 235929
         },
         "cost": {
           "input": 0.6,
@@ -64767,7 +64873,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 235929
         },
         "cost": {
           "input": 0.95,
@@ -66392,7 +66498,7 @@
         "open_weights": false,
         "limit": {
           "context": 4095,
-          "output": 4096
+          "output": 3685
         },
         "cost": {
           "input": 1.5,
@@ -67077,7 +67183,7 @@
         "open_weights": true,
         "limit": {
           "context": 131072,
-          "output": 131072
+          "output": 117964
         },
         "cost": {
           "input": 0.037,
@@ -67748,7 +67854,7 @@
         "open_weights": false,
         "limit": {
           "context": 4095,
-          "output": 4096
+          "output": 3685
         },
         "cost": {
           "input": 1,
@@ -68348,7 +68454,7 @@
         "open_weights": true,
         "limit": {
           "context": 131072,
-          "output": 131072
+          "output": 117964
         },
         "cost": {
           "input": 0.03,
@@ -68612,7 +68718,7 @@
         "open_weights": true,
         "limit": {
           "context": 131072,
-          "output": 131072
+          "output": 117964
         },
         "cost": {
           "input": 0.13,
@@ -68648,7 +68754,7 @@
         "open_weights": true,
         "limit": {
           "context": 131072,
-          "output": 131072
+          "output": 117964
         },
         "cost": {
           "input": 1,
@@ -68722,7 +68828,7 @@
         "limit": {
           "context": 262144,
           "input": 256000,
-          "output": 256000
+          "output": 230400
         },
         "cost": {
           "input": 0.2,
@@ -68755,12 +68861,11 @@
         "open_weights": true,
         "limit": {
           "context": 128000,
-          "output": 128000
+          "output": 28800
         },
         "cost": {
-          "input": 0.8,
-          "output": 1,
-          "cache_read": 0.4
+          "input": 0.25,
+          "output": 0.75
         }
       },
       "qwen/qwen3.5-plus-20260420": {
@@ -68846,7 +68951,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 235929
         },
         "cost": {
           "input": 0.07,
@@ -68973,58 +69078,6 @@
           "output": 0.28
         }
       },
-      "qwen/qwen-plus-2025-07-28:thinking": {
-        "id": "qwen/qwen-plus-2025-07-28:thinking",
-        "name": "Qwen Plus 0728 (thinking)",
-        "description": "Qwen reasoning model for deliberate problem solving, math, and coding",
-        "family": "qwen",
-        "attachment": false,
-        "reasoning": true,
-        "reasoning_options": [
-          {
-            "type": "budget_tokens",
-            "min": 1,
-            "max": 81920
-          }
-        ],
-        "tool_call": true,
-        "structured_output": true,
-        "temperature": true,
-        "knowledge": "2025-03-31",
-        "release_date": "2025-09-08",
-        "last_updated": "2025-09-08",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": false,
-        "limit": {
-          "context": 1000000,
-          "output": 32768
-        },
-        "cost": {
-          "input": 0.26,
-          "output": 0.78,
-          "tiers": [
-            {
-              "input": 0.78,
-              "output": 2.34,
-              "tier": {
-                "type": "context",
-                "size": 256000
-              }
-            }
-          ],
-          "context_over_200k": {
-            "input": 0.78,
-            "output": 2.34
-          }
-        }
-      },
       "qwen/qwen3-235b-a22b-thinking-2507": {
         "id": "qwen/qwen3-235b-a22b-thinking-2507",
         "name": "Qwen3 235B A22B Thinking 2507",
@@ -69050,7 +69103,7 @@
         "open_weights": true,
         "limit": {
           "context": 131072,
-          "output": 32768
+          "output": 117964
         },
         "cost": {
           "input": 0.23,
@@ -69160,7 +69213,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 235929
         },
         "cost": {
           "input": 0.25,
@@ -69266,12 +69319,11 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 65536
         },
         "cost": {
-          "input": 0.5,
-          "output": 3.6,
-          "cache_read": 0.3
+          "input": 0.39,
+          "output": 2.34
         }
       },
       "qwen/qwen-plus": {
@@ -69349,7 +69401,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 235929
         },
         "cost": {
           "input": 0.12,
@@ -69810,7 +69862,7 @@
         "open_weights": true,
         "limit": {
           "context": 32768,
-          "output": 32768
+          "output": 29491
         },
         "cost": {
           "input": 0.1,
@@ -70131,7 +70183,7 @@
         "open_weights": true,
         "limit": {
           "context": 32768,
-          "output": 32768
+          "output": 29491
         },
         "cost": {
           "input": 0.66,
@@ -70168,7 +70220,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 235929
         },
         "cost": {
           "input": 0.14,
@@ -70206,11 +70258,12 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 81920
+          "output": 235929
         },
         "cost": {
-          "input": 0.32,
-          "output": 3.2
+          "input": 0.6,
+          "output": 3.6,
+          "cache_read": 0.12
         }
       },
       "qwen/qwen3-next-80b-a3b-instruct": {
@@ -70237,7 +70290,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 235929
         },
         "cost": {
           "input": 0.1,
@@ -70286,9 +70339,10 @@
           "output": 131072
         },
         "cost": {
-          "input": 0.4,
-          "output": 3,
-          "cache_read": 0.05
+          "input": 0.425,
+          "output": 2.55,
+          "cache_read": 0.085,
+          "cache_write": 0.53125
         }
       },
       "qwen/qwen3.6-plus": {
@@ -70413,7 +70467,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 235929
         },
         "cost": {
           "input": 0.1,
@@ -70520,7 +70574,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 235929
         },
         "cost": {
           "input": 0.26,
@@ -70864,7 +70918,7 @@
         "open_weights": true,
         "limit": {
           "context": 65536,
-          "output": 65536
+          "output": 58982
         },
         "cost": {
           "input": 0.15,
@@ -71078,7 +71132,7 @@
         "open_weights": false,
         "limit": {
           "context": 128000,
-          "output": 128000
+          "output": 115200
         },
         "cost": {
           "input": 2,
@@ -71110,7 +71164,7 @@
         "open_weights": false,
         "limit": {
           "context": 127072,
-          "output": 127072
+          "output": 114364
         },
         "cost": {
           "input": 1,
@@ -71142,7 +71196,7 @@
         "open_weights": false,
         "limit": {
           "context": 128000,
-          "output": 128000
+          "output": 115200
         },
         "cost": {
           "input": 2,
@@ -71235,7 +71289,7 @@
         "open_weights": true,
         "limit": {
           "context": 131072,
-          "output": 131072
+          "output": 117964
         },
         "cost": {
           "input": 0.3,
@@ -71266,7 +71320,7 @@
         "open_weights": true,
         "limit": {
           "context": 32768,
-          "output": 32768
+          "output": 29491
         },
         "cost": {
           "input": 0.55,
@@ -71297,7 +71351,7 @@
         "open_weights": true,
         "limit": {
           "context": 65536,
-          "output": 65536
+          "output": 58982
         },
         "cost": {
           "input": 0.25,
@@ -71327,7 +71381,7 @@
         "open_weights": true,
         "limit": {
           "context": 1024000,
-          "output": 32768
+          "output": 26214
         },
         "cost": {
           "input": 0.4,
@@ -71359,7 +71413,7 @@
         "open_weights": true,
         "limit": {
           "context": 16384,
-          "output": 16384
+          "output": 14745
         },
         "cost": {
           "input": 0.1,
@@ -71391,7 +71445,7 @@
         "open_weights": true,
         "limit": {
           "context": 65536,
-          "output": 65536
+          "output": 58982
         },
         "cost": {
           "input": 0.1,
@@ -71688,12 +71742,12 @@
         "open_weights": false,
         "limit": {
           "context": 1310720,
-          "output": 1048576
+          "output": 131072
         },
         "cost": {
-          "input": 0.035,
+          "input": 0.03,
           "output": 0.075,
-          "cache_read": 0.008
+          "cache_read": 0.007
         }
       },
       "inclusionai/ling-3.0-flash": {
@@ -71752,7 +71806,7 @@
         "open_weights": true,
         "limit": {
           "context": 131072,
-          "output": 131072
+          "output": 117964
         },
         "cost": {
           "input": 0.05,
@@ -71783,11 +71837,12 @@
         "open_weights": true,
         "limit": {
           "context": 131072,
-          "output": 16384
+          "output": 115200
         },
         "cost": {
-          "input": 0.1,
-          "output": 0.32
+          "input": 0.71,
+          "output": 0.71,
+          "cache_read": 0.71
         }
       },
       "meta-llama/llama-guard-4-12b": {
@@ -71814,7 +71869,7 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 1048576,
+          "context": 163840,
           "output": 16384
         },
         "cost": {
@@ -71846,7 +71901,7 @@
         "open_weights": true,
         "limit": {
           "context": 60000,
-          "output": 60000
+          "output": 54000
         },
         "cost": {
           "input": 0.027,
@@ -71877,7 +71932,7 @@
         "open_weights": true,
         "limit": {
           "context": 131072,
-          "output": 131072
+          "output": 117964
         },
         "cost": {
           "input": 0.05,
@@ -71973,11 +72028,12 @@
         "open_weights": true,
         "limit": {
           "context": 1310720,
-          "output": 16384
+          "output": 8192
         },
         "cost": {
-          "input": 0.1,
-          "output": 0.3
+          "input": 0.11,
+          "output": 0.34,
+          "cache_read": 0.055
         }
       },
       "mistralai/ministral-8b-2512": {
@@ -72004,7 +72060,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 209715
         },
         "cost": {
           "input": 0.15,
@@ -72038,7 +72094,7 @@
         "open_weights": false,
         "limit": {
           "context": 131072,
-          "output": 262144
+          "output": 104857
         },
         "cost": {
           "input": 0.4,
@@ -72111,7 +72167,7 @@
         "open_weights": false,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 209715
         },
         "cost": {
           "input": 1.5,
@@ -72142,7 +72198,7 @@
         "open_weights": false,
         "limit": {
           "context": 128000,
-          "output": 128000
+          "output": 102400
         },
         "cost": {
           "input": 0.11,
@@ -72174,7 +72230,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 209715
         },
         "cost": {
           "input": 0.44,
@@ -72216,7 +72272,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 209715
         },
         "cost": {
           "input": 0.15,
@@ -72313,7 +72369,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 209715
         },
         "cost": {
           "input": 0.5,
@@ -72346,7 +72402,7 @@
         "open_weights": true,
         "limit": {
           "context": 32000,
-          "output": 32000
+          "output": 25600
         },
         "cost": {
           "input": 0.1,
@@ -72378,7 +72434,7 @@
         "open_weights": true,
         "limit": {
           "context": 131072,
-          "output": 131072
+          "output": 104857
         },
         "cost": {
           "input": 0.1,
@@ -72412,7 +72468,7 @@
         "open_weights": false,
         "limit": {
           "context": 131072,
-          "output": 131072
+          "output": 104857
         },
         "cost": {
           "input": 0.4,
@@ -72445,7 +72501,7 @@
         "open_weights": false,
         "limit": {
           "context": 131072,
-          "output": 131072
+          "output": 104857
         },
         "cost": {
           "input": 2,
@@ -72478,7 +72534,7 @@
         "open_weights": false,
         "limit": {
           "context": 128000,
-          "output": 128000
+          "output": 102400
         },
         "cost": {
           "input": 2,
@@ -72511,7 +72567,7 @@
         "open_weights": true,
         "limit": {
           "context": 65536,
-          "output": 65536
+          "output": 52428
         },
         "cost": {
           "input": 2,
@@ -72543,7 +72599,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 209715
         },
         "cost": {
           "input": 0.2,
@@ -72576,7 +72632,7 @@
         "open_weights": false,
         "limit": {
           "context": 256000,
-          "output": 256000
+          "output": 204800
         },
         "cost": {
           "input": 0.3,
@@ -72609,7 +72665,7 @@
         "open_weights": false,
         "limit": {
           "context": 32768,
-          "output": 32768
+          "output": 26214
         },
         "cost": {
           "input": 0.2,
@@ -72642,7 +72698,7 @@
         "open_weights": true,
         "limit": {
           "context": 128000,
-          "output": 128000
+          "output": 102400
         },
         "cost": {
           "input": 0.351,
@@ -72966,7 +73022,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 235929
         },
         "cost": {
           "input": 0.025,
@@ -72999,7 +73055,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 235929
         },
         "cost": {
           "input": 0.25,
@@ -73031,7 +73087,7 @@
         "open_weights": false,
         "limit": {
           "context": 131072,
-          "output": 131072
+          "output": 117964
         },
         "cost": {
           "input": 0.15,
@@ -73221,7 +73277,7 @@
         "open_weights": true,
         "limit": {
           "context": 8192,
-          "output": 16384
+          "output": 7372
         },
         "cost": {
           "input": 0.04,
@@ -73266,12 +73322,12 @@
         "open_weights": false,
         "limit": {
           "context": 1048576,
-          "output": 1048576
+          "output": 943718
         },
         "cost": {
-          "input": 2.8,
-          "output": 14,
-          "cache_read": 0.29
+          "input": 2.55,
+          "output": 12.75,
+          "cache_read": 0.256
         }
       },
       "kwaipilot/kat-coder-pro-v2.5": {
@@ -73390,7 +73446,7 @@
         "open_weights": true,
         "limit": {
           "context": 131000,
-          "output": 131000
+          "output": 117900
         },
         "cost": {
           "input": 0.017,
@@ -73420,7 +73476,7 @@
         "open_weights": true,
         "limit": {
           "context": 131072,
-          "output": 131072
+          "output": 117964
         },
         "cost": {
           "input": 0.05,
@@ -73452,7 +73508,7 @@
         "open_weights": false,
         "limit": {
           "context": 512000,
-          "output": 512000
+          "output": 460800
         },
         "cost": {
           "input": 0,
@@ -73484,7 +73540,7 @@
         "open_weights": true,
         "limit": {
           "context": 1000192,
-          "output": 1000192
+          "output": 900172
         },
         "cost": {
           "input": 0.2,
@@ -73715,7 +73771,7 @@
         "open_weights": true,
         "limit": {
           "context": 1048576,
-          "output": 1048576
+          "output": 943718
         },
         "cost": {
           "input": 0,
@@ -73746,7 +73802,7 @@
         "open_weights": true,
         "limit": {
           "context": 196608,
-          "output": 196608
+          "output": 176947
         },
         "cost": {
           "input": 0,
@@ -98763,10 +98819,10 @@
           "cache_read": 0.0028
         }
       },
-      "grok-4.5": {
-        "id": "grok-4.5",
-        "name": "Grok 4.5",
-        "description": "xAI's Grok model for chat, coding, agentic tools, and lower hallucination risk",
+      "grok-4.6": {
+        "id": "grok-4.6",
+        "name": "Grok 4.6",
+        "description": "xAI's frontier model for long-running agents, coding, knowledge work, and visual projects",
         "family": "grok",
         "attachment": true,
         "reasoning": true,
@@ -98776,15 +98832,17 @@
             "values": [
               "low",
               "medium",
-              "high"
+              "high",
+              "xhigh"
             ]
           }
         ],
         "tool_call": true,
         "structured_output": true,
         "temperature": true,
-        "release_date": "2026-07-08",
-        "last_updated": "2026-07-08",
+        "knowledge": "2026-02-01",
+        "release_date": "2026-08-12",
+        "last_updated": "2026-08-12",
         "modalities": {
           "input": [
             "text",
@@ -98821,6 +98879,68 @@
             "input": 4,
             "output": 12,
             "cache_read": 1
+          }
+        }
+      },
+      "grok-4.5": {
+        "id": "grok-4.5",
+        "name": "Grok 4.5",
+        "description": "xAI's Grok model for chat, coding, agentic tools, and lower hallucination risk",
+        "family": "grok",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "medium",
+              "high"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2026-07-08",
+        "last_updated": "2026-07-08",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 500000,
+          "output": 500000
+        },
+        "status": "deprecated",
+        "provider": {
+          "npm": "@ai-sdk/openai"
+        },
+        "cost": {
+          "input": 2,
+          "output": 6,
+          "cache_read": 0.3,
+          "tiers": [
+            {
+              "input": 4,
+              "output": 12,
+              "cache_read": 0.6,
+              "tier": {
+                "type": "context",
+                "size": 200000
+              }
+            }
+          ],
+          "context_over_200k": {
+            "input": 4,
+            "output": 12,
+            "cache_read": 0.6
           }
         }
       },
@@ -117716,9 +117836,9 @@
           "output": 131072
         },
         "cost": {
-          "input": 0.14,
-          "output": 0.28,
-          "cache_read": 0.028
+          "input": 0.44,
+          "output": 1.32,
+          "cache_read": 0.044
         }
       },
       "baidu/deepseek-v4-pro": {
@@ -117765,9 +117885,9 @@
           "output": 131072
         },
         "cost": {
-          "input": 1.69,
-          "output": 3.38,
-          "cache_read": 0.14
+          "input": 1.32,
+          "output": 3.96,
+          "cache_read": 0.132
         }
       },
       "baidu/glm-5": {
@@ -117816,6 +117936,47 @@
           "input": 1,
           "output": 3.2,
           "cache_read": 0.2
+        }
+      },
+      "baidu/glm-5.3": {
+        "id": "baidu/glm-5.3",
+        "name": "GLM-5.3 (Baidu)",
+        "description": "Flagship GLM model for long-horizon coding, agents, and complex project delivery",
+        "family": "glm",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "high",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": false,
+        "temperature": true,
+        "release_date": "2026-08-14",
+        "last_updated": "2026-08-14",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1048576,
+          "output": 131072
+        },
+        "cost": {
+          "input": 1.4,
+          "output": 4.4,
+          "cache_read": 0.26
         }
       },
       "baidu/glm-5.2": {
@@ -125719,8 +125880,8 @@
           "output": 384000
         },
         "cost": {
-          "input": 0.035,
-          "output": 0.07,
+          "input": 0.22,
+          "output": 0.66,
           "cache_read": 0.007
         }
       },
@@ -125731,7 +125892,21 @@
         "family": "deepseek-thinking",
         "attachment": false,
         "reasoning": true,
-        "reasoning_options": [],
+        "reasoning_options": [
+          {
+            "type": "toggle"
+          },
+          {
+            "type": "effort",
+            "values": [
+              "none",
+              "low",
+              "medium",
+              "high",
+              "max"
+            ]
+          }
+        ],
         "tool_call": true,
         "structured_output": false,
         "temperature": true,
@@ -128665,8 +128840,8 @@
           "output": 128000
         },
         "cost": {
-          "input": 4,
-          "output": 24,
+          "input": 5,
+          "output": 30,
           "cache_read": 0.5
         }
       },
@@ -129308,7 +129483,17 @@
         "family": "o-mini",
         "attachment": true,
         "reasoning": true,
-        "reasoning_options": [],
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "medium",
+              "high",
+              "xhigh"
+            ]
+          }
+        ],
         "tool_call": true,
         "structured_output": true,
         "temperature": false,
@@ -130905,7 +131090,7 @@
         "name": "Qwen3.5 27B",
         "description": "Qwen vision-language model for visual reasoning, documents, and agent tasks",
         "family": "qwen",
-        "attachment": false,
+        "attachment": true,
         "reasoning": true,
         "reasoning_options": [
           {
@@ -130919,7 +131104,8 @@
         "last_updated": "2026-02-23",
         "modalities": {
           "input": [
-            "text"
+            "text",
+            "image"
           ],
           "output": [
             "text"
@@ -130927,8 +131113,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 131072,
-          "output": 32768
+          "context": 256000,
+          "output": 64000
         },
         "cost": {
           "input": 0.086,
@@ -132211,7 +132397,7 @@
         },
         "cost": {
           "input": 0.57,
-          "output": 3.41,
+          "output": 3.39,
           "cache_read": 0.2,
           "cache_write": 0
         }
@@ -132300,7 +132486,7 @@
         },
         "cost": {
           "input": 0.75,
-          "output": 2.9,
+          "output": 2.4,
           "cache_read": 0.17,
           "cache_write": 0
         }
@@ -153359,6 +153545,62 @@
       }
     }
   },
+  "llmtech": {
+    "id": "llmtech",
+    "env": [
+      "LLMTECH_API_KEY"
+    ],
+    "npm": "@ai-sdk/openai-compatible",
+    "api": "https://api.llmtech.eu/v1",
+    "name": "LLM Tech",
+    "doc": "https://llmtech.eu/models/qwen3.8-27b",
+    "models": {
+      "unsloth/Qwen3.8-27B-NVFP4": {
+        "id": "unsloth/Qwen3.8-27B-NVFP4",
+        "name": "Qwen3.8 27B",
+        "description": "Dense 27B vision-language model for coding, agent tasks, and image and video understanding",
+        "family": "qwen",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "toggle"
+          },
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "medium",
+              "xhigh"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2026-08-14",
+        "last_updated": "2026-08-14",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 262144,
+          "output": 32768
+        },
+        "cost": {
+          "input": 0.25,
+          "output": 2.09,
+          "cache_read": 0.04
+        }
+      }
+    }
+  },
   "gmicloud": {
     "id": "gmicloud",
     "env": [
@@ -153369,6 +153611,90 @@
     "name": "GMI Cloud",
     "doc": "https://docs.gmicloud.ai/inference-engine/api-reference/llm-api-reference",
     "models": {
+      "MiniMaxAI/MiniMax-M2.7": {
+        "id": "MiniMaxAI/MiniMax-M2.7",
+        "name": "MiniMax-M2.7",
+        "description": "Open MiniMax flagship for coding agents, office automation, and complex environments",
+        "family": "minimax",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [],
+        "tool_call": true,
+        "temperature": true,
+        "release_date": "2026-03-18",
+        "last_updated": "2026-03-18",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 196608,
+          "output": 131072
+        },
+        "cost": {
+          "input": 0.3,
+          "output": 1.2,
+          "cache_read": 0.06
+        }
+      },
+      "MiniMaxAI/MiniMax-M3": {
+        "id": "MiniMaxAI/MiniMax-M3",
+        "name": "MiniMax-M3",
+        "description": "MiniMax multimodal model for long-context coding, perception, and agent planning",
+        "family": "minimax",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "toggle"
+          }
+        ],
+        "tool_call": true,
+        "temperature": true,
+        "release_date": "2026-06-01",
+        "last_updated": "2026-06-01",
+        "modalities": {
+          "input": [
+            "text",
+            "image",
+            "video"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 1048576,
+          "output": 128000
+        },
+        "cost": {
+          "input": 0.6,
+          "output": 2.4,
+          "cache_read": 0.12,
+          "tiers": [
+            {
+              "input": 1.2,
+              "output": 4.8,
+              "cache_read": 0.24,
+              "tier": {
+                "type": "context",
+                "size": 512000
+              }
+            }
+          ],
+          "context_over_200k": {
+            "input": 1.2,
+            "output": 4.8,
+            "cache_read": 0.24
+          }
+        }
+      },
       "moonshotai/Kimi-K2.6": {
         "id": "moonshotai/Kimi-K2.6",
         "name": "Kimi K2.6",
@@ -153886,6 +154212,52 @@
           "input": 0.98,
           "output": 3.08,
           "cache_read": 0.182
+        }
+      }
+    }
+  },
+  "aixy": {
+    "id": "aixy",
+    "env": [
+      "AIXY_API_KEY"
+    ],
+    "npm": "@ai-sdk/openai-compatible",
+    "api": "https://api.aixy-gateway.com/v1",
+    "name": "Aixy",
+    "doc": "https://docs.aixy-gateway.com/integrations/overview",
+    "models": {
+      "openai/gpt-4.1-mini": {
+        "id": "openai/gpt-4.1-mini",
+        "name": "GPT-4.1 mini",
+        "description": "Affordable GPT-4.1 lane for fast coding help and structured extraction",
+        "family": "gpt-mini",
+        "attachment": true,
+        "reasoning": false,
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "knowledge": "2024-04",
+        "release_date": "2025-04-14",
+        "last_updated": "2025-04-14",
+        "modalities": {
+          "input": [
+            "text",
+            "image",
+            "pdf"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1047576,
+          "output": 32768
+        },
+        "cost": {
+          "input": 0.4,
+          "output": 1.6,
+          "cache_read": 0.1
         }
       }
     }
@@ -170602,8 +170974,8 @@
           "output": 0
         }
       },
-      "Qwen/Qwen3.6-35B-A3B-FP8": {
-        "id": "Qwen/Qwen3.6-35B-A3B-FP8",
+      "Qwen/Qwen3.6-35B-A3B": {
+        "id": "Qwen/Qwen3.6-35B-A3B",
         "name": "Qwen3.6 35B-A3B",
         "description": "Open multimodal Qwen MoE for local agents that need vision, audio, and code",
         "family": "qwen",
@@ -170668,6 +171040,50 @@
           "output": 0.115
         }
       },
+      "Qwen/Qwen3.8-27B": {
+        "id": "Qwen/Qwen3.8-27B",
+        "name": "Qwen3.8-27B",
+        "description": "Dense 27B vision-language model for coding, agent tasks, and image and video understanding",
+        "family": "qwen",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "toggle"
+          },
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "medium",
+              "xhigh"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2026-08-14",
+        "last_updated": "2026-08-14",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 262144,
+          "output": 262144
+        },
+        "cost": {
+          "input": 0.87,
+          "output": 3.5
+        }
+      },
       "zai-org/GLM-5.2": {
         "id": "zai-org/GLM-5.2",
         "name": "GLM-5.2",
@@ -170682,7 +171098,6 @@
           {
             "type": "effort",
             "values": [
-              "none",
               "high",
               "max"
             ]
@@ -173829,6 +174244,222 @@
         "cost": {
           "input": 0.125,
           "output": 0.5
+        }
+      }
+    }
+  },
+  "pendra": {
+    "id": "pendra",
+    "env": [
+      "PENDRA_API_KEY"
+    ],
+    "npm": "@ai-sdk/openai-compatible",
+    "api": "https://api.pendra.ai/api/v1",
+    "name": "Pendra",
+    "doc": "https://pendra.ai/docs/integrations/opencode",
+    "models": {
+      "deepseek-v4-flash": {
+        "id": "deepseek-v4-flash",
+        "name": "DeepSeek V4 Flash",
+        "description": "Fast DeepSeek V4 lane for economical reasoning, coding, and long-context work",
+        "family": "deepseek-flash",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "high",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "knowledge": "2025-05",
+        "release_date": "2026-04-24",
+        "last_updated": "2026-04-24",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 1000000,
+          "output": 384000
+        },
+        "cost": {
+          "input": 0,
+          "output": 0
+        }
+      },
+      "llama3.3:70b": {
+        "id": "llama3.3:70b",
+        "name": "Llama-3.3-70B-Instruct",
+        "description": "Popular open Llama workhorse for multilingual chat, coding, and self-hosting",
+        "family": "llama",
+        "attachment": false,
+        "reasoning": false,
+        "tool_call": true,
+        "temperature": true,
+        "knowledge": "2023-12",
+        "release_date": "2024-12-06",
+        "last_updated": "2024-12-06",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 128000,
+          "output": 4096
+        },
+        "cost": {
+          "input": 0,
+          "output": 0
+        }
+      },
+      "qwen3.6:27b": {
+        "id": "qwen3.6:27b",
+        "name": "Qwen3.6 27B",
+        "description": "Qwen vision-language model for visual reasoning, documents, and agent tasks",
+        "family": "qwen",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2026-04-22",
+        "last_updated": "2026-04-22",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 262144,
+          "output": 65536
+        },
+        "cost": {
+          "input": 0,
+          "output": 0
+        }
+      },
+      "gpt-oss:120b": {
+        "id": "gpt-oss:120b",
+        "name": "GPT OSS 120B",
+        "description": "Open GPT reasoning model for self-hosted agents and controllable deployments",
+        "family": "gpt-oss",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "medium",
+              "high"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2025-08-05",
+        "last_updated": "2025-08-05",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 131072,
+          "output": 32768
+        },
+        "cost": {
+          "input": 0,
+          "output": 0
+        }
+      },
+      "glm-4.7-flash": {
+        "id": "glm-4.7-flash",
+        "name": "GLM-4.7-Flash",
+        "description": "Budget GLM lane for fast coding help, routing, and everyday automation",
+        "family": "glm-flash",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [],
+        "tool_call": true,
+        "temperature": true,
+        "knowledge": "2025-04",
+        "release_date": "2026-01-19",
+        "last_updated": "2026-01-19",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 200000,
+          "output": 131072
+        },
+        "cost": {
+          "input": 0,
+          "output": 0
+        }
+      },
+      "qwen3-coder:30b": {
+        "id": "qwen3-coder:30b",
+        "name": "Qwen3-Coder 30B-A3B Instruct",
+        "description": "Smaller Qwen coder for efficient local agents and repo-level fixes",
+        "family": "qwen",
+        "attachment": false,
+        "reasoning": false,
+        "tool_call": true,
+        "temperature": true,
+        "knowledge": "2025-04",
+        "release_date": "2025-04",
+        "last_updated": "2025-04",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 262144,
+          "output": 65536
+        },
+        "cost": {
+          "input": 0,
+          "output": 0
         }
       }
     }
@@ -178471,12 +179102,12 @@
         "cost": {
           "input": 2,
           "output": 6,
-          "cache_read": 0.5,
+          "cache_read": 0.3,
           "tiers": [
             {
               "input": 4,
               "output": 12,
-              "cache_read": 1,
+              "cache_read": 0.6,
               "tier": {
                 "type": "context",
                 "size": 200000
@@ -178486,7 +179117,7 @@
           "context_over_200k": {
             "input": 4,
             "output": 12,
-            "cache_read": 1
+            "cache_read": 0.6
           }
         }
       },
@@ -190153,9 +190784,9 @@
           "output": 25600
         },
         "cost": {
-          "input": 0.11,
-          "output": 0.408,
-          "cache_write": 0.055
+          "input": 0.12,
+          "output": 0.42,
+          "cache_write": 0.06
         }
       },
       "qwen3.7-max": {
@@ -190314,9 +190945,10 @@
           {
             "type": "effort",
             "values": [
+              "none",
               "low",
-              "medium",
-              "high"
+              "high",
+              "max"
             ]
           }
         ],
@@ -190444,9 +191076,9 @@
           "output": 20275
         },
         "cost": {
-          "input": 0.86,
-          "output": 2.784,
-          "cache_write": 0.43
+          "input": 0.91,
+          "output": 2.814,
+          "cache_write": 0.455
         }
       },
       "minimax-m3": {
@@ -190626,9 +191258,9 @@
           "output": 13107
         },
         "cost": {
-          "input": 0.178,
-          "output": 0.68,
-          "cache_write": 0.089
+          "input": 0.188,
+          "output": 0.7,
+          "cache_write": 0.094
         }
       },
       "qwen3.7-flash": {
@@ -190894,9 +191526,9 @@
           "output": 3276
         },
         "cost": {
-          "input": 1.332,
-          "output": 4.312,
-          "cache_write": 0.666
+          "input": 1.36,
+          "output": 4.4,
+          "cache_write": 0.68
         }
       },
       "deepseek-v4-flash-0731": {
@@ -190911,11 +191543,8 @@
             "type": "effort",
             "values": [
               "none",
-              "minimal",
               "low",
-              "medium",
               "high",
-              "xhigh",
               "max"
             ]
           }
@@ -215148,8 +215777,8 @@
         },
         "cost": {
           "input": 0.05,
-          "output": 0.2,
-          "cache_read": 0.01
+          "output": 0.15,
+          "cache_read": 0.05
         }
       },
       "nvidia/nemotron-3-ultra-550b-a55b": {
@@ -229281,7 +229910,9 @@
         },
         "cost": {
           "input": 0.07,
-          "output": 0.30002
+          "output": 0.30002,
+          "cache_read": 0.07,
+          "cache_write": 0.07
         }
       },
       "databricks/databricks-gpt-oss-120b": {
@@ -229321,7 +229952,9 @@
         },
         "cost": {
           "input": 0.15001,
-          "output": 0.59997
+          "output": 0.59997,
+          "cache_read": 0.15001,
+          "cache_write": 0.15001
         }
       },
       "together_ai/nvidia/nemotron-3-ultra-550b-a55b": {
@@ -229551,7 +230184,7 @@
           }
         ],
         "tool_call": true,
-        "structured_output": false,
+        "structured_output": true,
         "temperature": true,
         "release_date": "2026-07-15",
         "last_updated": "2026-07-15",
@@ -233174,8 +233807,8 @@
           "output": 384000
         },
         "cost": {
-          "input": 1.122,
-          "output": 3.366
+          "input": 0.5808,
+          "output": 1.7424
         }
       },
       "qwen/qwen3-coder-next": {
@@ -233242,6 +233875,37 @@
           "cache_write": 0.375
         }
       },
+      "qwen/qwen3-coder-next@eu": {
+        "id": "qwen/qwen3-coder-next@eu",
+        "name": "Qwen3 Coder Next (EU)",
+        "description": "Open-weight Qwen coding model for agents, repository edits, and multi-turn tool use",
+        "family": "qwen",
+        "attachment": false,
+        "reasoning": false,
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "knowledge": "2025-09",
+        "release_date": "2026-02-03",
+        "last_updated": "2026-02-03",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 262144,
+          "output": 65536
+        },
+        "cost": {
+          "input": 0.3,
+          "output": 1.5
+        }
+      },
       "qwen/qwen3.8-max": {
         "id": "qwen/qwen3.8-max",
         "name": "Qwen3.8 Max",
@@ -233285,6 +233949,39 @@
           "output": 6,
           "cache_read": 0.25,
           "cache_write": 2.5
+        }
+      },
+      "qwen/qwen3-max@eu": {
+        "id": "qwen/qwen3-max@eu",
+        "name": "Qwen3 Max (EU)",
+        "description": "Flagship Qwen3 model for coding agents, complex reasoning, and tool use",
+        "family": "qwen",
+        "attachment": false,
+        "reasoning": false,
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "knowledge": "2025-04",
+        "release_date": "2025-09-23",
+        "last_updated": "2025-09-23",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 262144,
+          "output": 65536
+        },
+        "cost": {
+          "input": 1.2,
+          "output": 6,
+          "cache_read": 0.24,
+          "cache_write": 1.5
         }
       },
       "qwen/qwen3-next-80b-a3b-thinking": {
@@ -233592,8 +234289,8 @@
           "output": 384000
         },
         "cost": {
-          "input": 0.352,
-          "output": 1.056
+          "input": 0.176,
+          "output": 0.528
         }
       },
       "qwen/qwen3-vl-235b-a22b-instruct": {
@@ -234032,8 +234729,8 @@
           "output": 32768
         },
         "cost": {
-          "input": 0.17496,
-          "output": 0.75816
+          "input": 0.17493,
+          "output": 0.75803
         }
       },
       "ionos/meta-llama/Llama-3.3-70B-Instruct": {
@@ -234063,8 +234760,8 @@
           "output": 4096
         },
         "cost": {
-          "input": 0.75816,
-          "output": 0.75816
+          "input": 0.75803,
+          "output": 0.75803
         }
       },
       "scaleway/llama-3.3-70b-instruct": {
@@ -234074,7 +234771,7 @@
         "family": "llama",
         "attachment": false,
         "reasoning": false,
-        "tool_call": true,
+        "tool_call": false,
         "structured_output": false,
         "temperature": true,
         "knowledge": "2023-12",
@@ -234094,8 +234791,8 @@
           "output": 4096
         },
         "cost": {
-          "input": 1.04976,
-          "output": 1.04976
+          "input": 1.04958,
+          "output": 1.04958
         }
       },
       "scaleway/gpt-oss-120b": {
@@ -234115,7 +234812,7 @@
             ]
           }
         ],
-        "tool_call": true,
+        "tool_call": false,
         "structured_output": false,
         "temperature": true,
         "release_date": "2025-08-05",
@@ -234134,8 +234831,8 @@
           "output": 32768
         },
         "cost": {
-          "input": 0.17496,
-          "output": 0.69984
+          "input": 0.17493,
+          "output": 0.69972
         }
       },
       "scaleway/deepseek-v4-flash-0731": {
@@ -234156,7 +234853,7 @@
             ]
           }
         ],
-        "tool_call": true,
+        "tool_call": false,
         "structured_output": false,
         "temperature": true,
         "knowledge": "2025-05",
@@ -234176,8 +234873,8 @@
           "output": 384000
         },
         "cost": {
-          "input": 0.46656,
-          "output": 0.93312
+          "input": 0.46648,
+          "output": 0.93296
         }
       },
       "mistral/mistral-small-latest": {
@@ -244125,7 +244822,7 @@
         },
         "open_weights": false,
         "limit": {
-          "context": 1000000,
+          "context": 1048576,
           "output": 131072
         },
         "cost": {
@@ -249675,6 +250372,45 @@
         "cost": {
           "input": 0,
           "output": 0
+        }
+      },
+      "agnes-2.5-pro-alpha": {
+        "id": "agnes-2.5-pro-alpha",
+        "name": "Agnes 2.5 Pro Alpha",
+        "description": "Paid reasoning model for advanced coding, scientific reasoning, long-context analysis, agentic workflows, and multimodal understanding.",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "toggle"
+          }
+        ],
+        "tool_call": true,
+        "interleaved": {
+          "field": "reasoning_content"
+        },
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2026-07-24",
+        "last_updated": "2026-07-24",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 1000000,
+          "output": 65536
+        },
+        "cost": {
+          "input": 0.45,
+          "output": 0.9,
+          "cache_read": 0.0038
         }
       },
       "agnes-2.5-flash": {
@@ -255849,7 +256585,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 235929
         },
         "cost": {
           "input": 0.18,
@@ -255889,7 +256625,7 @@
         "open_weights": false,
         "limit": {
           "context": 131072,
-          "output": 131072
+          "output": 117964
         },
         "cost": {
           "input": 0.14,
@@ -256229,7 +256965,7 @@
         "open_weights": false,
         "limit": {
           "context": 500000,
-          "output": 500000
+          "output": 450000
         },
         "cost": {
           "input": 2,
@@ -256270,7 +257006,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 235929
         },
         "cost": {
           "input": 0,
@@ -256309,7 +257045,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 235929
         },
         "cost": {
           "input": 0.05,
@@ -256430,7 +257166,7 @@
         "open_weights": true,
         "limit": {
           "context": 512288,
-          "output": 512288
+          "output": 461059
         },
         "cost": {
           "input": 0.5,
@@ -256752,7 +257488,7 @@
         "open_weights": false,
         "limit": {
           "context": 32768,
-          "output": 32768
+          "output": 29491
         },
         "cost": {
           "input": 0.8,
@@ -256916,7 +257652,7 @@
         "open_weights": false,
         "limit": {
           "context": 16384,
-          "output": 16384
+          "output": 14745
         },
         "cost": {
           "input": 0.07,
@@ -257367,7 +258103,7 @@
         "open_weights": true,
         "limit": {
           "context": 202752,
-          "output": 202752
+          "output": 182476
         },
         "cost": {
           "input": 1.4,
@@ -257612,7 +258348,7 @@
         "open_weights": true,
         "limit": {
           "context": 1048575,
-          "output": 384000
+          "output": 943717
         },
         "cost": {
           "input": 1.32,
@@ -257695,7 +258431,7 @@
         "open_weights": true,
         "limit": {
           "context": 163840,
-          "output": 163840
+          "output": 147456
         },
         "cost": {
           "input": 0.269,
@@ -257735,7 +258471,7 @@
         "open_weights": false,
         "limit": {
           "context": 161000,
-          "output": 161000
+          "output": 144900
         },
         "cost": {
           "input": 0.27,
@@ -257836,7 +258572,7 @@
         "open_weights": false,
         "limit": {
           "context": 163840,
-          "output": 163840
+          "output": 147456
         },
         "cost": {
           "input": 0.27,
@@ -257876,7 +258612,7 @@
         "open_weights": false,
         "limit": {
           "context": 8192,
-          "output": 8192
+          "output": 7372
         },
         "cost": {
           "input": 0.8,
@@ -257957,7 +258693,7 @@
         "open_weights": true,
         "limit": {
           "context": 1048576,
-          "output": 131072
+          "output": 943718
         },
         "cost": {
           "input": 0.44,
@@ -258039,7 +258775,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 235929
         },
         "cost": {
           "input": 0.22,
@@ -258226,7 +258962,7 @@
         },
         "open_weights": false,
         "limit": {
-          "context": 65536,
+          "context": 131072,
           "output": 32768
         },
         "cost": {
@@ -258368,7 +259104,7 @@
         "open_weights": false,
         "limit": {
           "context": 65536,
-          "output": 65536
+          "output": 58982
         },
         "cost": {
           "input": 0.25,
@@ -258583,42 +259319,12 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 16384
         },
         "cost": {
-          "input": 0.08,
-          "output": 0.35,
-          "cache_read": 0.01
-        }
-      },
-      "google/gemma-3n-e4b-it": {
-        "id": "google/gemma-3n-e4b-it",
-        "name": "Google: Gemma 3n 4B",
-        "description": "Open Gemma instruction model for efficient chat and self-hosted deployments",
-        "family": "gemma",
-        "attachment": false,
-        "reasoning": false,
-        "tool_call": false,
-        "structured_output": true,
-        "temperature": true,
-        "release_date": "2025-05-20",
-        "last_updated": "2025-05-20",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": false,
-        "limit": {
-          "context": 32768,
-          "output": 6554
-        },
-        "cost": {
-          "input": 0.06,
-          "output": 0.12
+          "input": 0.09,
+          "output": 0.34,
+          "cache_read": 0.05
         }
       },
       "google/lyria-3-clip-preview": {
@@ -258776,7 +259482,7 @@
         "open_weights": false,
         "limit": {
           "context": 131072,
-          "output": 131072
+          "output": 117964
         },
         "cost": {
           "input": 0.08,
@@ -259035,7 +259741,7 @@
         "open_weights": false,
         "limit": {
           "context": 65536,
-          "output": 65536
+          "output": 58982
         },
         "cost": {
           "input": 0.5,
@@ -259341,7 +260047,7 @@
         "open_weights": true,
         "limit": {
           "context": 131072,
-          "output": 131072
+          "output": 117964
         },
         "cost": {
           "input": 0.3,
@@ -259388,7 +260094,7 @@
         "open_weights": false,
         "limit": {
           "context": 1048576,
-          "output": 1048576
+          "output": 943718
         },
         "cost": {
           "input": 1.25,
@@ -259435,7 +260141,7 @@
         "open_weights": false,
         "limit": {
           "context": 1048576,
-          "output": 1048576
+          "output": 943718
         },
         "cost": {
           "input": 1.25,
@@ -259482,7 +260188,7 @@
         "open_weights": false,
         "limit": {
           "context": 1048576,
-          "output": 1048576
+          "output": 943718
         },
         "cost": {
           "input": 0.1,
@@ -259542,7 +260248,7 @@
         "open_weights": false,
         "limit": {
           "context": 4096,
-          "output": 4096
+          "output": 3686
         },
         "cost": {
           "input": 0.06,
@@ -259904,7 +260610,7 @@
         "open_weights": false,
         "limit": {
           "context": 2000000,
-          "output": 2000000
+          "output": 1800000
         },
         "cost": {
           "input": 1.25,
@@ -259949,7 +260655,7 @@
         "open_weights": false,
         "limit": {
           "context": 500000,
-          "output": 500000
+          "output": 450000
         },
         "cost": {
           "input": 2,
@@ -259992,7 +260698,7 @@
         "open_weights": false,
         "limit": {
           "context": 500000,
-          "output": 500000
+          "output": 450000
         },
         "cost": {
           "input": 2,
@@ -260036,7 +260742,7 @@
         "open_weights": false,
         "limit": {
           "context": 2000000,
-          "output": 2000000
+          "output": 1800000
         },
         "cost": {
           "input": 1.25,
@@ -260077,7 +260783,7 @@
         "open_weights": false,
         "limit": {
           "context": 256000,
-          "output": 256000
+          "output": 230400
         },
         "cost": {
           "input": 1,
@@ -260121,7 +260827,7 @@
         "open_weights": false,
         "limit": {
           "context": 1000000,
-          "output": 4096
+          "output": 900000
         },
         "cost": {
           "input": 1.25,
@@ -260416,7 +261122,7 @@
         "open_weights": false,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 235929
         },
         "cost": {
           "input": 0.5,
@@ -260456,7 +261162,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 235929
         },
         "cost": {
           "input": 0.95,
@@ -260499,7 +261205,7 @@
         "open_weights": true,
         "limit": {
           "context": 1048576,
-          "output": 1048576
+          "output": 943718
         },
         "cost": {
           "input": 3,
@@ -260571,7 +261277,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 235929
         },
         "cost": {
           "input": 0.6,
@@ -260683,7 +261389,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 235929
         },
         "cost": {
           "input": 0.8,
@@ -262167,7 +262873,7 @@
         "open_weights": false,
         "limit": {
           "context": 4095,
-          "output": 4096
+          "output": 3685
         },
         "cost": {
           "input": 1.5,
@@ -262835,7 +263541,7 @@
         "open_weights": true,
         "limit": {
           "context": 131072,
-          "output": 131072
+          "output": 117964
         },
         "cost": {
           "input": 0.03,
@@ -263472,7 +264178,7 @@
         "open_weights": false,
         "limit": {
           "context": 4095,
-          "output": 4096
+          "output": 3685
         },
         "cost": {
           "input": 1,
@@ -264017,12 +264723,11 @@
         "open_weights": true,
         "limit": {
           "context": 131072,
-          "output": 131072
+          "output": 117964
         },
         "cost": {
-          "input": 0.03,
-          "output": 0.13,
-          "cache_read": 0.03
+          "input": 0.02,
+          "output": 0.1
         }
       },
       "openai/gpt-5.4-nano": {
@@ -264507,7 +265212,7 @@
         "open_weights": false,
         "limit": {
           "context": 131072,
-          "output": 131072
+          "output": 117964
         },
         "cost": {
           "input": 0.13,
@@ -264546,7 +265251,7 @@
         "open_weights": false,
         "limit": {
           "context": 131072,
-          "output": 26215
+          "output": 117964
         },
         "cost": {
           "input": 1,
@@ -264670,7 +265375,7 @@
         "limit": {
           "context": 256000,
           "input": 256000,
-          "output": 256000
+          "output": 230400
         },
         "cost": {
           "input": 0.2,
@@ -264701,13 +265406,12 @@
         },
         "open_weights": false,
         "limit": {
-          "context": 128000,
-          "output": 128000
+          "context": 32000,
+          "output": 28800
         },
         "cost": {
-          "input": 0.8,
-          "output": 1,
-          "cache_read": 0.4
+          "input": 0.25,
+          "output": 0.75
         }
       },
       "qwen/qwen3.5-plus-20260420": {
@@ -264776,7 +265480,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 235929
         },
         "cost": {
           "input": 0.2925,
@@ -264905,45 +265609,6 @@
           "output": 0.28
         }
       },
-      "qwen/qwen-plus-2025-07-28:thinking": {
-        "id": "qwen/qwen-plus-2025-07-28:thinking",
-        "name": "Qwen: Qwen Plus 0728 (thinking)",
-        "description": "Qwen reasoning model for deliberate problem solving, math, and coding",
-        "family": "qwen",
-        "attachment": false,
-        "reasoning": true,
-        "reasoning_options": [
-          {
-            "type": "effort",
-            "values": [
-              "none",
-              "high"
-            ]
-          }
-        ],
-        "tool_call": true,
-        "structured_output": true,
-        "temperature": true,
-        "release_date": "2025-09-08",
-        "last_updated": "2025-09-08",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": false,
-        "limit": {
-          "context": 1000000,
-          "output": 32768
-        },
-        "cost": {
-          "input": 0.26,
-          "output": 0.78
-        }
-      },
       "qwen/qwen3-235b-a22b-thinking-2507": {
         "id": "qwen/qwen3-235b-a22b-thinking-2507",
         "name": "Qwen: Qwen3 235B A22B Thinking 2507",
@@ -264975,7 +265640,7 @@
         "open_weights": false,
         "limit": {
           "context": 131072,
-          "output": 262144
+          "output": 117964
         },
         "cost": {
           "input": 0.23,
@@ -265095,7 +265760,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 235929
         },
         "cost": {
           "input": 0.1625,
@@ -265215,7 +265880,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 65536
         },
         "cost": {
           "input": 0.39,
@@ -265279,7 +265944,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 235929
         },
         "cost": {
           "input": 0.3,
@@ -265647,7 +266312,7 @@
         "open_weights": false,
         "limit": {
           "context": 32768,
-          "output": 32768
+          "output": 29491
         },
         "cost": {
           "input": 0.1,
@@ -265927,7 +266592,7 @@
         "open_weights": false,
         "limit": {
           "context": 32768,
-          "output": 32768
+          "output": 29491
         },
         "cost": {
           "input": 0.66,
@@ -265968,7 +266633,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 235929
         },
         "cost": {
           "input": 0.14,
@@ -266010,7 +266675,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 81920
+          "output": 235929
         },
         "cost": {
           "input": 0.45,
@@ -266041,7 +266706,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 235929
         },
         "cost": {
           "input": 0.0975,
@@ -266083,7 +266748,7 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 262144,
+          "context": 1000000,
           "output": 131072
         },
         "cost": {
@@ -266208,7 +266873,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 235929
         },
         "cost": {
           "input": 0.1,
@@ -266329,7 +266994,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 235929
         },
         "cost": {
           "input": 0.26,
@@ -266646,7 +267311,7 @@
         "open_weights": false,
         "limit": {
           "context": 65536,
-          "output": 65536
+          "output": 58982
         },
         "cost": {
           "input": 0.15,
@@ -266892,7 +267557,7 @@
         "open_weights": false,
         "limit": {
           "context": 128000,
-          "output": 25600
+          "output": 115200
         },
         "cost": {
           "input": 2,
@@ -266924,7 +267589,7 @@
         "open_weights": false,
         "limit": {
           "context": 127072,
-          "output": 25415
+          "output": 114364
         },
         "cost": {
           "input": 1,
@@ -266964,7 +267629,7 @@
         "open_weights": false,
         "limit": {
           "context": 128000,
-          "output": 25600
+          "output": 115200
         },
         "cost": {
           "input": 2,
@@ -267063,7 +267728,7 @@
         "open_weights": false,
         "limit": {
           "context": 131072,
-          "output": 131072
+          "output": 117964
         },
         "cost": {
           "input": 0.3,
@@ -267093,7 +267758,7 @@
         "open_weights": false,
         "limit": {
           "context": 32768,
-          "output": 32768
+          "output": 29491
         },
         "cost": {
           "input": 0.55,
@@ -267123,7 +267788,7 @@
         "open_weights": false,
         "limit": {
           "context": 65536,
-          "output": 65536
+          "output": 58982
         },
         "cost": {
           "input": 0.25,
@@ -267152,7 +267817,7 @@
         "open_weights": false,
         "limit": {
           "context": 32768,
-          "output": 32768
+          "output": 26214
         },
         "cost": {
           "input": 0.4,
@@ -267184,7 +267849,7 @@
         "open_weights": false,
         "limit": {
           "context": 16384,
-          "output": 16384
+          "output": 14745
         },
         "cost": {
           "input": 0.1,
@@ -267222,7 +267887,7 @@
         "open_weights": false,
         "limit": {
           "context": 65536,
-          "output": 65536
+          "output": 58982
         },
         "cost": {
           "input": 0.1,
@@ -267755,12 +268420,12 @@
         "open_weights": false,
         "limit": {
           "context": 1048576,
-          "output": 1048576
+          "output": 131072
         },
         "cost": {
-          "input": 0.035,
+          "input": 0.03,
           "output": 0.075,
-          "cache_read": 0.008
+          "cache_read": 0.007
         }
       },
       "inclusionai/ling-3.0-flash": {
@@ -267826,7 +268491,7 @@
         "open_weights": false,
         "limit": {
           "context": 131072,
-          "output": 131072
+          "output": 117964
         },
         "cost": {
           "input": 0.05,
@@ -267856,8 +268521,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 131072,
-          "output": 16384
+          "context": 128000,
+          "output": 115200
         },
         "cost": {
           "input": 0.1,
@@ -267918,7 +268583,7 @@
         "open_weights": false,
         "limit": {
           "context": 60000,
-          "output": 60000
+          "output": 54000
         },
         "cost": {
           "input": 0.027,
@@ -267949,7 +268614,7 @@
         "open_weights": true,
         "limit": {
           "context": 131072,
-          "output": 131072
+          "output": 117964
         },
         "cost": {
           "input": 0.02,
@@ -268040,8 +268705,8 @@
         },
         "open_weights": false,
         "limit": {
-          "context": 327680,
-          "output": 16384
+          "context": 131072,
+          "output": 8192
         },
         "cost": {
           "input": 0.1,
@@ -268072,7 +268737,7 @@
         "open_weights": false,
         "limit": {
           "context": 262144,
-          "output": 32768
+          "output": 209715
         },
         "cost": {
           "input": 0.15,
@@ -268105,7 +268770,7 @@
         "open_weights": false,
         "limit": {
           "context": 131072,
-          "output": 26215
+          "output": 104857
         },
         "cost": {
           "input": 0.4,
@@ -268179,7 +268844,7 @@
         "open_weights": false,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 209715
         },
         "cost": {
           "input": 1.5,
@@ -268209,7 +268874,7 @@
         "open_weights": false,
         "limit": {
           "context": 128000,
-          "output": 128000
+          "output": 102400
         },
         "cost": {
           "input": 0.11,
@@ -268241,7 +268906,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 209715
         },
         "cost": {
           "input": 0.44,
@@ -268283,7 +268948,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 209715
         },
         "cost": {
           "input": 0.15,
@@ -268379,7 +269044,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 52429
+          "output": 209715
         },
         "cost": {
           "input": 0.5,
@@ -268412,7 +269077,7 @@
         "open_weights": false,
         "limit": {
           "context": 32000,
-          "output": 6400
+          "output": 25600
         },
         "cost": {
           "input": 0.1,
@@ -268444,7 +269109,7 @@
         "open_weights": false,
         "limit": {
           "context": 131072,
-          "output": 32768
+          "output": 104857
         },
         "cost": {
           "input": 0.1,
@@ -268477,7 +269142,7 @@
         "open_weights": false,
         "limit": {
           "context": 131072,
-          "output": 26215
+          "output": 104857
         },
         "cost": {
           "input": 0.4,
@@ -268509,7 +269174,7 @@
         "open_weights": false,
         "limit": {
           "context": 131072,
-          "output": 32768
+          "output": 104857
         },
         "cost": {
           "input": 2,
@@ -268541,7 +269206,7 @@
         "open_weights": false,
         "limit": {
           "context": 128000,
-          "output": 25600
+          "output": 102400
         },
         "cost": {
           "input": 2,
@@ -268573,7 +269238,7 @@
         "open_weights": false,
         "limit": {
           "context": 65536,
-          "output": 13108
+          "output": 52428
         },
         "cost": {
           "input": 2,
@@ -268605,7 +269270,7 @@
         "open_weights": false,
         "limit": {
           "context": 262144,
-          "output": 52429
+          "output": 209715
         },
         "cost": {
           "input": 0.2,
@@ -268637,7 +269302,7 @@
         "open_weights": false,
         "limit": {
           "context": 256000,
-          "output": 51200
+          "output": 204800
         },
         "cost": {
           "input": 0.3,
@@ -268669,7 +269334,7 @@
         "open_weights": false,
         "limit": {
           "context": 32768,
-          "output": 32768
+          "output": 26214
         },
         "cost": {
           "input": 0.2,
@@ -268701,7 +269366,7 @@
         "open_weights": false,
         "limit": {
           "context": 128000,
-          "output": 128000
+          "output": 102400
         },
         "cost": {
           "input": 0.351,
@@ -269037,7 +269702,7 @@
         "open_weights": false,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 235929
         },
         "cost": {
           "input": 0.025,
@@ -269078,7 +269743,7 @@
         "open_weights": false,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 235929
         },
         "cost": {
           "input": 0.25,
@@ -269118,7 +269783,7 @@
         "open_weights": false,
         "limit": {
           "context": 131072,
-          "output": 131072
+          "output": 117964
         },
         "cost": {
           "input": 0.15,
@@ -269319,7 +269984,7 @@
         "open_weights": false,
         "limit": {
           "context": 8192,
-          "output": 16384
+          "output": 7372
         },
         "cost": {
           "input": 0.04,
@@ -269362,12 +270027,12 @@
         "open_weights": false,
         "limit": {
           "context": 1048576,
-          "output": 1048576
+          "output": 943718
         },
         "cost": {
-          "input": 2.8,
-          "output": 14,
-          "cache_read": 0.29
+          "input": 2.55,
+          "output": 12.75,
+          "cache_read": 0.256
         }
       },
       "kwaipilot/kat-coder-pro-v2.5": {
@@ -269486,7 +270151,7 @@
         "open_weights": false,
         "limit": {
           "context": 131000,
-          "output": 131000
+          "output": 117900
         },
         "cost": {
           "input": 0.017,
@@ -269516,7 +270181,7 @@
         "open_weights": false,
         "limit": {
           "context": 131072,
-          "output": 131072
+          "output": 117964
         },
         "cost": {
           "input": 0.05,
@@ -269556,7 +270221,7 @@
         "open_weights": false,
         "limit": {
           "context": 512000,
-          "output": 512000
+          "output": 460800
         },
         "cost": {
           "input": 0,
@@ -269587,7 +270252,7 @@
         "open_weights": false,
         "limit": {
           "context": 1000192,
-          "output": 1000192
+          "output": 900172
         },
         "cost": {
           "input": 0.2,
@@ -269736,7 +270401,7 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 196608,
+          "context": 204800,
           "output": 131072
         },
         "cost": {
@@ -269856,7 +270521,7 @@
         "open_weights": true,
         "limit": {
           "context": 1048576,
-          "output": 1048576
+          "output": 943718
         },
         "cost": {
           "input": 0,
@@ -269894,7 +270559,7 @@
         "open_weights": true,
         "limit": {
           "context": 196608,
-          "output": 196608
+          "output": 176947
         },
         "cost": {
           "input": 0,
