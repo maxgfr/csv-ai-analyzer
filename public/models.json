@@ -5971,7 +5971,7 @@
         "open_weights": true,
         "limit": {
           "context": 1310720,
-          "output": 1310720
+          "output": 1048576
         },
         "cost": {
           "input": 0.15,
@@ -8122,6 +8122,52 @@
           "output": 2.2,
           "cache_read": 0.11,
           "cache_write": 0
+        }
+      },
+      "z-ai/glm-5.3-flash": {
+        "id": "z-ai/glm-5.3-flash",
+        "name": "GLM-5.3-Flash",
+        "description": "Native multimodal GLM model for efficient coding and long-horizon agent tasks",
+        "family": "glm",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "high",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "interleaved": {
+          "field": "reasoning_content"
+        },
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2026-08-26",
+        "last_updated": "2026-08-26",
+        "modalities": {
+          "input": [
+            "text",
+            "image",
+            "video",
+            "pdf"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1000000,
+          "output": 128000
+        },
+        "cost": {
+          "input": 0.075,
+          "output": 0.25
         }
       },
       "deepseek/deepseek-v4-flash": {
@@ -21137,37 +21183,6 @@
           "cache_read": 0.391
         }
       },
-      "jamba-large-1.6": {
-        "id": "jamba-large-1.6",
-        "name": "Jamba Large 1.6",
-        "description": "Compact GPT model for low-latency assistance and high-volume workloads",
-        "family": "jamba",
-        "attachment": false,
-        "reasoning": false,
-        "tool_call": false,
-        "structured_output": false,
-        "release_date": "2025-03-12",
-        "last_updated": "2025-03-12",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": false,
-        "limit": {
-          "context": 256000,
-          "input": 256000,
-          "output": 4096
-        },
-        "cost": {
-          "input": 1.989,
-          "output": 7.99,
-          "cache_read": 0.9945
-        }
-      },
       "glm-4-air-0111": {
         "id": "glm-4-air-0111",
         "name": "GLM 4 Air 0111",
@@ -21491,7 +21506,7 @@
         "reasoning_options": [],
         "tool_call": true,
         "structured_output": false,
-        "release_date": "2026-08-23",
+        "release_date": "2026-07-29",
         "last_updated": "2026-08-23",
         "modalities": {
           "input": [
@@ -21548,6 +21563,39 @@
           "cache_read": 0.2
         }
       },
+      "gemma-4-26b-a4b-it-moonlight": {
+        "id": "gemma-4-26b-a4b-it-moonlight",
+        "name": "Moonlight Dusk",
+        "description": "Moonlight Dusk is a Gemma 4 26B A4B multimodal mixture-of-experts fine-tune for creative writing, expressive dialogue, and roleplay.",
+        "family": "gemma",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [],
+        "tool_call": true,
+        "structured_output": false,
+        "release_date": "2026-07-29",
+        "last_updated": "2026-07-29",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 262144,
+          "input": 262144,
+          "output": 32768
+        },
+        "cost": {
+          "input": 0.08,
+          "output": 0.33,
+          "cache_read": 0.04
+        }
+      },
       "Gemma-4-31B-Queen": {
         "id": "Gemma-4-31B-Queen",
         "name": "Gemma 4 31B Queen",
@@ -21587,6 +21635,38 @@
           "input": 0.306,
           "output": 0.306,
           "cache_read": 0.153
+        }
+      },
+      "gemma-4-26b-a4b-it-luminous": {
+        "id": "gemma-4-26b-a4b-it-luminous",
+        "name": "Luminous Mirror",
+        "description": "Luminous Mirror is a Gemma 4 26B A4B multimodal mixture-of-experts fine-tune for creative writing, expressive dialogue, and roleplay.",
+        "family": "gemma",
+        "attachment": true,
+        "reasoning": false,
+        "tool_call": true,
+        "structured_output": false,
+        "release_date": "2026-07-29",
+        "last_updated": "2026-07-29",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 262144,
+          "input": 262144,
+          "output": 32768
+        },
+        "cost": {
+          "input": 0.08,
+          "output": 0.33,
+          "cache_read": 0.04
         }
       },
       "qwen-turbo": {
@@ -21762,37 +21842,6 @@
           "input": 0.2,
           "output": 0.77,
           "cache_read": 0.135
-        }
-      },
-      "glm-4-airx": {
-        "id": "glm-4-airx",
-        "name": "GLM-4 AirX",
-        "description": "Compact GPT model for low-latency assistance and high-volume workloads",
-        "family": "glm",
-        "attachment": false,
-        "reasoning": false,
-        "tool_call": false,
-        "structured_output": false,
-        "release_date": "2024-01-01",
-        "last_updated": "2024-06-05",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": false,
-        "limit": {
-          "context": 8000,
-          "input": 8000,
-          "output": 4096
-        },
-        "cost": {
-          "input": 2.006,
-          "output": 2.006,
-          "cache_read": 1.003
         }
       },
       "gemma-4-12b-it": {
@@ -22075,37 +22124,6 @@
           "cache_read": 1
         }
       },
-      "jamba-mini-1.7": {
-        "id": "jamba-mini-1.7",
-        "name": "Jamba Mini 1.7",
-        "description": "Compact GPT model for low-latency assistance and high-volume workloads",
-        "family": "jamba",
-        "attachment": false,
-        "reasoning": false,
-        "tool_call": false,
-        "structured_output": false,
-        "release_date": "2025-07-09",
-        "last_updated": "2025-07-09",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": false,
-        "limit": {
-          "context": 256000,
-          "input": 256000,
-          "output": 4096
-        },
-        "cost": {
-          "input": 0.1989,
-          "output": 0.408,
-          "cache_read": 0.09945
-        }
-      },
       "sonar-deep-research": {
         "id": "sonar-deep-research",
         "name": "Perplexity Deep Research",
@@ -22260,37 +22278,6 @@
           "output": 6,
           "cache_read": 0.25,
           "cache_write": 2.5
-        }
-      },
-      "learnlm-1.5-pro-experimental": {
-        "id": "learnlm-1.5-pro-experimental",
-        "name": "Gemini LearnLM Experimental",
-        "description": "Compact GPT model for low-latency assistance and high-volume workloads",
-        "family": "gemini",
-        "attachment": false,
-        "reasoning": false,
-        "tool_call": false,
-        "structured_output": false,
-        "release_date": "2024-01-01",
-        "last_updated": "2024-05-14",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": false,
-        "limit": {
-          "context": 32767,
-          "input": 32767,
-          "output": 8192
-        },
-        "cost": {
-          "input": 3.502,
-          "output": 10.506,
-          "cache_read": 1.751
         }
       },
       "glm-4.1v-thinking-flashx": {
@@ -22786,6 +22773,39 @@
           "cache_read": 0.102
         }
       },
+      "gemma-4-31b-it-isometry": {
+        "id": "gemma-4-31b-it-isometry",
+        "name": "Isometry",
+        "description": "Isometry is a multimodal Gemma 4 31B creative finetune for expressive dialogue, long-form storytelling, and roleplay.",
+        "family": "gemma",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [],
+        "tool_call": true,
+        "structured_output": false,
+        "release_date": "2026-07-29",
+        "last_updated": "2026-07-29",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 262144,
+          "input": 262144,
+          "output": 32768
+        },
+        "cost": {
+          "input": 0.08,
+          "output": 0.33,
+          "cache_read": 0.04
+        }
+      },
       "qwen3.5-flash": {
         "id": "qwen3.5-flash",
         "name": "Qwen3.5 Flash",
@@ -22818,37 +22838,6 @@
           "input": 0.1,
           "output": 0.4,
           "cache_read": 0.05
-        }
-      },
-      "glm-zero-preview": {
-        "id": "glm-zero-preview",
-        "name": "GLM Zero Preview",
-        "description": "Compact GPT model for low-latency assistance and high-volume workloads",
-        "family": "glm",
-        "attachment": false,
-        "reasoning": false,
-        "tool_call": false,
-        "structured_output": false,
-        "release_date": "2024-12-20",
-        "last_updated": "2024-12-01",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": false,
-        "limit": {
-          "context": 8000,
-          "input": 8000,
-          "output": 4096
-        },
-        "cost": {
-          "input": 1.802,
-          "output": 1.802,
-          "cache_read": 0.901
         }
       },
       "gemini-2.5-pro-preview-03-25": {
@@ -22892,37 +22881,6 @@
           "input": 2.5,
           "output": 10,
           "cache_read": 0.25
-        }
-      },
-      "jamba-mini": {
-        "id": "jamba-mini",
-        "name": "Jamba Mini",
-        "description": "Compact GPT model for low-latency assistance and high-volume workloads",
-        "family": "jamba",
-        "attachment": false,
-        "reasoning": false,
-        "tool_call": false,
-        "structured_output": false,
-        "release_date": "2025-07-09",
-        "last_updated": "2025-07-09",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": false,
-        "limit": {
-          "context": 256000,
-          "input": 256000,
-          "output": 4096
-        },
-        "cost": {
-          "input": 0.1989,
-          "output": 0.408,
-          "cache_read": 0.09945
         }
       },
       "gemini-2.5-flash-preview-09-2025-thinking": {
@@ -23073,37 +23031,6 @@
           "input": 0.25,
           "output": 1,
           "cache_read": 0.125
-        }
-      },
-      "jamba-large-1.7": {
-        "id": "jamba-large-1.7",
-        "name": "Jamba Large 1.7",
-        "description": "Compact GPT model for low-latency assistance and high-volume workloads",
-        "family": "jamba",
-        "attachment": false,
-        "reasoning": false,
-        "tool_call": false,
-        "structured_output": false,
-        "release_date": "2025-07-09",
-        "last_updated": "2025-07-09",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": false,
-        "limit": {
-          "context": 256000,
-          "input": 256000,
-          "output": 4096
-        },
-        "cost": {
-          "input": 1.989,
-          "output": 7.99,
-          "cache_read": 0.9945
         }
       },
       "doubao-1.5-pro-256k": {
@@ -23633,48 +23560,37 @@
           "cache_read": 0.3
         }
       },
-      "abliterated-model-large": {
-        "id": "abliterated-model-large",
-        "name": "Abliterated Model Large",
-        "description": "Abliteration.ai's large text reasoning model is derived from GLM-5.2 and supports structured output, automatic prompt caching, and a one-million-token context window.",
-        "attachment": false,
+      "gemma-4-26b-a4b-it-musica": {
+        "id": "gemma-4-26b-a4b-it-musica",
+        "name": "Musica",
+        "description": "Musica is a Gemma 4 26B A4B multimodal mixture-of-experts fine-tune for creative writing, expressive dialogue, and roleplay.",
+        "family": "gemma",
+        "attachment": true,
         "reasoning": true,
-        "reasoning_options": [
-          {
-            "type": "effort",
-            "values": [
-              "none",
-              "minimal",
-              "low",
-              "medium",
-              "high",
-              "xhigh",
-              "max"
-            ]
-          }
-        ],
-        "tool_call": false,
-        "structured_output": true,
-        "release_date": "2026-08-27",
-        "last_updated": "2026-08-27",
+        "reasoning_options": [],
+        "tool_call": true,
+        "structured_output": false,
+        "release_date": "2026-07-29",
+        "last_updated": "2026-07-29",
         "modalities": {
           "input": [
-            "text"
+            "text",
+            "image"
           ],
           "output": [
             "text"
           ]
         },
-        "open_weights": false,
+        "open_weights": true,
         "limit": {
-          "context": 1000000,
-          "input": 1000000,
-          "output": 999990
+          "context": 262144,
+          "input": 262144,
+          "output": 32768
         },
         "cost": {
-          "input": 5,
-          "output": 5,
-          "cache_read": 0.5
+          "input": 0.08,
+          "output": 0.33,
+          "cache_read": 0.04
         }
       },
       "deepclaude": {
@@ -23706,37 +23622,6 @@
           "input": 3,
           "output": 15,
           "cache_read": 0.3
-        }
-      },
-      "glm-4-air": {
-        "id": "glm-4-air",
-        "name": "GLM-4 Air",
-        "description": "Compact GPT model for low-latency assistance and high-volume workloads",
-        "family": "glm",
-        "attachment": false,
-        "reasoning": false,
-        "tool_call": false,
-        "structured_output": false,
-        "release_date": "2024-01-01",
-        "last_updated": "2024-06-05",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": false,
-        "limit": {
-          "context": 128000,
-          "input": 128000,
-          "output": 4096
-        },
-        "cost": {
-          "input": 0.2006,
-          "output": 0.2006,
-          "cache_read": 0.1003
         }
       },
       "gemini-2.0-pro-reasoner": {
@@ -23849,6 +23734,39 @@
           "input": 1.04,
           "output": 6.24,
           "cache_read": 0.52
+        }
+      },
+      "gemma-4-26b-a4b-it-opusdistill": {
+        "id": "gemma-4-26b-a4b-it-opusdistill",
+        "name": "Opus Distill",
+        "description": "Opus Distill is a Gemma 4 26B A4B multimodal mixture-of-experts fine-tune for creative writing, expressive dialogue, and roleplay.",
+        "family": "gemma",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [],
+        "tool_call": true,
+        "structured_output": false,
+        "release_date": "2026-07-29",
+        "last_updated": "2026-07-29",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 262144,
+          "input": 262144,
+          "output": 32768
+        },
+        "cost": {
+          "input": 0.08,
+          "output": 0.33,
+          "cache_read": 0.04
         }
       },
       "mistral-small-31-24b-instruct": {
@@ -24292,6 +24210,39 @@
           "cache_write": 0.5
         }
       },
+      "gemma-4-31b-it-darkidol": {
+        "id": "gemma-4-31b-it-darkidol",
+        "name": "DarkIdol",
+        "description": "DarkIdol is a multimodal Gemma 4 31B creative finetune for expressive dialogue, long-form storytelling, and roleplay.",
+        "family": "gemma",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [],
+        "tool_call": true,
+        "structured_output": false,
+        "release_date": "2026-07-29",
+        "last_updated": "2026-07-29",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 262144,
+          "input": 262144,
+          "output": 32768
+        },
+        "cost": {
+          "input": 0.08,
+          "output": 0.33,
+          "cache_read": 0.04
+        }
+      },
       "qwen3.7-max:thinking": {
         "id": "qwen3.7-max:thinking",
         "name": "Qwen3.7 Max Thinking",
@@ -24367,6 +24318,72 @@
           "cache_read": 0.03
         }
       },
+      "gemma-4-26b-a4b-uncensored:thinking": {
+        "id": "gemma-4-26b-a4b-uncensored:thinking",
+        "name": "Gemma 4 26B A4B Uncensored Thinking",
+        "description": "Gemma 4 26B A4B Uncensored with thinking enabled for more deliberate coding, multimodal analysis, tool use, and long-context problem solving.",
+        "family": "gemma",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [],
+        "tool_call": true,
+        "structured_output": true,
+        "release_date": "2026-07-29",
+        "last_updated": "2026-07-29",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 262144,
+          "input": 262144,
+          "output": 32768
+        },
+        "cost": {
+          "input": 0.08,
+          "output": 0.33,
+          "cache_read": 0.04
+        }
+      },
+      "gemma-4-26b-a4b-it-shadowsiren": {
+        "id": "gemma-4-26b-a4b-it-shadowsiren",
+        "name": "Shadow Siren",
+        "description": "Shadow Siren is a Gemma 4 26B A4B multimodal mixture-of-experts fine-tune for creative writing, expressive dialogue, and roleplay.",
+        "family": "gemma",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [],
+        "tool_call": true,
+        "structured_output": false,
+        "release_date": "2026-07-29",
+        "last_updated": "2026-07-29",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 262144,
+          "input": 262144,
+          "output": 32768
+        },
+        "cost": {
+          "input": 0.08,
+          "output": 0.33,
+          "cache_read": 0.04
+        }
+      },
       "claude-opus-4-1-thinking:32000": {
         "id": "claude-opus-4-1-thinking:32000",
         "name": "Claude 4.1 Opus Thinking (32K)",
@@ -24403,37 +24420,6 @@
           "cache_read": 1.5
         }
       },
-      "jamba-large": {
-        "id": "jamba-large",
-        "name": "Jamba Large",
-        "description": "Compact GPT model for low-latency assistance and high-volume workloads",
-        "family": "jamba",
-        "attachment": false,
-        "reasoning": false,
-        "tool_call": false,
-        "structured_output": false,
-        "release_date": "2025-07-09",
-        "last_updated": "2025-07-09",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": false,
-        "limit": {
-          "context": 256000,
-          "input": 256000,
-          "output": 4096
-        },
-        "cost": {
-          "input": 1.989,
-          "output": 7.99,
-          "cache_read": 0.9945
-        }
-      },
       "claude-sonnet-4-thinking:64000": {
         "id": "claude-sonnet-4-thinking:64000",
         "name": "Claude 4 Sonnet Thinking (64K)",
@@ -24468,6 +24454,39 @@
           "input": 3,
           "output": 15,
           "cache_read": 0.3
+        }
+      },
+      "gemma-4-31b-it-novelist": {
+        "id": "gemma-4-31b-it-novelist",
+        "name": "Novelist",
+        "description": "Novelist is a multimodal Gemma 4 31B creative finetune for expressive dialogue, long-form storytelling, and roleplay.",
+        "family": "gemma",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [],
+        "tool_call": true,
+        "structured_output": false,
+        "release_date": "2026-07-29",
+        "last_updated": "2026-07-29",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 262144,
+          "input": 262144,
+          "output": 32768
+        },
+        "cost": {
+          "input": 0.08,
+          "output": 0.33,
+          "cache_read": 0.04
         }
       },
       "claude-opus-4-thinking": {
@@ -24743,37 +24762,6 @@
           "input": 0.75,
           "output": 3,
           "cache_read": 0.75
-        }
-      },
-      "step-r1-v-mini": {
-        "id": "step-r1-v-mini",
-        "name": "Step R1 V Mini",
-        "description": "Compact GPT model for low-latency assistance and high-volume workloads",
-        "family": "step",
-        "attachment": false,
-        "reasoning": false,
-        "tool_call": false,
-        "structured_output": false,
-        "release_date": "2024-01-01",
-        "last_updated": "2025-04-08",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": false,
-        "limit": {
-          "context": 128000,
-          "input": 128000,
-          "output": 65536
-        },
-        "cost": {
-          "input": 2.5,
-          "output": 11,
-          "cache_read": 1.25
         }
       },
       "azure-gpt-4o-mini": {
@@ -25085,8 +25073,8 @@
           "output": 32768
         },
         "cost": {
-          "input": 0.2,
-          "output": 1.4,
+          "input": 0.15,
+          "output": 0.7,
           "cache_read": 0.04
         }
       },
@@ -25133,68 +25121,6 @@
           "input": 0.3,
           "output": 2.5,
           "cache_read": 0.03
-        }
-      },
-      "glm-4-plus": {
-        "id": "glm-4-plus",
-        "name": "GLM-4 Plus",
-        "description": "Compact GPT model for low-latency assistance and high-volume workloads",
-        "family": "glm",
-        "attachment": false,
-        "reasoning": false,
-        "tool_call": false,
-        "structured_output": false,
-        "release_date": "2024-09-20",
-        "last_updated": "2024-08-01",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": false,
-        "limit": {
-          "context": 128000,
-          "input": 128000,
-          "output": 4096
-        },
-        "cost": {
-          "input": 7.497,
-          "output": 7.497,
-          "cache_read": 3.7485
-        }
-      },
-      "hunyuan-turbos-20250226": {
-        "id": "hunyuan-turbos-20250226",
-        "name": "Hunyuan Turbo S",
-        "description": "Compact GPT model for low-latency assistance and high-volume workloads",
-        "family": "hunyuan",
-        "attachment": false,
-        "reasoning": false,
-        "tool_call": false,
-        "structured_output": false,
-        "release_date": "2025-02-27",
-        "last_updated": "2025-02-27",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": false,
-        "limit": {
-          "context": 24000,
-          "input": 24000,
-          "output": 8192
-        },
-        "cost": {
-          "input": 0.187,
-          "output": 0.374,
-          "cache_read": 0.0935
         }
       },
       "ernie-5.1:thinking": {
@@ -25853,6 +25779,39 @@
           "cache_read": 1.5
         }
       },
+      "gemma-4-26b-a4b-it-chimerax": {
+        "id": "gemma-4-26b-a4b-it-chimerax",
+        "name": "Chimera X",
+        "description": "Chimera X is a Gemma 4 26B A4B multimodal mixture-of-experts fine-tune for creative writing, expressive dialogue, and roleplay.",
+        "family": "gemma",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [],
+        "tool_call": true,
+        "structured_output": false,
+        "release_date": "2026-07-29",
+        "last_updated": "2026-07-29",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 262144,
+          "input": 262144,
+          "output": 32768
+        },
+        "cost": {
+          "input": 0.08,
+          "output": 0.33,
+          "cache_read": 0.04
+        }
+      },
       "Gemma-4-31B-MeroMero-v2:thinking": {
         "id": "Gemma-4-31B-MeroMero-v2:thinking",
         "name": "Gemma 4 31B MeroMero v2 Thinking",
@@ -25863,7 +25822,7 @@
         "reasoning_options": [],
         "tool_call": true,
         "structured_output": false,
-        "release_date": "2026-08-24",
+        "release_date": "2026-07-29",
         "last_updated": "2026-08-24",
         "modalities": {
           "input": [
@@ -26135,6 +26094,39 @@
           "output": 5
         }
       },
+      "gemma-4-26b-a4b-uncensored": {
+        "id": "gemma-4-26b-a4b-uncensored",
+        "name": "Gemma 4 26B A4B Uncensored",
+        "description": "Gemma 4 26B A4B Uncensored is an FP8 open-weight multimodal mixture-of-experts model LoRA-tuned for fewer refusals across chat, coding, tool use, and long-context work.",
+        "family": "gemma",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [],
+        "tool_call": true,
+        "structured_output": true,
+        "release_date": "2026-07-29",
+        "last_updated": "2026-07-29",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 262144,
+          "input": 262144,
+          "output": 32768
+        },
+        "cost": {
+          "input": 0.08,
+          "output": 0.33,
+          "cache_read": 0.04
+        }
+      },
       "qwen3.8-27b": {
         "id": "qwen3.8-27b",
         "name": "Qwen3.8 27B",
@@ -26164,8 +26156,8 @@
           "output": 32768
         },
         "cost": {
-          "input": 0.2,
-          "output": 1.4,
+          "input": 0.15,
+          "output": 0.7,
           "cache_read": 0.04
         }
       },
@@ -26270,37 +26262,6 @@
           "input": 0.1,
           "output": 0.4,
           "cache_read": 0.05
-        }
-      },
-      "glm-4-flash": {
-        "id": "glm-4-flash",
-        "name": "GLM-4 Flash",
-        "description": "Compact GPT model for low-latency assistance and high-volume workloads",
-        "family": "glm",
-        "attachment": false,
-        "reasoning": false,
-        "tool_call": false,
-        "structured_output": false,
-        "release_date": "2024-01-01",
-        "last_updated": "2024-08-01",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": false,
-        "limit": {
-          "context": 128000,
-          "input": 128000,
-          "output": 4096
-        },
-        "cost": {
-          "input": 0.1003,
-          "output": 0.1003,
-          "cache_read": 0.05015
         }
       },
       "qwen3.5-27b:thinking": {
@@ -26527,37 +26488,6 @@
           "cache_read": 1.5
         }
       },
-      "jamba-mini-1.6": {
-        "id": "jamba-mini-1.6",
-        "name": "Jamba Mini 1.6",
-        "description": "Compact GPT model for low-latency assistance and high-volume workloads",
-        "family": "jamba",
-        "attachment": false,
-        "reasoning": false,
-        "tool_call": false,
-        "structured_output": false,
-        "release_date": "2024-01-01",
-        "last_updated": "2025-03-01",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": false,
-        "limit": {
-          "context": 256000,
-          "input": 256000,
-          "output": 4096
-        },
-        "cost": {
-          "input": 0.1989,
-          "output": 0.408,
-          "cache_read": 0.09945
-        }
-      },
       "claude-opus-4-thinking:8192": {
         "id": "claude-opus-4-thinking:8192",
         "name": "Claude 4 Opus Thinking (8K)",
@@ -26592,6 +26522,39 @@
           "input": 15,
           "output": 75,
           "cache_read": 1.5
+        }
+      },
+      "gemma-4-31b-it-fabled": {
+        "id": "gemma-4-31b-it-fabled",
+        "name": "Fabled",
+        "description": "Fabled is a multimodal Gemma 4 31B creative finetune for expressive dialogue, long-form storytelling, and roleplay.",
+        "family": "gemma",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [],
+        "tool_call": true,
+        "structured_output": false,
+        "release_date": "2026-07-29",
+        "last_updated": "2026-07-29",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 262144,
+          "input": 262144,
+          "output": 32768
+        },
+        "cost": {
+          "input": 0.08,
+          "output": 0.33,
+          "cache_read": 0.04
         }
       },
       "asi1-mini": {
@@ -26791,6 +26754,39 @@
           "cache_read": 0.0731
         }
       },
+      "gemma-4-31b-it-gemsicle": {
+        "id": "gemma-4-31b-it-gemsicle",
+        "name": "Gemsicle",
+        "description": "Gemsicle is a multimodal Gemma 4 31B creative finetune for expressive dialogue, long-form storytelling, and roleplay.",
+        "family": "gemma",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [],
+        "tool_call": true,
+        "structured_output": false,
+        "release_date": "2026-07-29",
+        "last_updated": "2026-07-29",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 262144,
+          "input": 262144,
+          "output": 32768
+        },
+        "cost": {
+          "input": 0.08,
+          "output": 0.33,
+          "cache_read": 0.04
+        }
+      },
       "qwen3-max-2026-01-23": {
         "id": "qwen3-max-2026-01-23",
         "name": "Qwen3 Max 2026-01-23",
@@ -26923,6 +26919,39 @@
           "input": 0.15,
           "output": 0.6,
           "cache_read": 0.075
+        }
+      },
+      "gemma-4-31b-it-garnet": {
+        "id": "gemma-4-31b-it-garnet",
+        "name": "Garnet",
+        "description": "Garnet is a multimodal Gemma 4 31B creative finetune for expressive dialogue, long-form storytelling, and roleplay.",
+        "family": "gemma",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [],
+        "tool_call": true,
+        "structured_output": false,
+        "release_date": "2026-07-29",
+        "last_updated": "2026-07-29",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 262144,
+          "input": 262144,
+          "output": 32768
+        },
+        "cost": {
+          "input": 0.08,
+          "output": 0.33,
+          "cache_read": 0.04
         }
       },
       "qwen-3.6-plus": {
@@ -27080,7 +27109,7 @@
         "reasoning_options": [],
         "tool_call": true,
         "structured_output": false,
-        "release_date": "2026-08-26",
+        "release_date": "2026-07-29",
         "last_updated": "2026-08-26",
         "modalities": {
           "input": [
@@ -27186,37 +27215,6 @@
           "cache_read": 0.2
         }
       },
-      "glm-4": {
-        "id": "glm-4",
-        "name": "GLM-4",
-        "description": "Compact GPT model for low-latency assistance and high-volume workloads",
-        "family": "glm",
-        "attachment": false,
-        "reasoning": false,
-        "tool_call": false,
-        "structured_output": false,
-        "release_date": "2024-01-01",
-        "last_updated": "2024-01-16",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": false,
-        "limit": {
-          "context": 128000,
-          "input": 128000,
-          "output": 4096
-        },
-        "cost": {
-          "input": 14.994,
-          "output": 14.994,
-          "cache_read": 7.497
-        }
-      },
       "gemma-4-e4b-it": {
         "id": "gemma-4-e4b-it",
         "name": "Gemma 4 E4B Instruct",
@@ -27262,8 +27260,41 @@
         "reasoning_options": [],
         "tool_call": true,
         "structured_output": false,
-        "release_date": "2026-08-26",
+        "release_date": "2026-07-29",
         "last_updated": "2026-08-26",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 262144,
+          "input": 262144,
+          "output": 32768
+        },
+        "cost": {
+          "input": 0.08,
+          "output": 0.33,
+          "cache_read": 0.04
+        }
+      },
+      "gemma-4-26b-a4b-it-darksoul": {
+        "id": "gemma-4-26b-a4b-it-darksoul",
+        "name": "Dark Soul",
+        "description": "Dark Soul is a Gemma 4 26B A4B multimodal mixture-of-experts fine-tune for creative writing, expressive dialogue, and roleplay.",
+        "family": "gemma",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [],
+        "tool_call": true,
+        "structured_output": false,
+        "release_date": "2026-07-29",
+        "last_updated": "2026-07-29",
         "modalities": {
           "input": [
             "text",
@@ -27420,51 +27451,6 @@
           "cache_read": 0.1
         }
       },
-      "abliterated-model": {
-        "id": "abliterated-model",
-        "name": "Abliterated Model",
-        "description": "Abliteration.ai's multimodal reasoning model supports text and image input, structured output, automatic prompt caching, and a 262K-token context window.",
-        "attachment": true,
-        "reasoning": true,
-        "reasoning_options": [
-          {
-            "type": "effort",
-            "values": [
-              "none",
-              "minimal",
-              "low",
-              "medium",
-              "high",
-              "xhigh",
-              "max"
-            ]
-          }
-        ],
-        "tool_call": false,
-        "structured_output": true,
-        "release_date": "2026-08-27",
-        "last_updated": "2026-08-27",
-        "modalities": {
-          "input": [
-            "text",
-            "image"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": false,
-        "limit": {
-          "context": 262144,
-          "input": 262144,
-          "output": 262134
-        },
-        "cost": {
-          "input": 3,
-          "output": 3,
-          "cache_read": 0.3
-        }
-      },
       "pokee-isaac": {
         "id": "pokee-isaac",
         "name": "Pokee-Isaac 28B",
@@ -27494,6 +27480,39 @@
           "input": 0.15,
           "output": 1,
           "cache_read": 0.075
+        }
+      },
+      "gemma-4-31b-it-gembrain": {
+        "id": "gemma-4-31b-it-gembrain",
+        "name": "Gembrain",
+        "description": "Gembrain is a multimodal Gemma 4 31B creative finetune for expressive dialogue, long-form storytelling, and roleplay.",
+        "family": "gemma",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [],
+        "tool_call": true,
+        "structured_output": false,
+        "release_date": "2026-07-29",
+        "last_updated": "2026-07-29",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 262144,
+          "input": 262144,
+          "output": 32768
+        },
+        "cost": {
+          "input": 0.08,
+          "output": 0.33,
+          "cache_read": 0.04
         }
       },
       "brave": {
@@ -28639,6 +28658,95 @@
           "cache_read": 0.3995
         }
       },
+      "abliteration-ai/abliterated-model-large": {
+        "id": "abliteration-ai/abliterated-model-large",
+        "name": "Abliterated Model Large",
+        "description": "Abliteration.ai's large text reasoning model is derived from GLM-5.2 and supports native tool calling, structured output, automatic prompt caching, and a one-million-token context window.",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "none",
+              "minimal",
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "release_date": "2026-08-27",
+        "last_updated": "2026-08-27",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1000000,
+          "input": 1000000,
+          "output": 999990
+        },
+        "cost": {
+          "input": 5,
+          "output": 5,
+          "cache_read": 0.5
+        }
+      },
+      "abliteration-ai/abliterated-model": {
+        "id": "abliteration-ai/abliterated-model",
+        "name": "Abliterated Model",
+        "description": "Abliteration.ai's multimodal reasoning model supports text and image input, structured output, automatic prompt caching, and a 262K-token context window.",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "none",
+              "minimal",
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": false,
+        "structured_output": true,
+        "release_date": "2026-08-27",
+        "last_updated": "2026-08-27",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 262144,
+          "input": 262144,
+          "output": 262134
+        },
+        "cost": {
+          "input": 3,
+          "output": 3,
+          "cache_read": 0.3
+        }
+      },
       "microsoft/wizardlm-2-8x22b": {
         "id": "microsoft/wizardlm-2-8x22b",
         "name": "WizardLM-2 8x22B",
@@ -28714,6 +28822,188 @@
           "cache_read": 0.175
         }
       },
+      "z-ai/glm-5.3:thinking": {
+        "id": "z-ai/glm-5.3:thinking",
+        "name": "GLM 5.3 Thinking",
+        "description": "Flagship GLM model for long-horizon coding, agents, and complex project delivery",
+        "family": "glm",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "high",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2026-08-14",
+        "last_updated": "2026-08-14",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1048576,
+          "input": 1048576,
+          "output": 131072
+        },
+        "cost": {
+          "input": 1,
+          "output": 3.2,
+          "cache_read": 0.2
+        }
+      },
+      "z-ai/glm-5-original:thinking": {
+        "id": "z-ai/glm-5-original:thinking",
+        "name": "GLM 5 Original Thinking",
+        "description": "GLM-5 original with extended thinking capabilities for complex reasoning.",
+        "family": "glm",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [],
+        "tool_call": true,
+        "structured_output": true,
+        "release_date": "2026-02-11",
+        "last_updated": "2026-02-11",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 200000,
+          "input": 200000,
+          "output": 128000
+        },
+        "cost": {
+          "input": 1,
+          "output": 3.2,
+          "cache_read": 0.2
+        }
+      },
+      "z-ai/glm-4.7-flash:thinking": {
+        "id": "z-ai/glm-4.7-flash:thinking",
+        "name": "GLM 4.7 Flash Thinking",
+        "description": "Budget GLM lane for fast coding help, routing, and everyday automation",
+        "family": "glm-flash",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [],
+        "tool_call": true,
+        "structured_output": false,
+        "temperature": true,
+        "knowledge": "2025-04",
+        "release_date": "2026-01-19",
+        "last_updated": "2026-01-19",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 200000,
+          "input": 200000,
+          "output": 128000
+        },
+        "cost": {
+          "input": 0.07,
+          "output": 0.4,
+          "cache_read": 0.035
+        }
+      },
+      "z-ai/GLM-4.5-Air:thinking": {
+        "id": "z-ai/GLM-4.5-Air:thinking",
+        "name": "GLM 4.5 Air (Thinking)",
+        "description": "Lighter GLM-4.5 variant for fast coding assistance and cheaper agents",
+        "family": "glm-air",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "knowledge": "2025-04",
+        "release_date": "2025-07-28",
+        "last_updated": "2025-07-28",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 128000,
+          "input": 128000,
+          "output": 98304
+        },
+        "cost": {
+          "input": 0.12,
+          "output": 0.8,
+          "cache_read": 0.06
+        }
+      },
+      "z-ai/glm-5.1:thinking": {
+        "id": "z-ai/glm-5.1:thinking",
+        "name": "GLM 5.1 Thinking",
+        "description": "Strong GLM coding model for agentic engineering, terminals, and repository generation",
+        "family": "glm",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "none",
+              "high"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2026-04-07",
+        "last_updated": "2026-04-07",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 200000,
+          "input": 200000,
+          "output": 131072
+        },
+        "cost": {
+          "input": 0.75,
+          "output": 2.6,
+          "cache_read": 0.15
+        }
+      },
       "z-ai/glm-5v-turbo": {
         "id": "z-ai/glm-5v-turbo",
         "name": "GLM 5V Turbo",
@@ -28745,6 +29035,40 @@
           "input": 1.2,
           "output": 4,
           "cache_read": 0.24
+        }
+      },
+      "z-ai/glm-4.7": {
+        "id": "z-ai/glm-4.7",
+        "name": "GLM 4.7",
+        "description": "Mature GLM model for dependable coding, reasoning, and structured agent tasks",
+        "family": "glm",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "knowledge": "2025-04",
+        "release_date": "2025-12-22",
+        "last_updated": "2025-12-22",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 200000,
+          "input": 200000,
+          "output": 65535
+        },
+        "cost": {
+          "input": 0.2,
+          "output": 0.8,
+          "cache_read": 0.1
         }
       },
       "z-ai/glm-4.5v": {
@@ -28783,6 +29107,38 @@
         "cost": {
           "input": 0.6,
           "output": 1.8,
+          "cache_read": 0.3
+        }
+      },
+      "z-ai/glm-4.6v-original": {
+        "id": "z-ai/glm-4.6v-original",
+        "name": "GLM 4.6V Original",
+        "description": "GLM-4.6V scales its context window to 128k tokens in training, and achieves SoTA performance in visual understanding among models of similar parameter scales. Integrates native Function Calling capabilities, bridging 'visual perception' and 'executable action' for multimodal agents. Direct via Z-AI (Zhipu).",
+        "family": "glm",
+        "attachment": true,
+        "reasoning": false,
+        "tool_call": false,
+        "structured_output": false,
+        "release_date": "2025-12-08",
+        "last_updated": "2025-12-08",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 128000,
+          "input": 128000,
+          "output": 24000
+        },
+        "cost": {
+          "input": 0.6,
+          "output": 0.9,
           "cache_read": 0.3
         }
       },
@@ -28829,6 +29185,102 @@
           "cache_read": 0.175
         }
       },
+      "z-ai/GLM-4.6-turbo": {
+        "id": "z-ai/GLM-4.6-turbo",
+        "name": "GLM 4.6 Turbo",
+        "description": "Fast variant of GLM 4.6 for general chat, coding, and analysis with improved latency and strong reasoning.",
+        "family": "glm",
+        "attachment": false,
+        "reasoning": false,
+        "tool_call": false,
+        "structured_output": false,
+        "release_date": "2025-10-02",
+        "last_updated": "2025-10-02",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 200000,
+          "input": 200000,
+          "output": 204800
+        },
+        "cost": {
+          "input": 1,
+          "output": 3,
+          "cache_read": 0.5
+        }
+      },
+      "z-ai/glm-5:thinking": {
+        "id": "z-ai/glm-5:thinking",
+        "name": "GLM 5 Thinking",
+        "description": "General GLM flagship for coding, analysis, and tool-heavy engineering workflows",
+        "family": "glm",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2026-02-12",
+        "last_updated": "2026-02-12",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 200000,
+          "input": 200000,
+          "output": 128000
+        },
+        "cost": {
+          "input": 0.5,
+          "output": 2.55,
+          "cache_read": 0.13
+        }
+      },
+      "z-ai/glm-4.6v-flash-original": {
+        "id": "z-ai/glm-4.6v-flash-original",
+        "name": "GLM 4.6V Flash",
+        "description": "GLM-4.6V-Flash (9B), a lightweight model optimized for local deployment and low-latency applications. Scales context window to 128k tokens and achieves SoTA performance in visual understanding among similar-scale models.",
+        "family": "glm",
+        "attachment": true,
+        "reasoning": false,
+        "tool_call": false,
+        "structured_output": false,
+        "release_date": "2025-12-08",
+        "last_updated": "2025-12-08",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 128000,
+          "input": 128000,
+          "output": 24000
+        },
+        "cost": {
+          "input": 0.1,
+          "output": 0.4,
+          "cache_read": 0.05
+        }
+      },
       "z-ai/glm-4.5v:thinking": {
         "id": "z-ai/glm-4.5v:thinking",
         "name": "GLM 4.5V Thinking",
@@ -28864,6 +29316,170 @@
           "cache_read": 0.3
         }
       },
+      "z-ai/glm-4.7:thinking": {
+        "id": "z-ai/glm-4.7:thinking",
+        "name": "GLM 4.7 Thinking",
+        "description": "Mature GLM model for dependable coding, reasoning, and structured agent tasks",
+        "family": "glm",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "knowledge": "2025-04",
+        "release_date": "2025-12-22",
+        "last_updated": "2025-12-22",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 200000,
+          "input": 200000,
+          "output": 65535
+        },
+        "cost": {
+          "input": 0.2,
+          "output": 0.8,
+          "cache_read": 0.1
+        }
+      },
+      "z-ai/GLM-4.5-Air": {
+        "id": "z-ai/GLM-4.5-Air",
+        "name": "GLM 4.5 Air",
+        "description": "Lighter GLM-4.5 variant for fast coding assistance and cheaper agents",
+        "family": "glm-air",
+        "attachment": false,
+        "reasoning": false,
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "knowledge": "2025-04",
+        "release_date": "2025-07-28",
+        "last_updated": "2025-07-28",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 128000,
+          "input": 128000,
+          "output": 98304
+        },
+        "cost": {
+          "input": 0.12,
+          "output": 0.8,
+          "cache_read": 0.06
+        }
+      },
+      "z-ai/glm-5": {
+        "id": "z-ai/glm-5",
+        "name": "GLM 5",
+        "description": "General GLM flagship for coding, analysis, and tool-heavy engineering workflows",
+        "family": "glm",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2026-02-12",
+        "last_updated": "2026-02-12",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 200000,
+          "input": 200000,
+          "output": 128000
+        },
+        "cost": {
+          "input": 0.5,
+          "output": 2.55,
+          "cache_read": 0.13
+        }
+      },
+      "z-ai/glm-4.7-flash-original": {
+        "id": "z-ai/glm-4.7-flash-original",
+        "name": "GLM 4.7 Flash Original",
+        "description": "GLM-4.7-Flash is a lightweight 30B model optimized for coding and agentic tasks. Balances high performance with efficiency, perfect for local deployment.",
+        "family": "glm",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [],
+        "tool_call": true,
+        "structured_output": true,
+        "release_date": "2026-01-19",
+        "last_updated": "2026-01-19",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 200000,
+          "input": 200000,
+          "output": 128000
+        },
+        "cost": {
+          "input": 0.07,
+          "output": 0.4,
+          "cache_read": 0.035
+        }
+      },
+      "z-ai/glm-latest": {
+        "id": "z-ai/glm-latest",
+        "name": "GLM Latest",
+        "description": "Compatibility alias that routes to the newest thinking GLM model. Currently routes to GLM 5.2 Thinking.",
+        "family": "glm",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [],
+        "tool_call": true,
+        "structured_output": true,
+        "release_date": "2026-05-03",
+        "last_updated": "2026-05-03",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 1048576,
+          "input": 1048576,
+          "output": 131072
+        },
+        "cost": {
+          "input": 0.42,
+          "output": 1.32,
+          "cache_read": 0.078
+        }
+      },
       "z-ai/glm-5-turbo": {
         "id": "z-ai/glm-5-turbo",
         "name": "GLM 5 Turbo",
@@ -28896,12 +29512,260 @@
           "cache_read": 0.24
         }
       },
+      "z-ai/glm-5.3": {
+        "id": "z-ai/glm-5.3",
+        "name": "GLM 5.3",
+        "description": "Flagship GLM model for long-horizon coding, agents, and complex project delivery",
+        "family": "glm",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "high",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2026-08-14",
+        "last_updated": "2026-08-14",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1048576,
+          "input": 1048576,
+          "output": 131072
+        },
+        "cost": {
+          "input": 1,
+          "output": 3.2,
+          "cache_read": 0.2
+        }
+      },
+      "z-ai/glm-4.7-flash-original:thinking": {
+        "id": "z-ai/glm-4.7-flash-original:thinking",
+        "name": "GLM 4.7 Flash Original Thinking",
+        "description": "GLM-4.7-Flash with extended thinking capabilities for complex reasoning. Lightweight 30B model optimized for coding and agentic tasks.",
+        "family": "glm",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [],
+        "tool_call": true,
+        "structured_output": false,
+        "release_date": "2026-01-19",
+        "last_updated": "2026-01-19",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 200000,
+          "input": 200000,
+          "output": 128000
+        },
+        "cost": {
+          "input": 0.07,
+          "output": 0.4,
+          "cache_read": 0.035
+        }
+      },
+      "z-ai/glm-5.2": {
+        "id": "z-ai/glm-5.2",
+        "name": "GLM 5.2",
+        "description": "Open flagship GLM for long-horizon coding agents and million-token context work",
+        "family": "glm",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "none",
+              "high",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2026-06-13",
+        "last_updated": "2026-06-13",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 1048576,
+          "input": 1048576,
+          "output": 131072
+        },
+        "cost": {
+          "input": 0.42,
+          "output": 1.32,
+          "cache_read": 0.078
+        }
+      },
+      "z-ai/glm-4.6v": {
+        "id": "z-ai/glm-4.6v",
+        "name": "GLM 4.6V",
+        "description": "GLM vision model for visual reasoning, documents, and multimodal agents",
+        "family": "glm",
+        "attachment": true,
+        "reasoning": false,
+        "tool_call": false,
+        "structured_output": false,
+        "temperature": true,
+        "knowledge": "2025-04",
+        "release_date": "2025-12-08",
+        "last_updated": "2025-12-08",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 128000,
+          "input": 128000,
+          "output": 24000
+        },
+        "cost": {
+          "input": 0.3,
+          "output": 0.9,
+          "cache_read": 0.15
+        }
+      },
+      "z-ai/GLM-4.5:thinking": {
+        "id": "z-ai/GLM-4.5:thinking",
+        "name": "GLM 4.5 (Thinking)",
+        "description": "Hybrid-reasoning GLM release that made the 4.5 line broadly useful",
+        "family": "glm",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [],
+        "tool_call": false,
+        "structured_output": false,
+        "temperature": true,
+        "knowledge": "2025-04",
+        "release_date": "2025-07-28",
+        "last_updated": "2025-07-28",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 128000,
+          "input": 128000,
+          "output": 65536
+        },
+        "cost": {
+          "input": 0.3,
+          "output": 1.3,
+          "cache_read": 0.15
+        }
+      },
+      "z-ai/glm-4.6-original": {
+        "id": "z-ai/glm-4.6-original",
+        "name": "GLM 4.6 Original",
+        "description": "GLM-4.6, Zhipu's flagship text model with 256K context window and advanced reasoning capabilities. Direct via Z-AI (Zhipu).",
+        "family": "glm",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [],
+        "tool_call": true,
+        "structured_output": false,
+        "release_date": "2025-12-11",
+        "last_updated": "2025-12-11",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 256000,
+          "input": 256000,
+          "output": 65535
+        },
+        "cost": {
+          "input": 0.35,
+          "output": 1.4,
+          "cache_read": 0.175
+        }
+      },
+      "z-ai/glm-5-original": {
+        "id": "z-ai/glm-5-original",
+        "name": "GLM 5 Original",
+        "description": "GLM-5 is Zhipu's latest flagship model with advanced reasoning and instruction following. Routed directly via Z-AI (Zhipu).",
+        "family": "glm",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [],
+        "tool_call": true,
+        "structured_output": true,
+        "release_date": "2026-02-11",
+        "last_updated": "2026-02-11",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 200000,
+          "input": 200000,
+          "output": 128000
+        },
+        "cost": {
+          "input": 1,
+          "output": 3.2,
+          "cache_read": 0.2
+        }
+      },
       "z-ai/glm-5.3-flash-uncensored": {
         "id": "z-ai/glm-5.3-flash-uncensored",
         "name": "GLM 5.3 Flash Uncensored",
         "description": "GLM 5.3 Flash Uncensored is an uncensored fine-tune of the efficient 320B mixture-of-experts reasoning model, built for unrestricted chat, creative writing, coding, agentic work, tool use, and long-context tasks.",
         "family": "glm",
-        "attachment": false,
+        "attachment": true,
         "reasoning": true,
         "reasoning_options": [
           {
@@ -28914,11 +29778,12 @@
         ],
         "tool_call": true,
         "structured_output": true,
-        "release_date": "2026-08-27",
+        "release_date": "2026-07-29",
         "last_updated": "2026-08-27",
         "modalities": {
           "input": [
-            "text"
+            "text",
+            "image"
           ],
           "output": [
             "text"
@@ -28934,6 +29799,120 @@
           "input": 0.125,
           "output": 0.5,
           "cache_read": 0.0625
+        }
+      },
+      "z-ai/GLM-4.6-turbo:thinking": {
+        "id": "z-ai/GLM-4.6-turbo:thinking",
+        "name": "GLM 4.6 Turbo (Thinking)",
+        "description": "GLM 4.6 Turbo with thinking mode enabled for enhanced reasoning; shows internal reasoning and supports long context.",
+        "family": "glm",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [],
+        "tool_call": false,
+        "structured_output": false,
+        "release_date": "2025-10-02",
+        "last_updated": "2025-10-02",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 200000,
+          "input": 200000,
+          "output": 204800
+        },
+        "cost": {
+          "input": 1,
+          "output": 3,
+          "cache_read": 0.5
+        }
+      },
+      "z-ai/glm-5.1": {
+        "id": "z-ai/glm-5.1",
+        "name": "GLM 5.1",
+        "description": "Strong GLM coding model for agentic engineering, terminals, and repository generation",
+        "family": "glm",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "none",
+              "high"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2026-04-07",
+        "last_updated": "2026-04-07",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 200000,
+          "input": 200000,
+          "output": 131072
+        },
+        "cost": {
+          "input": 0.75,
+          "output": 2.6,
+          "cache_read": 0.15
+        }
+      },
+      "z-ai/glm-5.2:thinking": {
+        "id": "z-ai/glm-5.2:thinking",
+        "name": "GLM 5.2 Thinking",
+        "description": "Open flagship GLM for long-horizon coding agents and million-token context work",
+        "family": "glm",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "high",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2026-06-13",
+        "last_updated": "2026-06-13",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 1048576,
+          "input": 1048576,
+          "output": 131072
+        },
+        "cost": {
+          "input": 0.42,
+          "output": 1.32,
+          "cache_read": 0.078
         }
       },
       "z-ai/glm-5v-turbo:thinking": {
@@ -28968,6 +29947,137 @@
           "input": 1.2,
           "output": 4,
           "cache_read": 0.24
+        }
+      },
+      "z-ai/glm-4.7-original": {
+        "id": "z-ai/glm-4.7-original",
+        "name": "GLM 4.7 Original",
+        "description": "GLM-4.7 is a next-gen GLM series text model with stronger reasoning, long-context chat, and reliable tool use. Routed directly via Z-AI (Zhipu).",
+        "family": "glm",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [],
+        "tool_call": true,
+        "structured_output": true,
+        "release_date": "2025-12-22",
+        "last_updated": "2025-12-22",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 200000,
+          "input": 200000,
+          "output": 65535
+        },
+        "cost": {
+          "input": 0.6,
+          "output": 2.2,
+          "cache_read": 0.11
+        }
+      },
+      "z-ai/glm-4.7-flash": {
+        "id": "z-ai/glm-4.7-flash",
+        "name": "GLM 4.7 Flash",
+        "description": "Budget GLM lane for fast coding help, routing, and everyday automation",
+        "family": "glm-flash",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "knowledge": "2025-04",
+        "release_date": "2026-01-19",
+        "last_updated": "2026-01-19",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 200000,
+          "input": 200000,
+          "output": 128000
+        },
+        "cost": {
+          "input": 0.07,
+          "output": 0.4,
+          "cache_read": 0.035
+        }
+      },
+      "z-ai/glm-4.7-original:thinking": {
+        "id": "z-ai/glm-4.7-original:thinking",
+        "name": "GLM 4.7 Original Thinking",
+        "description": "GLM-4.7 original with extended thinking capabilities for complex reasoning.",
+        "family": "glm",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [],
+        "tool_call": true,
+        "structured_output": true,
+        "release_date": "2025-12-22",
+        "last_updated": "2025-12-22",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 200000,
+          "input": 200000,
+          "output": 65535
+        },
+        "cost": {
+          "input": 0.6,
+          "output": 2.2,
+          "cache_read": 0.11
+        }
+      },
+      "z-ai/glm-4.5": {
+        "id": "z-ai/glm-4.5",
+        "name": "GLM 4.5",
+        "description": "Hybrid-reasoning GLM release that made the 4.5 line broadly useful",
+        "family": "glm",
+        "attachment": false,
+        "reasoning": false,
+        "tool_call": false,
+        "structured_output": false,
+        "temperature": true,
+        "knowledge": "2025-04",
+        "release_date": "2025-07-28",
+        "last_updated": "2025-07-28",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 128000,
+          "input": 128000,
+          "output": 65536
+        },
+        "cost": {
+          "input": 0.3,
+          "output": 1.3,
+          "cache_read": 0.15
         }
       },
       "z-ai/glm-5.3-flash": {
@@ -29693,71 +30803,6 @@
           "cache_read": 0.04
         }
       },
-      "google/gemma-4-26b-a4b-it-moonlight": {
-        "id": "google/gemma-4-26b-a4b-it-moonlight",
-        "name": "Moonlight Dusk",
-        "description": "Moonlight Dusk is a Gemma 4 26B A4B multimodal mixture-of-experts fine-tune for creative writing, expressive dialogue, and roleplay.",
-        "family": "gemma",
-        "attachment": true,
-        "reasoning": true,
-        "reasoning_options": [],
-        "tool_call": true,
-        "structured_output": false,
-        "release_date": "2026-08-28",
-        "last_updated": "2026-08-28",
-        "modalities": {
-          "input": [
-            "text",
-            "image"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 262144,
-          "input": 262144,
-          "output": 32768
-        },
-        "cost": {
-          "input": 0.08,
-          "output": 0.33,
-          "cache_read": 0.04
-        }
-      },
-      "google/gemma-4-26b-a4b-it-luminous": {
-        "id": "google/gemma-4-26b-a4b-it-luminous",
-        "name": "Luminous Mirror",
-        "description": "Luminous Mirror is a Gemma 4 26B A4B multimodal mixture-of-experts fine-tune for creative writing, expressive dialogue, and roleplay.",
-        "family": "gemma",
-        "attachment": true,
-        "reasoning": false,
-        "tool_call": true,
-        "structured_output": false,
-        "release_date": "2026-08-28",
-        "last_updated": "2026-08-28",
-        "modalities": {
-          "input": [
-            "text",
-            "image"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 262144,
-          "input": 262144,
-          "output": 32768
-        },
-        "cost": {
-          "input": 0.08,
-          "output": 0.33,
-          "cache_read": 0.04
-        }
-      },
       "google/gemini-flash-lite-latest": {
         "id": "google/gemini-flash-lite-latest",
         "name": "Gemini Flash Lite Latest",
@@ -29889,39 +30934,6 @@
           "output": 2.5,
           "cache_read": 0.03,
           "cache_write": 0.08333
-        }
-      },
-      "google/gemma-4-31b-it-isometry": {
-        "id": "google/gemma-4-31b-it-isometry",
-        "name": "Isometry",
-        "description": "Isometry is a multimodal Gemma 4 31B creative finetune for expressive dialogue, long-form storytelling, and roleplay.",
-        "family": "gemma",
-        "attachment": true,
-        "reasoning": true,
-        "reasoning_options": [],
-        "tool_call": true,
-        "structured_output": false,
-        "release_date": "2026-08-28",
-        "last_updated": "2026-08-28",
-        "modalities": {
-          "input": [
-            "text",
-            "image"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 262144,
-          "input": 262144,
-          "output": 32768
-        },
-        "cost": {
-          "input": 0.08,
-          "output": 0.33,
-          "cache_read": 0.04
         }
       },
       "google/gemini-3.1-pro-preview": {
@@ -30101,171 +31113,6 @@
           "cache_write": 0.083333
         }
       },
-      "google/gemma-4-26b-a4b-it-musica": {
-        "id": "google/gemma-4-26b-a4b-it-musica",
-        "name": "Musica",
-        "description": "Musica is a Gemma 4 26B A4B multimodal mixture-of-experts fine-tune for creative writing, expressive dialogue, and roleplay.",
-        "family": "gemma",
-        "attachment": true,
-        "reasoning": true,
-        "reasoning_options": [],
-        "tool_call": true,
-        "structured_output": false,
-        "release_date": "2026-08-28",
-        "last_updated": "2026-08-28",
-        "modalities": {
-          "input": [
-            "text",
-            "image"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 262144,
-          "input": 262144,
-          "output": 32768
-        },
-        "cost": {
-          "input": 0.08,
-          "output": 0.33,
-          "cache_read": 0.04
-        }
-      },
-      "google/gemma-4-26b-a4b-it-opusdistill": {
-        "id": "google/gemma-4-26b-a4b-it-opusdistill",
-        "name": "Opus Distill",
-        "description": "Opus Distill is a Gemma 4 26B A4B multimodal mixture-of-experts fine-tune for creative writing, expressive dialogue, and roleplay.",
-        "family": "gemma",
-        "attachment": true,
-        "reasoning": true,
-        "reasoning_options": [],
-        "tool_call": true,
-        "structured_output": false,
-        "release_date": "2026-08-28",
-        "last_updated": "2026-08-28",
-        "modalities": {
-          "input": [
-            "text",
-            "image"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 262144,
-          "input": 262144,
-          "output": 32768
-        },
-        "cost": {
-          "input": 0.08,
-          "output": 0.33,
-          "cache_read": 0.04
-        }
-      },
-      "google/gemma-4-31b-it-darkidol": {
-        "id": "google/gemma-4-31b-it-darkidol",
-        "name": "DarkIdol",
-        "description": "DarkIdol is a multimodal Gemma 4 31B creative finetune for expressive dialogue, long-form storytelling, and roleplay.",
-        "family": "gemma",
-        "attachment": true,
-        "reasoning": true,
-        "reasoning_options": [],
-        "tool_call": true,
-        "structured_output": false,
-        "release_date": "2026-08-28",
-        "last_updated": "2026-08-28",
-        "modalities": {
-          "input": [
-            "text",
-            "image"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 262144,
-          "input": 262144,
-          "output": 32768
-        },
-        "cost": {
-          "input": 0.08,
-          "output": 0.33,
-          "cache_read": 0.04
-        }
-      },
-      "google/gemma-4-26b-a4b-uncensored:thinking": {
-        "id": "google/gemma-4-26b-a4b-uncensored:thinking",
-        "name": "Gemma 4 26B A4B Uncensored Thinking",
-        "description": "Gemma 4 26B A4B Uncensored with thinking enabled for more deliberate coding, multimodal analysis, tool use, and long-context problem solving.",
-        "family": "gemma",
-        "attachment": true,
-        "reasoning": true,
-        "reasoning_options": [],
-        "tool_call": true,
-        "structured_output": true,
-        "release_date": "2026-08-24",
-        "last_updated": "2026-08-24",
-        "modalities": {
-          "input": [
-            "text",
-            "image"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 262144,
-          "input": 262144,
-          "output": 32768
-        },
-        "cost": {
-          "input": 0.08,
-          "output": 0.33,
-          "cache_read": 0.04
-        }
-      },
-      "google/gemma-4-26b-a4b-it-shadowsiren": {
-        "id": "google/gemma-4-26b-a4b-it-shadowsiren",
-        "name": "Shadow Siren",
-        "description": "Shadow Siren is a Gemma 4 26B A4B multimodal mixture-of-experts fine-tune for creative writing, expressive dialogue, and roleplay.",
-        "family": "gemma",
-        "attachment": true,
-        "reasoning": true,
-        "reasoning_options": [],
-        "tool_call": true,
-        "structured_output": false,
-        "release_date": "2026-08-28",
-        "last_updated": "2026-08-28",
-        "modalities": {
-          "input": [
-            "text",
-            "image"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 262144,
-          "input": 262144,
-          "output": 32768
-        },
-        "cost": {
-          "input": 0.08,
-          "output": 0.33,
-          "cache_read": 0.04
-        }
-      },
       "google/gemini-flash-latest": {
         "id": "google/gemini-flash-latest",
         "name": "Gemini Flash Latest",
@@ -30313,39 +31160,6 @@
           "output": 1.875,
           "cache_read": 0.0375,
           "cache_write": 0.020833
-        }
-      },
-      "google/gemma-4-31b-it-novelist": {
-        "id": "google/gemma-4-31b-it-novelist",
-        "name": "Novelist",
-        "description": "Novelist is a multimodal Gemma 4 31B creative finetune for expressive dialogue, long-form storytelling, and roleplay.",
-        "family": "gemma",
-        "attachment": true,
-        "reasoning": true,
-        "reasoning_options": [],
-        "tool_call": true,
-        "structured_output": false,
-        "release_date": "2026-08-28",
-        "last_updated": "2026-08-28",
-        "modalities": {
-          "input": [
-            "text",
-            "image"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 262144,
-          "input": 262144,
-          "output": 32768
-        },
-        "cost": {
-          "input": 0.08,
-          "output": 0.33,
-          "cache_read": 0.04
         }
       },
       "google/gemini-3.5-flash": {
@@ -30490,39 +31304,6 @@
           "cache_read": 0.05
         }
       },
-      "google/gemma-4-26b-a4b-it-chimerax": {
-        "id": "google/gemma-4-26b-a4b-it-chimerax",
-        "name": "Chimera X",
-        "description": "Chimera X is a Gemma 4 26B A4B multimodal mixture-of-experts fine-tune for creative writing, expressive dialogue, and roleplay.",
-        "family": "gemma",
-        "attachment": true,
-        "reasoning": true,
-        "reasoning_options": [],
-        "tool_call": true,
-        "structured_output": false,
-        "release_date": "2026-08-28",
-        "last_updated": "2026-08-28",
-        "modalities": {
-          "input": [
-            "text",
-            "image"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 262144,
-          "input": 262144,
-          "output": 32768
-        },
-        "cost": {
-          "input": 0.08,
-          "output": 0.33,
-          "cache_read": 0.04
-        }
-      },
       "google/gemini-3.6-flash": {
         "id": "google/gemini-3.6-flash",
         "name": "Gemini 3.6 Flash",
@@ -30616,39 +31397,6 @@
           "cache_write": 0.375
         }
       },
-      "google/gemma-4-26b-a4b-uncensored": {
-        "id": "google/gemma-4-26b-a4b-uncensored",
-        "name": "Gemma 4 26B A4B Uncensored",
-        "description": "Gemma 4 26B A4B Uncensored is an NVFP4 open-weight multimodal mixture-of-experts model tuned for fewer refusals across chat, coding, tool use, and long-context work.",
-        "family": "gemma",
-        "attachment": true,
-        "reasoning": true,
-        "reasoning_options": [],
-        "tool_call": true,
-        "structured_output": true,
-        "release_date": "2026-08-22",
-        "last_updated": "2026-08-22",
-        "modalities": {
-          "input": [
-            "text",
-            "image"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 262144,
-          "input": 262144,
-          "output": 32768
-        },
-        "cost": {
-          "input": 0.08,
-          "output": 0.33,
-          "cache_read": 0.04
-        }
-      },
       "google/gemma-4-31b-it:thinking": {
         "id": "google/gemma-4-31b-it:thinking",
         "name": "Gemma 4 31B Thinking",
@@ -30681,71 +31429,6 @@
           "input": 0.1,
           "output": 0.35,
           "cache_read": 0.05
-        }
-      },
-      "google/gemma-4-31b-it-fabled": {
-        "id": "google/gemma-4-31b-it-fabled",
-        "name": "Fabled",
-        "description": "Fabled is a multimodal Gemma 4 31B creative finetune for expressive dialogue, long-form storytelling, and roleplay.",
-        "family": "gemma",
-        "attachment": true,
-        "reasoning": true,
-        "reasoning_options": [],
-        "tool_call": true,
-        "structured_output": false,
-        "release_date": "2026-08-28",
-        "last_updated": "2026-08-28",
-        "modalities": {
-          "input": [
-            "text",
-            "image"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 262144,
-          "input": 262144,
-          "output": 32768
-        },
-        "cost": {
-          "input": 0.08,
-          "output": 0.33,
-          "cache_read": 0.04
-        }
-      },
-      "google/gemma-4-31b-it-gemsicle": {
-        "id": "google/gemma-4-31b-it-gemsicle",
-        "name": "Gemsicle",
-        "description": "Gemsicle is a multimodal Gemma 4 31B creative finetune for expressive dialogue, long-form storytelling, and roleplay.",
-        "family": "gemma",
-        "attachment": true,
-        "reasoning": false,
-        "tool_call": true,
-        "structured_output": false,
-        "release_date": "2026-08-29",
-        "last_updated": "2026-08-29",
-        "modalities": {
-          "input": [
-            "text",
-            "image"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 262144,
-          "input": 262144,
-          "output": 32768
-        },
-        "cost": {
-          "input": 0.08,
-          "output": 0.33,
-          "cache_read": 0.04
         }
       },
       "google/gemini-3.1-pro-preview-high": {
@@ -30781,39 +31464,6 @@
           "output": 12,
           "cache_read": 0.2,
           "cache_write": 0.375
-        }
-      },
-      "google/gemma-4-31b-it-garnet": {
-        "id": "google/gemma-4-31b-it-garnet",
-        "name": "Garnet",
-        "description": "Garnet is a multimodal Gemma 4 31B creative finetune for expressive dialogue, long-form storytelling, and roleplay.",
-        "family": "gemma",
-        "attachment": true,
-        "reasoning": true,
-        "reasoning_options": [],
-        "tool_call": true,
-        "structured_output": false,
-        "release_date": "2026-08-28",
-        "last_updated": "2026-08-28",
-        "modalities": {
-          "input": [
-            "text",
-            "image"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 262144,
-          "input": 262144,
-          "output": 32768
-        },
-        "cost": {
-          "input": 0.08,
-          "output": 0.33,
-          "cache_read": 0.04
         }
       },
       "google/gemini-3-flash-preview": {
@@ -30860,39 +31510,6 @@
           "input": 0.5,
           "output": 3,
           "cache_read": 0.05
-        }
-      },
-      "google/gemma-4-26b-a4b-it-darksoul": {
-        "id": "google/gemma-4-26b-a4b-it-darksoul",
-        "name": "Dark Soul",
-        "description": "Dark Soul is a Gemma 4 26B A4B multimodal mixture-of-experts fine-tune for creative writing, expressive dialogue, and roleplay.",
-        "family": "gemma",
-        "attachment": true,
-        "reasoning": true,
-        "reasoning_options": [],
-        "tool_call": true,
-        "structured_output": false,
-        "release_date": "2026-08-28",
-        "last_updated": "2026-08-28",
-        "modalities": {
-          "input": [
-            "text",
-            "image"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 262144,
-          "input": 262144,
-          "output": 32768
-        },
-        "cost": {
-          "input": 0.08,
-          "output": 0.33,
-          "cache_read": 0.04
         }
       },
       "google/gemini-3.7-flash": {
@@ -30942,39 +31559,6 @@
           "output": 1.875,
           "cache_read": 0.0375,
           "cache_write": 0.020833
-        }
-      },
-      "google/gemma-4-31b-it-gembrain": {
-        "id": "google/gemma-4-31b-it-gembrain",
-        "name": "Gembrain",
-        "description": "Gembrain is a multimodal Gemma 4 31B creative finetune for expressive dialogue, long-form storytelling, and roleplay.",
-        "family": "gemma",
-        "attachment": true,
-        "reasoning": true,
-        "reasoning_options": [],
-        "tool_call": true,
-        "structured_output": false,
-        "release_date": "2026-08-28",
-        "last_updated": "2026-08-28",
-        "modalities": {
-          "input": [
-            "text",
-            "image"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 262144,
-          "input": 262144,
-          "output": 32768
-        },
-        "cost": {
-          "input": 0.08,
-          "output": 0.33,
-          "cache_read": 0.04
         }
       },
       "meta/muse-glimmer-30b": {
@@ -31842,9 +32426,9 @@
           "output": 1048576
         },
         "cost": {
-          "input": 2.5,
-          "output": 13.5,
-          "cache_read": 0.25
+          "input": 2,
+          "output": 10,
+          "cache_read": 0.2
         }
       },
       "moonshotai/kimi-latest": {
@@ -31885,9 +32469,9 @@
           "output": 1048576
         },
         "cost": {
-          "input": 2.5,
-          "output": 13.5,
-          "cache_read": 0.25
+          "input": 2,
+          "output": 10,
+          "cache_read": 0.2
         }
       },
       "moonshotai/kimi-k2-instruct": {
@@ -36633,70 +37217,6 @@
           "cache_read": 0.2465
         }
       },
-      "dmind/dmind-1-mini": {
-        "id": "dmind/dmind-1-mini",
-        "name": "DMind-1-Mini",
-        "description": "Compact GPT model for low-latency assistance and high-volume workloads",
-        "family": "gpt",
-        "attachment": false,
-        "reasoning": false,
-        "tool_call": false,
-        "structured_output": false,
-        "release_date": "2024-01-01",
-        "last_updated": "2025-06-01",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": false,
-        "limit": {
-          "context": 32768,
-          "input": 32768,
-          "output": 8192
-        },
-        "cost": {
-          "input": 0.2,
-          "output": 0.4,
-          "cache_read": 0.1
-        }
-      },
-      "ornith-ai/ornith-1.5-397b": {
-        "id": "ornith-ai/ornith-1.5-397b",
-        "name": "Ornith 1.5 397B",
-        "description": "Ornith 1.5 397B is an open-weight mixture-of-experts model built for agentic coding, tool use, image understanding, and long-context workflows. This variant disables thinking for faster direct responses.",
-        "family": "ornith",
-        "attachment": true,
-        "reasoning": true,
-        "reasoning_options": [],
-        "tool_call": true,
-        "structured_output": true,
-        "release_date": "2026-08-24",
-        "last_updated": "2026-08-24",
-        "modalities": {
-          "input": [
-            "text",
-            "image"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 262144,
-          "input": 262144,
-          "output": 32768
-        },
-        "cost": {
-          "input": 0.9,
-          "output": 3.6,
-          "cache_read": 0.045
-        }
-      },
       "ornith-ai/ornith-1.5-35b-a3b": {
         "id": "ornith-ai/ornith-1.5-35b-a3b",
         "name": "Ornith 1.5 35B",
@@ -36707,7 +37227,7 @@
         "reasoning_options": [],
         "tool_call": true,
         "structured_output": true,
-        "release_date": "2026-08-20",
+        "release_date": "2026-07-29",
         "last_updated": "2026-08-20",
         "modalities": {
           "input": [
@@ -36740,7 +37260,7 @@
         "reasoning_options": [],
         "tool_call": true,
         "structured_output": true,
-        "release_date": "2026-08-20",
+        "release_date": "2026-07-29",
         "last_updated": "2026-08-20",
         "modalities": {
           "input": [
@@ -36773,7 +37293,7 @@
         "reasoning_options": [],
         "tool_call": true,
         "structured_output": true,
-        "release_date": "2026-08-24",
+        "release_date": "2026-07-29",
         "last_updated": "2026-08-24",
         "modalities": {
           "input": [
@@ -36806,7 +37326,7 @@
         "reasoning_options": [],
         "tool_call": true,
         "structured_output": true,
-        "release_date": "2026-08-23",
+        "release_date": "2026-07-29",
         "last_updated": "2026-08-23",
         "modalities": {
           "input": [
@@ -36827,39 +37347,6 @@
           "input": 0.05,
           "output": 0.1,
           "cache_read": 0.025
-        }
-      },
-      "ornith-ai/ornith-1.5-397b:thinking": {
-        "id": "ornith-ai/ornith-1.5-397b:thinking",
-        "name": "Ornith 1.5 397B Thinking",
-        "description": "Ornith 1.5 397B with thinking enabled for deeper agentic coding, reasoning, tool use, image understanding, and long-context workflows.",
-        "family": "ornith",
-        "attachment": true,
-        "reasoning": true,
-        "reasoning_options": [],
-        "tool_call": true,
-        "structured_output": true,
-        "release_date": "2026-08-24",
-        "last_updated": "2026-08-24",
-        "modalities": {
-          "input": [
-            "text",
-            "image"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 262144,
-          "input": 262144,
-          "output": 32768
-        },
-        "cost": {
-          "input": 0.9,
-          "output": 3.6,
-          "cache_read": 0.045
         }
       },
       "shisa-ai/shisa-v2.1-llama3.3-70b": {
@@ -37321,7 +37808,7 @@
         "reasoning_options": [],
         "tool_call": true,
         "structured_output": true,
-        "release_date": "2026-08-24",
+        "release_date": "2026-07-29",
         "last_updated": "2026-08-24",
         "modalities": {
           "input": [
@@ -37388,7 +37875,7 @@
         "reasoning_options": [],
         "tool_call": true,
         "structured_output": false,
-        "release_date": "2026-08-28",
+        "release_date": "2026-07-29",
         "last_updated": "2026-08-28",
         "modalities": {
           "input": [
@@ -37664,7 +38151,7 @@
         "reasoning_options": [],
         "tool_call": true,
         "structured_output": true,
-        "release_date": "2026-08-25",
+        "release_date": "2026-07-29",
         "last_updated": "2026-08-25",
         "modalities": {
           "input": [
@@ -37761,7 +38248,7 @@
         "reasoning_options": [],
         "tool_call": true,
         "structured_output": true,
-        "release_date": "2026-08-21",
+        "release_date": "2026-07-29",
         "last_updated": "2026-08-21",
         "modalities": {
           "input": [
@@ -38105,7 +38592,7 @@
         "reasoning_options": [],
         "tool_call": true,
         "structured_output": true,
-        "release_date": "2026-08-21",
+        "release_date": "2026-07-29",
         "last_updated": "2026-08-21",
         "modalities": {
           "input": [
@@ -38172,7 +38659,7 @@
         "reasoning_options": [],
         "tool_call": true,
         "structured_output": true,
-        "release_date": "2026-08-24",
+        "release_date": "2026-07-29",
         "last_updated": "2026-08-24",
         "modalities": {
           "input": [
@@ -38205,7 +38692,7 @@
         "reasoning_options": [],
         "tool_call": true,
         "structured_output": true,
-        "release_date": "2026-08-24",
+        "release_date": "2026-07-29",
         "last_updated": "2026-08-24",
         "modalities": {
           "input": [
@@ -39181,1043 +39668,6 @@
           "cache_read": 0.2465
         }
       },
-      "zai-org/glm-5.3:thinking": {
-        "id": "zai-org/glm-5.3:thinking",
-        "name": "GLM 5.3 Preview Thinking",
-        "description": "Flagship GLM model for long-horizon coding, agents, and complex project delivery",
-        "family": "glm",
-        "attachment": false,
-        "reasoning": true,
-        "reasoning_options": [
-          {
-            "type": "effort",
-            "values": [
-              "high",
-              "max"
-            ]
-          }
-        ],
-        "tool_call": true,
-        "structured_output": true,
-        "temperature": true,
-        "release_date": "2026-08-14",
-        "last_updated": "2026-08-14",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": false,
-        "limit": {
-          "context": 1048576,
-          "input": 1048576,
-          "output": 131072
-        },
-        "cost": {
-          "input": 1,
-          "output": 3.2,
-          "cache_read": 0.2
-        }
-      },
-      "zai-org/glm-5-original:thinking": {
-        "id": "zai-org/glm-5-original:thinking",
-        "name": "GLM 5 Original Thinking",
-        "description": "Flagship GLM model for hybrid reasoning, coding, and agentic engineering",
-        "family": "glm",
-        "attachment": false,
-        "reasoning": true,
-        "reasoning_options": [],
-        "tool_call": true,
-        "structured_output": true,
-        "release_date": "2026-02-11",
-        "last_updated": "2026-02-11",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 200000,
-          "input": 200000,
-          "output": 128000
-        },
-        "cost": {
-          "input": 1,
-          "output": 3.2,
-          "cache_read": 0.2
-        }
-      },
-      "zai-org/glm-4.7-flash:thinking": {
-        "id": "zai-org/glm-4.7-flash:thinking",
-        "name": "GLM 4.7 Flash Thinking",
-        "description": "Budget GLM lane for fast coding help, routing, and everyday automation",
-        "family": "glm-flash",
-        "attachment": false,
-        "reasoning": true,
-        "reasoning_options": [],
-        "tool_call": true,
-        "structured_output": false,
-        "temperature": true,
-        "knowledge": "2025-04",
-        "release_date": "2026-01-19",
-        "last_updated": "2026-01-19",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 200000,
-          "input": 200000,
-          "output": 128000
-        },
-        "cost": {
-          "input": 0.07,
-          "output": 0.4,
-          "cache_read": 0.035
-        }
-      },
-      "zai-org/GLM-4.5-Air:thinking": {
-        "id": "zai-org/GLM-4.5-Air:thinking",
-        "name": "GLM 4.5 Air (Thinking)",
-        "description": "Lighter GLM-4.5 variant for fast coding assistance and cheaper agents",
-        "family": "glm-air",
-        "attachment": false,
-        "reasoning": true,
-        "reasoning_options": [],
-        "tool_call": true,
-        "structured_output": true,
-        "temperature": true,
-        "knowledge": "2025-04",
-        "release_date": "2025-07-28",
-        "last_updated": "2025-07-28",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 128000,
-          "input": 128000,
-          "output": 98304
-        },
-        "cost": {
-          "input": 0.12,
-          "output": 0.8,
-          "cache_read": 0.06
-        }
-      },
-      "zai-org/glm-5.1:thinking": {
-        "id": "zai-org/glm-5.1:thinking",
-        "name": "GLM 5.1 Thinking",
-        "description": "Strong GLM coding model for agentic engineering, terminals, and repository generation",
-        "family": "glm",
-        "attachment": false,
-        "reasoning": true,
-        "reasoning_options": [
-          {
-            "type": "effort",
-            "values": [
-              "none",
-              "high"
-            ]
-          }
-        ],
-        "tool_call": true,
-        "structured_output": true,
-        "temperature": true,
-        "release_date": "2026-04-07",
-        "last_updated": "2026-04-07",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 200000,
-          "input": 200000,
-          "output": 131072
-        },
-        "cost": {
-          "input": 0.75,
-          "output": 2.6,
-          "cache_read": 0.15
-        }
-      },
-      "zai-org/glm-4.7": {
-        "id": "zai-org/glm-4.7",
-        "name": "GLM 4.7",
-        "description": "Mature GLM model for dependable coding, reasoning, and structured agent tasks",
-        "family": "glm",
-        "attachment": false,
-        "reasoning": true,
-        "reasoning_options": [
-          {
-            "type": "toggle"
-          }
-        ],
-        "tool_call": true,
-        "structured_output": true,
-        "temperature": true,
-        "knowledge": "2025-04",
-        "release_date": "2025-12-22",
-        "last_updated": "2025-12-22",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 200000,
-          "input": 200000,
-          "output": 65535
-        },
-        "cost": {
-          "input": 0.2,
-          "output": 0.8,
-          "cache_read": 0.1
-        }
-      },
-      "zai-org/glm-4.6v-original": {
-        "id": "zai-org/glm-4.6v-original",
-        "name": "GLM 4.6V Original",
-        "description": "GLM vision model for visual reasoning, documents, and multimodal agents",
-        "family": "glm",
-        "attachment": true,
-        "reasoning": false,
-        "tool_call": false,
-        "structured_output": false,
-        "release_date": "2025-12-08",
-        "last_updated": "2025-12-08",
-        "modalities": {
-          "input": [
-            "text",
-            "image"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 128000,
-          "input": 128000,
-          "output": 24000
-        },
-        "cost": {
-          "input": 0.6,
-          "output": 0.9,
-          "cache_read": 0.3
-        }
-      },
-      "zai-org/GLM-4.6-turbo": {
-        "id": "zai-org/GLM-4.6-turbo",
-        "name": "GLM 4.6 Turbo",
-        "description": "Efficient GLM model for fast reasoning, coding, and agent workflows",
-        "family": "glm",
-        "attachment": false,
-        "reasoning": false,
-        "tool_call": false,
-        "structured_output": false,
-        "release_date": "2025-10-02",
-        "last_updated": "2025-10-02",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 200000,
-          "input": 200000,
-          "output": 204800
-        },
-        "cost": {
-          "input": 1,
-          "output": 3,
-          "cache_read": 0.5
-        }
-      },
-      "zai-org/glm-5:thinking": {
-        "id": "zai-org/glm-5:thinking",
-        "name": "GLM 5 Thinking",
-        "description": "General GLM flagship for coding, analysis, and tool-heavy engineering workflows",
-        "family": "glm",
-        "attachment": false,
-        "reasoning": true,
-        "reasoning_options": [],
-        "tool_call": true,
-        "structured_output": true,
-        "temperature": true,
-        "release_date": "2026-02-12",
-        "last_updated": "2026-02-12",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 200000,
-          "input": 200000,
-          "output": 128000
-        },
-        "cost": {
-          "input": 0.5,
-          "output": 2.55,
-          "cache_read": 0.13
-        }
-      },
-      "zai-org/glm-4.6v-flash-original": {
-        "id": "zai-org/glm-4.6v-flash-original",
-        "name": "GLM 4.6V Flash",
-        "description": "GLM vision model for visual reasoning, documents, and multimodal agents",
-        "family": "glm",
-        "attachment": true,
-        "reasoning": false,
-        "tool_call": false,
-        "structured_output": false,
-        "release_date": "2025-12-08",
-        "last_updated": "2025-12-08",
-        "modalities": {
-          "input": [
-            "text",
-            "image"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 128000,
-          "input": 128000,
-          "output": 24000
-        },
-        "cost": {
-          "input": 0.1,
-          "output": 0.4,
-          "cache_read": 0.05
-        }
-      },
-      "zai-org/glm-4.7:thinking": {
-        "id": "zai-org/glm-4.7:thinking",
-        "name": "GLM 4.7 Thinking",
-        "description": "Mature GLM model for dependable coding, reasoning, and structured agent tasks",
-        "family": "glm",
-        "attachment": false,
-        "reasoning": true,
-        "reasoning_options": [],
-        "tool_call": true,
-        "structured_output": true,
-        "temperature": true,
-        "knowledge": "2025-04",
-        "release_date": "2025-12-22",
-        "last_updated": "2025-12-22",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 200000,
-          "input": 200000,
-          "output": 65535
-        },
-        "cost": {
-          "input": 0.2,
-          "output": 0.8,
-          "cache_read": 0.1
-        }
-      },
-      "zai-org/GLM-4.5-Air": {
-        "id": "zai-org/GLM-4.5-Air",
-        "name": "GLM 4.5 Air",
-        "description": "Lighter GLM-4.5 variant for fast coding assistance and cheaper agents",
-        "family": "glm-air",
-        "attachment": false,
-        "reasoning": false,
-        "tool_call": true,
-        "structured_output": true,
-        "temperature": true,
-        "knowledge": "2025-04",
-        "release_date": "2025-07-28",
-        "last_updated": "2025-07-28",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 128000,
-          "input": 128000,
-          "output": 98304
-        },
-        "cost": {
-          "input": 0.12,
-          "output": 0.8,
-          "cache_read": 0.06
-        }
-      },
-      "zai-org/glm-5": {
-        "id": "zai-org/glm-5",
-        "name": "GLM 5",
-        "description": "General GLM flagship for coding, analysis, and tool-heavy engineering workflows",
-        "family": "glm",
-        "attachment": false,
-        "reasoning": true,
-        "reasoning_options": [
-          {
-            "type": "toggle"
-          }
-        ],
-        "tool_call": true,
-        "structured_output": true,
-        "temperature": true,
-        "release_date": "2026-02-12",
-        "last_updated": "2026-02-12",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 200000,
-          "input": 200000,
-          "output": 128000
-        },
-        "cost": {
-          "input": 0.5,
-          "output": 2.55,
-          "cache_read": 0.13
-        }
-      },
-      "zai-org/glm-4.7-flash-original": {
-        "id": "zai-org/glm-4.7-flash-original",
-        "name": "GLM 4.7 Flash Original",
-        "description": "Efficient GLM model for fast reasoning, coding, and agent workflows",
-        "family": "glm",
-        "attachment": false,
-        "reasoning": true,
-        "reasoning_options": [
-          {
-            "type": "toggle"
-          }
-        ],
-        "tool_call": true,
-        "structured_output": true,
-        "release_date": "2026-01-19",
-        "last_updated": "2026-01-19",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 200000,
-          "input": 200000,
-          "output": 128000
-        },
-        "cost": {
-          "input": 0.07,
-          "output": 0.4,
-          "cache_read": 0.035
-        }
-      },
-      "zai-org/glm-latest": {
-        "id": "zai-org/glm-latest",
-        "name": "GLM Latest",
-        "description": "Flagship GLM model for hybrid reasoning, coding, and agentic engineering",
-        "family": "glm",
-        "attachment": false,
-        "reasoning": true,
-        "reasoning_options": [
-          {
-            "type": "effort",
-            "values": [
-              "high",
-              "xhigh"
-            ]
-          }
-        ],
-        "tool_call": true,
-        "structured_output": true,
-        "release_date": "2026-05-03",
-        "last_updated": "2026-05-03",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 1048576,
-          "input": 1048576,
-          "output": 131072
-        },
-        "cost": {
-          "input": 0.42,
-          "output": 1.32,
-          "cache_read": 0.078
-        }
-      },
-      "zai-org/glm-5.3": {
-        "id": "zai-org/glm-5.3",
-        "name": "GLM 5.3 Preview",
-        "description": "Flagship GLM model for long-horizon coding, agents, and complex project delivery",
-        "family": "glm",
-        "attachment": false,
-        "reasoning": true,
-        "reasoning_options": [
-          {
-            "type": "effort",
-            "values": [
-              "low",
-              "high",
-              "max"
-            ]
-          }
-        ],
-        "tool_call": true,
-        "structured_output": true,
-        "temperature": true,
-        "release_date": "2026-08-14",
-        "last_updated": "2026-08-14",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": false,
-        "limit": {
-          "context": 1048576,
-          "input": 1048576,
-          "output": 131072
-        },
-        "cost": {
-          "input": 1,
-          "output": 3.2,
-          "cache_read": 0.2
-        }
-      },
-      "zai-org/glm-4.7-flash-original:thinking": {
-        "id": "zai-org/glm-4.7-flash-original:thinking",
-        "name": "GLM 4.7 Flash Original Thinking",
-        "description": "Efficient GLM model for fast reasoning, coding, and agent workflows",
-        "family": "glm",
-        "attachment": false,
-        "reasoning": true,
-        "reasoning_options": [],
-        "tool_call": true,
-        "structured_output": false,
-        "release_date": "2026-01-19",
-        "last_updated": "2026-01-19",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 200000,
-          "input": 200000,
-          "output": 128000
-        },
-        "cost": {
-          "input": 0.07,
-          "output": 0.4,
-          "cache_read": 0.035
-        }
-      },
-      "zai-org/glm-5.2": {
-        "id": "zai-org/glm-5.2",
-        "name": "GLM 5.2",
-        "description": "Open flagship GLM for long-horizon coding agents and million-token context work",
-        "family": "glm",
-        "attachment": false,
-        "reasoning": true,
-        "reasoning_options": [
-          {
-            "type": "effort",
-            "values": [
-              "none",
-              "high",
-              "max"
-            ]
-          }
-        ],
-        "tool_call": true,
-        "structured_output": true,
-        "temperature": true,
-        "release_date": "2026-06-13",
-        "last_updated": "2026-06-13",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 1048576,
-          "input": 1048576,
-          "output": 131072
-        },
-        "cost": {
-          "input": 0.42,
-          "output": 1.32,
-          "cache_read": 0.078
-        }
-      },
-      "zai-org/glm-4.6v": {
-        "id": "zai-org/glm-4.6v",
-        "name": "GLM 4.6V",
-        "description": "GLM vision model for visual reasoning, documents, and multimodal agents",
-        "family": "glm",
-        "attachment": true,
-        "reasoning": false,
-        "tool_call": false,
-        "structured_output": false,
-        "temperature": true,
-        "knowledge": "2025-04",
-        "release_date": "2025-12-08",
-        "last_updated": "2025-12-08",
-        "modalities": {
-          "input": [
-            "text",
-            "image"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 128000,
-          "input": 128000,
-          "output": 24000
-        },
-        "cost": {
-          "input": 0.3,
-          "output": 0.9,
-          "cache_read": 0.15
-        }
-      },
-      "zai-org/GLM-4.5:thinking": {
-        "id": "zai-org/GLM-4.5:thinking",
-        "name": "GLM 4.5 (Thinking)",
-        "description": "Hybrid-reasoning GLM release that made the 4.5 line broadly useful",
-        "family": "glm",
-        "attachment": false,
-        "reasoning": true,
-        "reasoning_options": [],
-        "tool_call": false,
-        "structured_output": false,
-        "temperature": true,
-        "knowledge": "2025-04",
-        "release_date": "2025-07-28",
-        "last_updated": "2025-07-28",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 128000,
-          "input": 128000,
-          "output": 65536
-        },
-        "cost": {
-          "input": 0.3,
-          "output": 1.3,
-          "cache_read": 0.15
-        }
-      },
-      "zai-org/glm-4.6-original": {
-        "id": "zai-org/glm-4.6-original",
-        "name": "GLM 4.6 Original",
-        "description": "Flagship GLM model for hybrid reasoning, coding, and agentic engineering",
-        "family": "glm",
-        "attachment": false,
-        "reasoning": true,
-        "reasoning_options": [
-          {
-            "type": "toggle"
-          }
-        ],
-        "tool_call": true,
-        "structured_output": false,
-        "release_date": "2025-12-11",
-        "last_updated": "2025-12-11",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 256000,
-          "input": 256000,
-          "output": 65535
-        },
-        "cost": {
-          "input": 0.35,
-          "output": 1.4,
-          "cache_read": 0.175
-        }
-      },
-      "zai-org/glm-5-original": {
-        "id": "zai-org/glm-5-original",
-        "name": "GLM 5 Original",
-        "description": "Flagship GLM model for hybrid reasoning, coding, and agentic engineering",
-        "family": "glm",
-        "attachment": false,
-        "reasoning": true,
-        "reasoning_options": [
-          {
-            "type": "toggle"
-          }
-        ],
-        "tool_call": true,
-        "structured_output": true,
-        "release_date": "2026-02-11",
-        "last_updated": "2026-02-11",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 200000,
-          "input": 200000,
-          "output": 128000
-        },
-        "cost": {
-          "input": 1,
-          "output": 3.2,
-          "cache_read": 0.2
-        }
-      },
-      "zai-org/GLM-4.6-turbo:thinking": {
-        "id": "zai-org/GLM-4.6-turbo:thinking",
-        "name": "GLM 4.6 Turbo (Thinking)",
-        "description": "Efficient GLM model for fast reasoning, coding, and agent workflows",
-        "family": "glm",
-        "attachment": false,
-        "reasoning": true,
-        "reasoning_options": [],
-        "tool_call": false,
-        "structured_output": false,
-        "release_date": "2025-10-02",
-        "last_updated": "2025-10-02",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 200000,
-          "input": 200000,
-          "output": 204800
-        },
-        "cost": {
-          "input": 1,
-          "output": 3,
-          "cache_read": 0.5
-        }
-      },
-      "zai-org/glm-5.1": {
-        "id": "zai-org/glm-5.1",
-        "name": "GLM 5.1",
-        "description": "Strong GLM coding model for agentic engineering, terminals, and repository generation",
-        "family": "glm",
-        "attachment": false,
-        "reasoning": true,
-        "reasoning_options": [
-          {
-            "type": "effort",
-            "values": [
-              "none",
-              "high"
-            ]
-          }
-        ],
-        "tool_call": true,
-        "structured_output": true,
-        "temperature": true,
-        "release_date": "2026-04-07",
-        "last_updated": "2026-04-07",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 200000,
-          "input": 200000,
-          "output": 131072
-        },
-        "cost": {
-          "input": 0.75,
-          "output": 2.6,
-          "cache_read": 0.15
-        }
-      },
-      "zai-org/glm-5.2:thinking": {
-        "id": "zai-org/glm-5.2:thinking",
-        "name": "GLM 5.2 Thinking",
-        "description": "Open flagship GLM for long-horizon coding agents and million-token context work",
-        "family": "glm",
-        "attachment": false,
-        "reasoning": true,
-        "reasoning_options": [
-          {
-            "type": "effort",
-            "values": [
-              "high",
-              "max"
-            ]
-          }
-        ],
-        "tool_call": true,
-        "structured_output": true,
-        "temperature": true,
-        "release_date": "2026-06-13",
-        "last_updated": "2026-06-13",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 1048576,
-          "input": 1048576,
-          "output": 131072
-        },
-        "cost": {
-          "input": 0.42,
-          "output": 1.32,
-          "cache_read": 0.078
-        }
-      },
-      "zai-org/glm-4.7-original": {
-        "id": "zai-org/glm-4.7-original",
-        "name": "GLM 4.7 Original",
-        "description": "Flagship GLM model for hybrid reasoning, coding, and agentic engineering",
-        "family": "glm",
-        "attachment": false,
-        "reasoning": true,
-        "reasoning_options": [
-          {
-            "type": "toggle"
-          }
-        ],
-        "tool_call": true,
-        "structured_output": true,
-        "release_date": "2025-12-22",
-        "last_updated": "2025-12-22",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 200000,
-          "input": 200000,
-          "output": 65535
-        },
-        "cost": {
-          "input": 0.6,
-          "output": 2.2,
-          "cache_read": 0.11
-        }
-      },
-      "zai-org/glm-4.7-flash": {
-        "id": "zai-org/glm-4.7-flash",
-        "name": "GLM 4.7 Flash",
-        "description": "Budget GLM lane for fast coding help, routing, and everyday automation",
-        "family": "glm-flash",
-        "attachment": false,
-        "reasoning": true,
-        "reasoning_options": [
-          {
-            "type": "toggle"
-          }
-        ],
-        "tool_call": true,
-        "structured_output": true,
-        "temperature": true,
-        "knowledge": "2025-04",
-        "release_date": "2026-01-19",
-        "last_updated": "2026-01-19",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 200000,
-          "input": 200000,
-          "output": 128000
-        },
-        "cost": {
-          "input": 0.07,
-          "output": 0.4,
-          "cache_read": 0.035
-        }
-      },
-      "zai-org/glm-4.7-original:thinking": {
-        "id": "zai-org/glm-4.7-original:thinking",
-        "name": "GLM 4.7 Original Thinking",
-        "description": "Flagship GLM model for hybrid reasoning, coding, and agentic engineering",
-        "family": "glm",
-        "attachment": false,
-        "reasoning": true,
-        "reasoning_options": [],
-        "tool_call": true,
-        "structured_output": true,
-        "release_date": "2025-12-22",
-        "last_updated": "2025-12-22",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 200000,
-          "input": 200000,
-          "output": 65535
-        },
-        "cost": {
-          "input": 0.6,
-          "output": 2.2,
-          "cache_read": 0.11
-        }
-      },
-      "zai-org/glm-4.5": {
-        "id": "zai-org/glm-4.5",
-        "name": "GLM 4.5",
-        "description": "Hybrid-reasoning GLM release that made the 4.5 line broadly useful",
-        "family": "glm",
-        "attachment": false,
-        "reasoning": false,
-        "tool_call": false,
-        "structured_output": false,
-        "temperature": true,
-        "knowledge": "2025-04",
-        "release_date": "2025-07-28",
-        "last_updated": "2025-07-28",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 128000,
-          "input": 128000,
-          "output": 65536
-        },
-        "cost": {
-          "input": 0.3,
-          "output": 1.3,
-          "cache_read": 0.15
-        }
-      },
       "Gryphe/MythoMax-L2-13b": {
         "id": "Gryphe/MythoMax-L2-13b",
         "name": "MythoMax 13B",
@@ -40467,37 +39917,6 @@
           "input": 0.4,
           "output": 1.8,
           "cache_read": 0.2
-        }
-      },
-      "inflection/inflection-3-productivity": {
-        "id": "inflection/inflection-3-productivity",
-        "name": "Inflection 3 Productivity",
-        "description": "GPT model for general reasoning, writing, coding, and tool-assisted tasks",
-        "family": "gpt",
-        "attachment": false,
-        "reasoning": false,
-        "tool_call": false,
-        "structured_output": false,
-        "release_date": "2025-11-21",
-        "last_updated": "2024-10-11",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": false,
-        "limit": {
-          "context": 8000,
-          "input": 8000,
-          "output": 4096
-        },
-        "cost": {
-          "input": 2.499,
-          "output": 9.996,
-          "cache_read": 1.2495
         }
       },
       "inclusionai/ling-3.0-flash": {
@@ -43840,6 +43259,51 @@
           "input": 0.6,
           "output": 1.2,
           "cache_read": 0.6
+        }
+      },
+      "hf:zai-org/GLM-5.3-Flash": {
+        "id": "hf:zai-org/GLM-5.3-Flash",
+        "name": "GLM-5.3-Flash",
+        "description": "Native multimodal GLM model for efficient coding and long-horizon agent tasks",
+        "family": "glm",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "high",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "interleaved": {
+          "field": "reasoning_content"
+        },
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2026-08-26",
+        "last_updated": "2026-08-26",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 524288,
+          "output": 65536
+        },
+        "cost": {
+          "input": 0.15,
+          "output": 0.5,
+          "cache_read": 0.04
         }
       },
       "hf:zai-org/GLM-5.2": {
@@ -65434,12 +64898,12 @@
         "open_weights": true,
         "limit": {
           "context": 204800,
-          "output": 182476
+          "output": 128000
         },
         "cost": {
-          "input": 1.26,
-          "output": 3.96,
-          "cache_read": 0.234
+          "input": 0.966,
+          "output": 3.036,
+          "cache_read": 0.1794
         }
       },
       "z-ai/glm-4.7-flash": {
@@ -65673,9 +65137,9 @@
           "output": 384000
         },
         "cost": {
-          "input": 0.08372,
-          "output": 0.16744,
-          "cache_read": 0.016744
+          "input": 0.0798,
+          "output": 0.1596,
+          "cache_read": 0.01596
         }
       },
       "deepseek/deepseek-v4-pro-0813": {
@@ -65764,9 +65228,9 @@
           "output": 384000
         },
         "cost": {
-          "input": 0.630054,
-          "output": 1.260108,
-          "cache_read": 0.052505
+          "input": 0.427344,
+          "output": 0.854688,
+          "cache_read": 0.035612
         }
       },
       "deepseek/deepseek-v3.2": {
@@ -66050,9 +65514,9 @@
           "output": 943718
         },
         "cost": {
-          "input": 0.045,
-          "output": 0.09,
-          "cache_read": 0.009
+          "input": 0.065,
+          "output": 0.18,
+          "cache_read": 0.016
         }
       },
       "deepseek/deepseek-v4-flash-vision-exp": {
@@ -66124,11 +65588,11 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 235929
+          "output": 80000
         },
         "cost": {
-          "input": 0.22,
-          "output": 0.85,
+          "input": 0.25,
+          "output": 0.8,
           "cache_read": 0.06
         }
       },
@@ -74348,12 +73812,11 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 235929
+          "output": 16384
         },
         "cost": {
-          "input": 0.1,
-          "output": 1.1,
-          "cache_read": 0.07
+          "input": 0.09,
+          "output": 1.1
         }
       },
       "qwen/qwen3.8-27b": {
@@ -75576,12 +75039,12 @@
         "open_weights": true,
         "limit": {
           "context": 1048576,
-          "output": 262144
+          "output": 471859
         },
         "cost": {
-          "input": 0.95,
+          "input": 1,
           "output": 4.05,
-          "cache_read": 0.16
+          "cache_read": 0.17
         }
       },
       "thinkingmachines/inkling-small:free": {
@@ -75695,12 +75158,12 @@
         "open_weights": false,
         "limit": {
           "context": 1310720,
-          "output": 131072
+          "output": 393216
         },
         "cost": {
           "input": 0.03,
-          "output": 0.1,
-          "cache_read": 0.007
+          "output": 0.16,
+          "cache_read": 0.01
         }
       },
       "inclusionai/ling-3.0-flash-fin:free": {
@@ -76954,12 +76417,12 @@
         "open_weights": false,
         "limit": {
           "context": 1310720,
-          "output": 943718
+          "output": 131072
         },
         "cost": {
-          "input": 1.2,
-          "output": 4,
-          "cache_read": 0.24
+          "input": 1.1875,
+          "output": 4.18,
+          "cache_read": 0.247
         }
       },
       "nex-agi/nex-n2-mini": {
@@ -79614,6 +79077,368 @@
           "output": 65536
         },
         "status": "beta"
+      }
+    }
+  },
+  "above": {
+    "id": "above",
+    "env": [
+      "ABOVE_API_KEY"
+    ],
+    "npm": "@ai-sdk/openai-compatible",
+    "api": "https://api.above.dev/v1",
+    "name": "above.dev",
+    "doc": "https://above.dev/docs",
+    "models": {
+      "mimo-v2.5-pro-ultraspeed": {
+        "id": "mimo-v2.5-pro-ultraspeed",
+        "name": "MiMo V2.5 Pro UltraSpeed",
+        "description": "MiMo pro model for strong multimodal reasoning and agent execution",
+        "family": "mimo",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "toggle"
+          }
+        ],
+        "tool_call": true,
+        "interleaved": {
+          "field": "reasoning_content"
+        },
+        "temperature": true,
+        "knowledge": "2024-12",
+        "release_date": "2026-06-08",
+        "last_updated": "2026-06-09",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 1048576,
+          "output": 131072
+        },
+        "cost": {
+          "input": 1.5231,
+          "output": 3.0462,
+          "cache_read": 0.0127
+        }
+      },
+      "deepseek-v4-flash": {
+        "id": "deepseek-v4-flash",
+        "name": "DeepSeek V4 Flash",
+        "description": "Official DeepSeek V4 Flash release with enhanced agentic capabilities and integrated DSpark speculative decoding",
+        "family": "deepseek-flash",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "toggle"
+          },
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "high",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "interleaved": {
+          "field": "reasoning_content"
+        },
+        "structured_output": true,
+        "temperature": true,
+        "knowledge": "2025-05",
+        "release_date": "2026-07-31",
+        "last_updated": "2026-07-31",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 1000000,
+          "output": 384000
+        },
+        "cost": {
+          "input": 0.242,
+          "output": 0.726,
+          "reasoning": 0.726,
+          "cache_read": 0.0077
+        }
+      },
+      "deepseek-v4-pro": {
+        "id": "deepseek-v4-pro",
+        "name": "DeepSeek V4 Pro",
+        "description": "DeepSeek V4 Pro snapshot with million-token context and support for thinking and non-thinking modes",
+        "family": "deepseek-thinking",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "toggle"
+          },
+          {
+            "type": "effort",
+            "values": [
+              "high",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "interleaved": {
+          "field": "reasoning_content"
+        },
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2026-08-12",
+        "last_updated": "2026-08-22",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 1000000,
+          "output": 384000
+        },
+        "cost": {
+          "input": 0.726,
+          "output": 2.178,
+          "reasoning": 2.178,
+          "cache_read": 0.0242
+        }
+      },
+      "glm-5.2-fast": {
+        "id": "glm-5.2-fast",
+        "name": "GLM 5.2 Fast",
+        "description": "Open flagship GLM for long-horizon coding agents and million-token context work",
+        "family": "glm",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "none",
+              "high",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "interleaved": {
+          "field": "reasoning_content"
+        },
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2026-06-13",
+        "last_updated": "2026-06-13",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 1000000,
+          "output": 131072
+        },
+        "cost": {
+          "input": 2.31,
+          "output": 7.26,
+          "cache_read": 0.231
+        }
+      },
+      "qwen3.8-max": {
+        "id": "qwen3.8-max",
+        "name": "Qwen 3.8 Max",
+        "description": "2.4-trillion-parameter MoE flagship for coding, professional work, multimodal understanding, and long-horizon agentic workflows",
+        "family": "qwen",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "toggle"
+          }
+        ],
+        "tool_call": true,
+        "interleaved": {
+          "field": "reasoning_content"
+        },
+        "temperature": true,
+        "release_date": "2026-08-03",
+        "last_updated": "2026-08-03",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1000000,
+          "output": 32768
+        },
+        "cost": {
+          "input": 2.2,
+          "output": 6.6,
+          "cache_read": 0.275
+        }
+      },
+      "glm-5.2": {
+        "id": "glm-5.2",
+        "name": "GLM 5.2",
+        "description": "Open flagship GLM for long-horizon coding agents and million-token context work",
+        "family": "glm",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "none",
+              "high",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "interleaved": {
+          "field": "reasoning_content"
+        },
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2026-06-13",
+        "last_updated": "2026-06-13",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 1000000,
+          "output": 131072
+        },
+        "cost": {
+          "input": 1.54,
+          "output": 4.84,
+          "cache_read": 0.154
+        }
+      },
+      "mimo-v2.5-pro": {
+        "id": "mimo-v2.5-pro",
+        "name": "MiMo V2.5 Pro",
+        "description": "Stronger MiMo Pro tier for multimodal reasoning and coding-agent execution",
+        "family": "mimo",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "toggle"
+          }
+        ],
+        "tool_call": true,
+        "interleaved": {
+          "field": "reasoning_content"
+        },
+        "temperature": true,
+        "knowledge": "2024-12",
+        "release_date": "2026-04-22",
+        "last_updated": "2026-04-22",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 1048576,
+          "output": 131072
+        },
+        "cost": {
+          "input": 0.5077,
+          "output": 1.0154,
+          "cache_read": 0.0042
+        }
+      },
+      "deepseek-v4-flash-vision-exp": {
+        "id": "deepseek-v4-flash-vision-exp",
+        "name": "DeepSeek V4 Flash Vision (Exp)",
+        "description": "Experimental multimodal DeepSeek V4 Flash model for image understanding, coding, and agentic work",
+        "family": "deepseek-flash",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "toggle"
+          },
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "high",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "interleaved": {
+          "field": "reasoning_content"
+        },
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2026-08-21",
+        "last_updated": "2026-08-21",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1000000,
+          "output": 384000
+        },
+        "cost": {
+          "input": 0.242,
+          "output": 0.726,
+          "reasoning": 0.726,
+          "cache_read": 0.0077
+        }
       }
     }
   },
@@ -104963,7 +104788,7 @@
       },
       "hy3": {
         "id": "hy3",
-        "name": "Hy3 (8x usage)",
+        "name": "Hy3",
         "description": "Tencent Hy reasoning model for coding, instruction following, and agent tasks",
         "family": "Hy",
         "attachment": false,
@@ -104996,9 +104821,9 @@
           "output": 64000
         },
         "cost": {
-          "input": 0.0175,
-          "output": 0.0725,
-          "cache_read": 0.004375
+          "input": 0.14,
+          "output": 0.58,
+          "cache_read": 0.035
         }
       },
       "muse-spark-1.2-contributor": {
@@ -118750,6 +118575,47 @@
           "output": 5.4461,
           "cache_read": 0.21,
           "cache_write": 2.5
+        }
+      },
+      "scx-ai-gp/glm-5.3": {
+        "id": "scx-ai-gp/glm-5.3",
+        "name": "GLM-5.3 (SCX.ai)",
+        "description": "Flagship GLM model for long-horizon coding, agents, and complex project delivery",
+        "family": "glm",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "high",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": false,
+        "temperature": true,
+        "release_date": "2026-08-14",
+        "last_updated": "2026-08-14",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1000000,
+          "output": 128000
+        },
+        "cost": {
+          "input": 1.3,
+          "output": 4,
+          "cache_read": 0.25
         }
       },
       "scx-ai-gp/glm-5.2": {
@@ -139699,6 +139565,95 @@
       }
     }
   },
+  "bothub": {
+    "id": "bothub",
+    "env": [
+      "BOTHUB_API_KEY"
+    ],
+    "npm": "@ai-sdk/openai-compatible",
+    "api": "https://openai.bothub.ru/v1",
+    "name": "Bothub",
+    "doc": "https://bothub.ru/models",
+    "models": {
+      "gemma-4-31b-it:free": {
+        "id": "gemma-4-31b-it:free",
+        "name": "Gemma 4 31B IT (free)",
+        "description": "Largest Gemma 4 instruction model for open, self-hosted chat and reasoning",
+        "family": "gemma",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "toggle"
+          }
+        ],
+        "tool_call": true,
+        "interleaved": true,
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2026-04-02",
+        "last_updated": "2026-04-02",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 262144,
+          "output": 32768
+        },
+        "cost": {
+          "input": 0,
+          "output": 0
+        }
+      },
+      "nemotron-3-ultra-550b-a55b:free": {
+        "id": "nemotron-3-ultra-550b-a55b:free",
+        "name": "Nemotron 3 Ultra (free)",
+        "description": "Largest Nemotron 3 model for maximum open-weight reasoning and agent accuracy",
+        "family": "nemotron",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "none",
+              "medium",
+              "high"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "interleaved": true,
+        "temperature": true,
+        "release_date": "2026-06-04",
+        "last_updated": "2026-06-04",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 1000000,
+          "output": 128000
+        },
+        "cost": {
+          "input": 0,
+          "output": 0
+        }
+      }
+    }
+  },
   "cloudflare-ai-gateway": {
     "id": "cloudflare-ai-gateway",
     "env": [
@@ -143947,6 +143902,47 @@
           "cache_read": 7.5
         }
       },
+      "glm-5.3": {
+        "id": "glm-5.3",
+        "name": "GLM5.3",
+        "description": "Flagship GLM model for long-horizon coding, agents, and complex project delivery",
+        "family": "glm",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "high",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2026-08-14",
+        "last_updated": "2026-08-14",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1048576,
+          "output": 1048576
+        },
+        "cost": {
+          "input": 1.4,
+          "output": 4.4,
+          "cache_read": 0.26
+        }
+      },
       "openai-o3-mini": {
         "id": "openai-o3-mini",
         "name": "OpenAI o3 mini",
@@ -146195,6 +146191,108 @@
       }
     }
   },
+  "klokintegration": {
+    "id": "klokintegration",
+    "env": [
+      "KLOKINTEGRATION_API_KEY"
+    ],
+    "npm": "@ai-sdk/openai-compatible",
+    "api": "https://api-gw.klok.ipaas.se/proxy/kloker-key/v1",
+    "name": "klokintegration.se",
+    "doc": "https://klokintegration.se/docs/ai-api",
+    "models": {
+      "Kloker-Integration-Architect": {
+        "id": "Kloker-Integration-Architect",
+        "name": "Kloker Integration Architect",
+        "description": "Knows the customer integration environment and Klok best practices. Opinionated about structure. The gateway runs ecosystem lookup tools server-side and appends a system-prompt injection (data contracts, CloudEvents, event-driven flows). Client system prompts and OpenAI tool calls are preserved.",
+        "attachment": false,
+        "reasoning": false,
+        "tool_call": true,
+        "structured_output": false,
+        "temperature": true,
+        "release_date": "2026-08-29",
+        "last_updated": "2026-08-29",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 200000,
+          "output": 50000
+        },
+        "status": "beta",
+        "cost": {
+          "input": 0.23,
+          "output": 1.16
+        }
+      },
+      "Kloker": {
+        "id": "Kloker",
+        "name": "Kloker",
+        "description": "Cheap general model with a clean context. Nothing from the customer environment is packed in. It tracks the current best open source model. The Klok team verifies it and upgrades it periodically.",
+        "attachment": false,
+        "reasoning": false,
+        "tool_call": true,
+        "structured_output": false,
+        "temperature": true,
+        "release_date": "2026-08-29",
+        "last_updated": "2026-08-29",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 200000,
+          "output": 50000
+        },
+        "status": "beta",
+        "cost": {
+          "input": 0.23,
+          "output": 1.16
+        }
+      },
+      "Kloker-Integration-Developer": {
+        "id": "Kloker-Integration-Developer",
+        "name": "Kloker Integration Developer",
+        "description": "Knows the customer integration environment and Klok best practices. Opinionated about implementation. The gateway runs ecosystem lookup tools server-side and appends a system-prompt injection. Client system prompts and OpenAI tool calls are preserved.",
+        "attachment": false,
+        "reasoning": false,
+        "tool_call": true,
+        "structured_output": false,
+        "temperature": true,
+        "release_date": "2026-08-29",
+        "last_updated": "2026-08-29",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 200000,
+          "output": 50000
+        },
+        "status": "beta",
+        "cost": {
+          "input": 0.23,
+          "output": 1.16
+        }
+      }
+    }
+  },
   "stepfun-ai-step-plan": {
     "id": "stepfun-ai-step-plan",
     "env": [
@@ -148272,6 +148370,61 @@
           "input": [
             "text",
             "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1000000,
+          "output": 131072
+        },
+        "cost": {
+          "input": 0,
+          "output": 0
+        }
+      }
+    }
+  },
+  "tokenrouter": {
+    "id": "tokenrouter",
+    "env": [
+      "TOKENROUTER_API_KEY"
+    ],
+    "npm": "@ai-sdk/openai-compatible",
+    "api": "https://api.tokenrouter.com/v1",
+    "name": "TokenRouter",
+    "doc": "https://www.tokenrouter.com/docs/tokenrouter-feature-guide/",
+    "models": {
+      "z-ai/glm-5.3-free": {
+        "id": "z-ai/glm-5.3-free",
+        "name": "GLM-5.3 (free)",
+        "description": "Flagship GLM model for long-horizon coding, agents, and complex project delivery",
+        "family": "glm",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "high",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "interleaved": {
+          "field": "reasoning_content"
+        },
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2026-08-14",
+        "last_updated": "2026-08-14",
+        "modalities": {
+          "input": [
+            "text"
           ],
           "output": [
             "text"
@@ -159301,6 +159454,45 @@
           "output": 65536
         }
       },
+      "glm-5.3": {
+        "id": "glm-5.3",
+        "name": "GLM-5.3",
+        "description": "Flagship GLM model for long-horizon coding, agents, and complex project delivery",
+        "family": "glm",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "high",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "interleaved": {
+          "field": "reasoning_content"
+        },
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2026-08-14",
+        "last_updated": "2026-08-14",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 1048576,
+          "output": 131072
+        }
+      },
       "kimi-k2.5": {
         "id": "kimi-k2.5",
         "name": "kimi-k2.5",
@@ -165900,6 +166092,50 @@
           "cache_read": 0.26
         }
       },
+      "zai-org/GLM-5.3": {
+        "id": "zai-org/GLM-5.3",
+        "name": "GLM-5.3",
+        "description": "Flagship GLM model for long-horizon coding, agents, and complex project delivery",
+        "family": "glm",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "high",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "interleaved": {
+          "field": "reasoning_content"
+        },
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2026-08-14",
+        "last_updated": "2026-08-14",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1048576,
+          "output": 262144
+        },
+        "cost": {
+          "input": 1.4,
+          "output": 4.4,
+          "cache_read": 0.26
+        }
+      },
       "zai-org/GLM-5": {
         "id": "zai-org/GLM-5",
         "name": "GLM-5",
@@ -170949,6 +171185,55 @@
         "limit": {
           "context": 202752,
           "output": 202752
+        },
+        "cost": {
+          "input": 1.4,
+          "output": 4.4,
+          "cache_read": 0.26
+        }
+      },
+      "zai-org/GLM-5.3": {
+        "id": "zai-org/GLM-5.3",
+        "name": "GLM-5.3",
+        "description": "Flagship GLM model for long-horizon coding, agents, and complex project delivery",
+        "family": "glm",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "high",
+              "max"
+            ]
+          },
+          {
+            "type": "budget_tokens",
+            "min": -1,
+            "max": 1048576
+          }
+        ],
+        "tool_call": true,
+        "interleaved": {
+          "field": "reasoning_content"
+        },
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2026-08-14",
+        "last_updated": "2026-08-14",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1048576,
+          "output": 1048576
         },
         "cost": {
           "input": 1.4,
@@ -187219,6 +187504,7 @@
           "context": 190000,
           "output": 64000
         },
+        "status": "deprecated",
         "cost": {
           "input": 0,
           "output": 0,
@@ -191477,55 +191763,6 @@
           }
         }
       },
-      "glm-5.3-flash@eu": {
-        "id": "glm-5.3-flash@eu",
-        "name": "GLM-5.3-Flash (EU)",
-        "description": "Native multimodal GLM model for efficient coding and long-horizon agent tasks",
-        "family": "glm",
-        "attachment": true,
-        "reasoning": true,
-        "reasoning_options": [
-          {
-            "type": "effort",
-            "values": [
-              "none",
-              "low",
-              "medium",
-              "high",
-              "max"
-            ]
-          },
-          {
-            "type": "budget_tokens"
-          }
-        ],
-        "tool_call": true,
-        "structured_output": true,
-        "temperature": true,
-        "release_date": "2026-08-26",
-        "last_updated": "2026-08-26",
-        "modalities": {
-          "input": [
-            "text",
-            "image",
-            "video",
-            "pdf"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": false,
-        "limit": {
-          "context": 1000000,
-          "output": 262144
-        },
-        "cost": {
-          "input": 0.2,
-          "output": 0.5,
-          "cache_read": 0.07
-        }
-      },
       "gpt-5-nano@eu": {
         "id": "gpt-5-nano@eu",
         "name": "GPT-5 Nano (EU)",
@@ -193001,10 +193238,15 @@
           {
             "type": "effort",
             "values": [
+              "none",
               "low",
+              "medium",
               "high",
               "max"
             ]
+          },
+          {
+            "type": "budget_tokens"
           }
         ],
         "tool_call": true,
@@ -243595,7 +243837,8 @@
         },
         "cost": {
           "input": 0.15,
-          "output": 0.6
+          "output": 0.6,
+          "cache_read": 0.015
         }
       },
       "mistral/mistral-large-latest": {
@@ -243778,7 +244021,8 @@
         },
         "cost": {
           "input": 1.5,
-          "output": 7.5
+          "output": 7.5,
+          "cache_read": 0.15
         }
       },
       "mistral/mistral-medium-2505": {
@@ -243903,7 +244147,8 @@
         },
         "cost": {
           "input": 0.3,
-          "output": 0.9
+          "output": 0.9,
+          "cache_read": 0.03
         }
       },
       "mistral/magistral-medium-latest": {
@@ -243976,7 +244221,8 @@
         },
         "cost": {
           "input": 1.5,
-          "output": 7.5
+          "output": 7.5,
+          "cache_read": 0.15
         }
       },
       "amazon/moonshot.kimi-k2-thinking": {
@@ -245039,7 +245285,7 @@
         },
         "cost": {
           "input": 0.3,
-          "output": 1.2
+          "output": 1.1
         }
       },
       "flexai/gpt-oss-120b": {
@@ -253504,9 +253750,9 @@
           "output": 131072
         },
         "cost": {
-          "input": 1.4,
-          "output": 4.4,
-          "cache_read": 0.26
+          "input": 1.3,
+          "output": 4,
+          "cache_read": 0.25
         }
       },
       "grok-4-1-fast-non-reasoning": {
@@ -257880,6 +258126,54 @@
           "cache_read": 0.01
         }
       },
+      "glm-5.3": {
+        "id": "glm-5.3",
+        "name": "GLM-5.3",
+        "description": "Flagship GLM model for long-horizon coding, agents, and complex project delivery",
+        "family": "glm",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "none",
+              "low",
+              "medium",
+              "high"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "interleaved": {
+          "field": "reasoning_content"
+        },
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2026-08-14",
+        "last_updated": "2026-08-14",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1000000,
+          "output": 131072
+        },
+        "provider": {
+          "npm": "@ai-sdk/openai-compatible"
+        },
+        "cost": {
+          "input": 0.4,
+          "output": 1.4,
+          "cache_read": 0.06
+        }
+      },
       "glm-5.2": {
         "id": "glm-5.2",
         "name": "GLM-5.2",
@@ -261784,6 +262078,93 @@
         "cost": {
           "input": 0.32,
           "output": 3.2
+        }
+      },
+      "qwen/qwen3.8-27b": {
+        "id": "qwen/qwen3.8-27b",
+        "name": "Qwen3.8 27B",
+        "description": "Dense 27B vision-language model for coding, agent tasks, and image and video understanding",
+        "family": "qwen",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "none",
+              "low",
+              "medium",
+              "xhigh"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2026-08-14",
+        "last_updated": "2026-08-14",
+        "modalities": {
+          "input": [
+            "text",
+            "image",
+            "video",
+            "pdf"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 262144,
+          "output": 32768
+        },
+        "cost": {
+          "input": 0.4,
+          "output": 3,
+          "cache_read": 0.2
+        }
+      },
+      "zai-org/glm-5.3": {
+        "id": "zai-org/glm-5.3",
+        "name": "GLM-5.3",
+        "description": "Flagship GLM model for long-horizon coding, agents, and complex project delivery",
+        "family": "glm",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "none",
+              "low",
+              "xhigh",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2026-08-14",
+        "last_updated": "2026-08-14",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1048576,
+          "output": 131072
+        },
+        "cost": {
+          "input": 1,
+          "output": 4,
+          "cache_read": 0.3
         }
       },
       "zai-org/glm-5.2": {
@@ -267176,8 +267557,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 202752,
-          "output": 182476
+          "context": 200000,
+          "output": 128000
         },
         "cost": {
           "input": 1.4,
@@ -267892,7 +268273,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 235929
+          "output": 80000
         },
         "cost": {
           "input": 0.22,
@@ -268410,9 +268791,9 @@
           "output": 16384
         },
         "cost": {
-          "input": 0.07,
-          "output": 0.35,
-          "cache_read": 0.1
+          "input": 0.09,
+          "output": 0.34,
+          "cache_read": 0.05
         }
       },
       "google/lyria-3-clip-preview": {
@@ -275837,7 +276218,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 235929
+          "output": 16384
         },
         "cost": {
           "input": 0.0975,
@@ -277325,7 +277706,7 @@
         "open_weights": true,
         "limit": {
           "context": 524288,
-          "output": 262144
+          "output": 471859
         },
         "cost": {
           "input": 0.95,
@@ -277442,12 +277823,12 @@
         "open_weights": false,
         "limit": {
           "context": 1048576,
-          "output": 131072
+          "output": 393216
         },
         "cost": {
           "input": 0.03,
-          "output": 0.1,
-          "cache_read": 0.007
+          "output": 0.16,
+          "cache_read": 0.01
         }
       },
       "inclusionai/ling-3.0-flash-fin:free": {
@@ -278691,13 +279072,13 @@
         },
         "open_weights": false,
         "limit": {
-          "context": 1048576,
-          "output": 943718
+          "context": 262144,
+          "output": 131072
         },
         "cost": {
-          "input": 1.2,
-          "output": 4,
-          "cache_read": 0.24
+          "input": 1.1875,
+          "output": 4.18,
+          "cache_read": 0.247
         }
       },
       "nex-agi/nex-n2-mini": {
@@ -288588,6 +288969,52 @@
           "input": 1.32,
           "output": 3.96,
           "cache_read": 0.044
+        }
+      },
+      "accounts/fireworks/models/glm-5p3-flash": {
+        "id": "accounts/fireworks/models/glm-5p3-flash",
+        "name": "GLM 5.3 Flash",
+        "description": "Native multimodal GLM model for efficient coding and long-horizon agent tasks",
+        "family": "glm",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "high",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "interleaved": {
+          "field": "reasoning_content"
+        },
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2026-08-26",
+        "last_updated": "2026-08-26",
+        "modalities": {
+          "input": [
+            "text",
+            "image",
+            "video",
+            "pdf"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1000000,
+          "output": 131072
+        },
+        "cost": {
+          "input": 0.15,
+          "output": 0.5,
+          "cache_read": 0.029
         }
       },
       "accounts/fireworks/models/nemotron-lightning-3p5-30b-a3b": {
