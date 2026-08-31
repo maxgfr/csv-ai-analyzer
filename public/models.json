@@ -3912,6 +3912,52 @@
           "cache_read": 0.029
         }
       },
+      "glm-5.3": {
+        "id": "glm-5.3",
+        "name": "GLM 5.3",
+        "description": "Flagship GLM model for long-horizon coding, agents, and complex project delivery",
+        "family": "glm",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "high",
+              "max"
+            ]
+          },
+          {
+            "type": "budget_tokens"
+          }
+        ],
+        "tool_call": true,
+        "interleaved": true,
+        "structured_output": false,
+        "temperature": true,
+        "release_date": "2026-08-14",
+        "last_updated": "2026-08-14",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 1048560,
+          "output": 1048560
+        },
+        "status": "beta",
+        "cost": {
+          "input": 1.45,
+          "output": 4.5,
+          "cache_read": 0.145
+        }
+      },
       "glm-5.2-short-fast-flex": {
         "id": "glm-5.2-short-fast-flex",
         "name": "GLM 5.2 Short Fast Flex",
@@ -4982,7 +5028,7 @@
             "text"
           ]
         },
-        "open_weights": false,
+        "open_weights": true,
         "limit": {
           "context": 1000000,
           "output": 131072
@@ -5844,7 +5890,7 @@
             "text"
           ]
         },
-        "open_weights": false,
+        "open_weights": true,
         "limit": {
           "context": 1310720,
           "output": 1310720
@@ -7096,7 +7142,7 @@
             "text"
           ]
         },
-        "open_weights": false,
+        "open_weights": true,
         "limit": {
           "context": 1000000,
           "output": 131072
@@ -7956,7 +8002,7 @@
             "text"
           ]
         },
-        "open_weights": false,
+        "open_weights": true,
         "limit": {
           "context": 1000000,
           "output": 131072
@@ -19037,7 +19083,7 @@
             "text"
           ]
         },
-        "open_weights": false,
+        "open_weights": true,
         "limit": {
           "context": 1048576,
           "output": 1048576
@@ -21214,42 +21260,6 @@
           "cache_read": 0.0697
         }
       },
-      "claude-opus-4-thinking:32000": {
-        "id": "claude-opus-4-thinking:32000",
-        "name": "Claude 4 Opus Thinking (32K)",
-        "description": "Flagship Claude model for deep reasoning, coding, and long-horizon agents",
-        "family": "claude-opus",
-        "attachment": true,
-        "reasoning": true,
-        "reasoning_options": [],
-        "tool_call": true,
-        "structured_output": true,
-        "temperature": true,
-        "knowledge": "2025-03-31",
-        "release_date": "2025-05-22",
-        "last_updated": "2025-05-22",
-        "modalities": {
-          "input": [
-            "text",
-            "image",
-            "pdf"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": false,
-        "limit": {
-          "context": 200000,
-          "input": 200000,
-          "output": 32000
-        },
-        "cost": {
-          "input": 15,
-          "output": 75,
-          "cache_read": 1.5
-        }
-      },
       "doubao-1.5-vision-pro-32k": {
         "id": "doubao-1.5-vision-pro-32k",
         "name": "Doubao 1.5 Vision Pro 32k",
@@ -21524,9 +21534,9 @@
           "output": 32768
         },
         "cost": {
-          "input": 0.08,
-          "output": 0.33,
-          "cache_read": 0.04
+          "input": 0.1,
+          "output": 0.45,
+          "cache_read": 0.05
         }
       },
       "gemini-3-pro-image-preview": {
@@ -21591,9 +21601,9 @@
           "output": 32768
         },
         "cost": {
-          "input": 0.08,
-          "output": 0.33,
-          "cache_read": 0.04
+          "input": 0.12,
+          "output": 0.38,
+          "cache_read": 0.06
         }
       },
       "Gemma-4-31B-Queen": {
@@ -21664,9 +21674,9 @@
           "output": 32768
         },
         "cost": {
-          "input": 0.08,
-          "output": 0.33,
-          "cache_read": 0.04
+          "input": 0.12,
+          "output": 0.38,
+          "cache_read": 0.06
         }
       },
       "qwen-turbo": {
@@ -22801,9 +22811,9 @@
           "output": 32768
         },
         "cost": {
-          "input": 0.08,
-          "output": 0.33,
-          "cache_read": 0.04
+          "input": 0.1,
+          "output": 0.45,
+          "cache_read": 0.05
         }
       },
       "qwen3.5-flash": {
@@ -23588,9 +23598,9 @@
           "output": 32768
         },
         "cost": {
-          "input": 0.08,
-          "output": 0.33,
-          "cache_read": 0.04
+          "input": 0.12,
+          "output": 0.38,
+          "cache_read": 0.06
         }
       },
       "deepclaude": {
@@ -23764,9 +23774,9 @@
           "output": 32768
         },
         "cost": {
-          "input": 0.08,
-          "output": 0.33,
-          "cache_read": 0.04
+          "input": 0.12,
+          "output": 0.38,
+          "cache_read": 0.06
         }
       },
       "mistral-small-31-24b-instruct": {
@@ -24238,9 +24248,9 @@
           "output": 32768
         },
         "cost": {
-          "input": 0.08,
-          "output": 0.33,
-          "cache_read": 0.04
+          "input": 0.1,
+          "output": 0.45,
+          "cache_read": 0.05
         }
       },
       "qwen3.7-max:thinking": {
@@ -24346,9 +24356,9 @@
           "output": 32768
         },
         "cost": {
-          "input": 0.08,
-          "output": 0.33,
-          "cache_read": 0.04
+          "input": 0.12,
+          "output": 0.38,
+          "cache_read": 0.06
         }
       },
       "gemma-4-26b-a4b-it-shadowsiren": {
@@ -24379,45 +24389,9 @@
           "output": 32768
         },
         "cost": {
-          "input": 0.08,
-          "output": 0.33,
-          "cache_read": 0.04
-        }
-      },
-      "claude-opus-4-1-thinking:32000": {
-        "id": "claude-opus-4-1-thinking:32000",
-        "name": "Claude 4.1 Opus Thinking (32K)",
-        "description": "Flagship Claude model for deep reasoning, coding, and long-horizon agents",
-        "family": "claude-opus",
-        "attachment": true,
-        "reasoning": true,
-        "reasoning_options": [],
-        "tool_call": true,
-        "structured_output": true,
-        "temperature": true,
-        "knowledge": "2025-03-31",
-        "release_date": "2025-08-05",
-        "last_updated": "2025-08-05",
-        "modalities": {
-          "input": [
-            "text",
-            "image",
-            "pdf"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": false,
-        "limit": {
-          "context": 200000,
-          "input": 200000,
-          "output": 32000
-        },
-        "cost": {
-          "input": 15,
-          "output": 75,
-          "cache_read": 1.5
+          "input": 0.12,
+          "output": 0.38,
+          "cache_read": 0.06
         }
       },
       "claude-sonnet-4-thinking:64000": {
@@ -24484,9 +24458,9 @@
           "output": 32768
         },
         "cost": {
-          "input": 0.08,
-          "output": 0.33,
-          "cache_read": 0.04
+          "input": 0.1,
+          "output": 0.45,
+          "cache_read": 0.05
         }
       },
       "claude-opus-4-thinking": {
@@ -25807,9 +25781,9 @@
           "output": 32768
         },
         "cost": {
-          "input": 0.08,
-          "output": 0.33,
-          "cache_read": 0.04
+          "input": 0.12,
+          "output": 0.38,
+          "cache_read": 0.06
         }
       },
       "Gemma-4-31B-MeroMero-v2:thinking": {
@@ -25840,9 +25814,9 @@
           "output": 32768
         },
         "cost": {
-          "input": 0.08,
-          "output": 0.33,
-          "cache_read": 0.04
+          "input": 0.1,
+          "output": 0.45,
+          "cache_read": 0.05
         }
       },
       "gemini-2.5-flash-preview-05-20:thinking": {
@@ -26122,9 +26096,9 @@
           "output": 32768
         },
         "cost": {
-          "input": 0.08,
-          "output": 0.33,
-          "cache_read": 0.04
+          "input": 0.12,
+          "output": 0.38,
+          "cache_read": 0.06
         }
       },
       "qwen3.8-27b": {
@@ -26552,9 +26526,9 @@
           "output": 32768
         },
         "cost": {
-          "input": 0.08,
-          "output": 0.33,
-          "cache_read": 0.04
+          "input": 0.1,
+          "output": 0.45,
+          "cache_read": 0.05
         }
       },
       "asi1-mini": {
@@ -26782,9 +26756,9 @@
           "output": 32768
         },
         "cost": {
-          "input": 0.08,
-          "output": 0.33,
-          "cache_read": 0.04
+          "input": 0.1,
+          "output": 0.45,
+          "cache_read": 0.05
         }
       },
       "qwen3-max-2026-01-23": {
@@ -26949,9 +26923,9 @@
           "output": 32768
         },
         "cost": {
-          "input": 0.08,
-          "output": 0.33,
-          "cache_read": 0.04
+          "input": 0.1,
+          "output": 0.45,
+          "cache_read": 0.05
         }
       },
       "qwen-3.6-plus": {
@@ -27127,9 +27101,9 @@
           "output": 32768
         },
         "cost": {
-          "input": 0.08,
-          "output": 0.33,
-          "cache_read": 0.04
+          "input": 0.12,
+          "output": 0.38,
+          "cache_read": 0.06
         }
       },
       "gemini-2.5-flash-preview-04-17": {
@@ -27278,9 +27252,9 @@
           "output": 32768
         },
         "cost": {
-          "input": 0.08,
-          "output": 0.33,
-          "cache_read": 0.04
+          "input": 0.12,
+          "output": 0.38,
+          "cache_read": 0.06
         }
       },
       "gemma-4-26b-a4b-it-darksoul": {
@@ -27311,9 +27285,9 @@
           "output": 32768
         },
         "cost": {
-          "input": 0.08,
-          "output": 0.33,
-          "cache_read": 0.04
+          "input": 0.12,
+          "output": 0.38,
+          "cache_read": 0.06
         }
       },
       "phi-4-mini-instruct": {
@@ -27510,9 +27484,9 @@
           "output": 32768
         },
         "cost": {
-          "input": 0.08,
-          "output": 0.33,
-          "cache_read": 0.04
+          "input": 0.1,
+          "output": 0.45,
+          "cache_read": 0.05
         }
       },
       "brave": {
@@ -28373,7 +28347,7 @@
           }
         ],
         "tool_call": true,
-        "structured_output": true,
+        "structured_output": false,
         "temperature": true,
         "release_date": "2026-08-11",
         "last_updated": "2026-08-11",
@@ -28479,7 +28453,7 @@
           }
         ],
         "tool_call": true,
-        "structured_output": true,
+        "structured_output": false,
         "temperature": true,
         "release_date": "2026-08-11",
         "last_updated": "2026-08-11",
@@ -28851,7 +28825,7 @@
             "text"
           ]
         },
-        "open_weights": false,
+        "open_weights": true,
         "limit": {
           "context": 1048576,
           "input": 1048576,
@@ -29542,7 +29516,7 @@
             "text"
           ]
         },
-        "open_weights": false,
+        "open_weights": true,
         "limit": {
           "context": 1048576,
           "input": 1048576,
@@ -29796,9 +29770,9 @@
           "output": 32768
         },
         "cost": {
-          "input": 0.125,
-          "output": 0.5,
-          "cache_read": 0.0625
+          "input": 0.35,
+          "output": 1.4,
+          "cache_read": 0.175
         }
       },
       "z-ai/GLM-4.6-turbo:thinking": {
@@ -30798,9 +30772,9 @@
           "output": 131072
         },
         "cost": {
-          "input": 0.08,
-          "output": 0.33,
-          "cache_read": 0.04
+          "input": 0.12,
+          "output": 0.38,
+          "cache_read": 0.06
         }
       },
       "google/gemini-flash-lite-latest": {
@@ -31061,9 +31035,9 @@
           "output": 131072
         },
         "cost": {
-          "input": 0.08,
-          "output": 0.33,
-          "cache_read": 0.04
+          "input": 0.1,
+          "output": 0.45,
+          "cache_read": 0.05
         }
       },
       "google/gemini-3.5-flash-thinking": {
@@ -37311,9 +37285,9 @@
           "output": 32768
         },
         "cost": {
-          "input": 0.05,
-          "output": 0.1,
-          "cache_read": 0.025
+          "input": 0.1,
+          "output": 0.2,
+          "cache_read": 0.05
         }
       },
       "ornith-ai/ornith-1.5-9b": {
@@ -37344,9 +37318,9 @@
           "output": 32768
         },
         "cost": {
-          "input": 0.05,
-          "output": 0.1,
-          "cache_read": 0.025
+          "input": 0.1,
+          "output": 0.2,
+          "cache_read": 0.05
         }
       },
       "shisa-ai/shisa-v2.1-llama3.3-70b": {
@@ -37826,9 +37800,9 @@
           "output": 32768
         },
         "cost": {
-          "input": 0.18,
-          "output": 0.5,
-          "cache_read": 0.075
+          "input": 0.25,
+          "output": 1.5,
+          "cache_read": 0.125
         }
       },
       "qwen/Qwen3-VL-235B-A22B-Instruct": {
@@ -37893,9 +37867,9 @@
           "output": 32768
         },
         "cost": {
-          "input": 0.2,
-          "output": 1.4,
-          "cache_read": 0.04
+          "input": 0.25,
+          "output": 1.5,
+          "cache_read": 0.125
         }
       },
       "qwen/qwen3-32b": {
@@ -38169,9 +38143,9 @@
           "output": 32768
         },
         "cost": {
-          "input": 0.18,
-          "output": 0.5,
-          "cache_read": 0.075
+          "input": 0.25,
+          "output": 1.5,
+          "cache_read": 0.125
         }
       },
       "qwen/qwen3-coder-flash": {
@@ -38266,9 +38240,9 @@
           "output": 32768
         },
         "cost": {
-          "input": 0.18,
-          "output": 0.5,
-          "cache_read": 0.075
+          "input": 0.25,
+          "output": 1.5,
+          "cache_read": 0.125
         }
       },
       "qwen/qwen3.5-plus-thinking": {
@@ -38611,7 +38585,7 @@
         },
         "cost": {
           "input": 0.15,
-          "output": 0.5,
+          "output": 0.95,
           "cache_read": 0.075
         }
       },
@@ -38678,7 +38652,7 @@
         },
         "cost": {
           "input": 0.15,
-          "output": 0.5,
+          "output": 0.95,
           "cache_read": 0.075
         }
       },
@@ -38710,9 +38684,9 @@
           "output": 32768
         },
         "cost": {
-          "input": 0.18,
-          "output": 0.5,
-          "cache_read": 0.075
+          "input": 0.25,
+          "output": 1.5,
+          "cache_read": 0.125
         }
       },
       "qwen/qwen3-coder-plus": {
@@ -39627,8 +39601,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 16384,
-          "input": 16384,
+          "context": 32768,
+          "input": 32768,
           "output": 8192
         },
         "cost": {
@@ -41937,6 +41911,48 @@
           "input": 2,
           "output": 2,
           "cache_read": 2
+        }
+      },
+      "TEE/glm-5.3": {
+        "id": "TEE/glm-5.3",
+        "name": "GLM 5.3 TEE",
+        "description": "Flagship GLM model for long-horizon coding, agents, and complex project delivery",
+        "family": "glm",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "high",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2026-08-14",
+        "last_updated": "2026-08-14",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 1048576,
+          "input": 1048576,
+          "output": 131072
+        },
+        "cost": {
+          "input": 1.4,
+          "output": 4.4,
+          "cache_read": 0.26
         }
       },
       "TEE/glm-5.2": {
@@ -54729,7 +54745,7 @@
             "text"
           ]
         },
-        "open_weights": false,
+        "open_weights": true,
         "limit": {
           "context": 1048576,
           "output": 131072
@@ -64734,7 +64750,7 @@
             "text"
           ]
         },
-        "open_weights": false,
+        "open_weights": true,
         "limit": {
           "context": 1310720,
           "output": 131072
@@ -65137,9 +65153,9 @@
           "output": 384000
         },
         "cost": {
-          "input": 0.0798,
-          "output": 0.1596,
-          "cache_read": 0.01596
+          "input": 0.088606,
+          "output": 0.177212,
+          "cache_read": 0.017721
         }
       },
       "deepseek/deepseek-v4-pro-0813": {
@@ -65228,9 +65244,9 @@
           "output": 384000
         },
         "cost": {
-          "input": 0.427344,
-          "output": 0.854688,
-          "cache_read": 0.035612
+          "input": 1.04226,
+          "output": 2.08452,
+          "cache_read": 0.086855
         }
       },
       "deepseek/deepseek-v3.2": {
@@ -68333,9 +68349,9 @@
           "output": 235929
         },
         "cost": {
-          "input": 0.6,
-          "output": 3,
-          "cache_read": 0.1
+          "input": 0.45,
+          "output": 2.25,
+          "cache_read": 0.07
         }
       },
       "moonshotai/kimi-k2-0905": {
@@ -70746,12 +70762,12 @@
         "open_weights": false,
         "limit": {
           "context": 1047576,
-          "output": 942818
+          "output": 32768
         },
         "cost": {
           "input": 0.1,
           "output": 0.4,
-          "cache_read": 0.03
+          "cache_read": 0.025
         }
       },
       "openai/o1": {
@@ -75163,7 +75179,7 @@
         "cost": {
           "input": 0.03,
           "output": 0.16,
-          "cache_read": 0.01
+          "cache_read": 0.013
         }
       },
       "inclusionai/ling-3.0-flash-fin:free": {
@@ -75451,11 +75467,11 @@
         "open_weights": true,
         "limit": {
           "context": 1048576,
-          "output": 16384
+          "output": 115200
         },
         "cost": {
           "input": 0.2,
-          "output": 0.8
+          "output": 0.696
         }
       },
       "meta-llama/llama-4-scout": {
@@ -75657,9 +75673,9 @@
           "output": 209715
         },
         "cost": {
-          "input": 0.44,
-          "output": 2.2,
-          "cache_read": 0.044
+          "input": 0.4,
+          "output": 2,
+          "cache_read": 0.04
         }
       },
       "mistralai/mistral-small-2603": {
@@ -76863,7 +76879,7 @@
         "open_weights": false,
         "limit": {
           "context": 262144,
-          "output": 80000
+          "output": 144000
         },
         "cost": {
           "input": 0.3,
@@ -79439,6 +79455,50 @@
           "reasoning": 0.726,
           "cache_read": 0.0077
         }
+      },
+      "glm-5.3-flash": {
+        "id": "glm-5.3-flash",
+        "name": "GLM 5.3 Flash",
+        "description": "Native multimodal GLM model for efficient coding and long-horizon agent tasks",
+        "family": "glm",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "high",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "interleaved": {
+          "field": "reasoning_content"
+        },
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2026-08-26",
+        "last_updated": "2026-08-26",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1000000,
+          "output": 131072
+        },
+        "cost": {
+          "input": 0.165,
+          "output": 0.55,
+          "cache_read": 0.0319
+        }
       }
     }
   },
@@ -81064,6 +81124,46 @@
     "name": "CrossModel",
     "doc": "https://www.crossmodel.ai/docs",
     "models": {
+      "tencent/hy4-preview": {
+        "id": "tencent/hy4-preview",
+        "name": "Hy4 preview",
+        "description": "A next-generation productivity model with significantly enhanced Agent and complex task execution capabilities.",
+        "family": "Hy",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "none",
+              "high"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "temperature": true,
+        "release_date": "2026-08-28",
+        "last_updated": "2026-08-28",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 1048576,
+          "output": 65536
+        },
+        "cost": {
+          "input": 0.96,
+          "output": 2.88,
+          "cache_read": 0.048,
+          "cache_write": 0.96
+        }
+      },
       "tencent/hy3": {
         "id": "tencent/hy3",
         "name": "Hy3",
@@ -81097,7 +81197,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 131072
         },
         "cost": {
           "input": 0.16,
@@ -81284,7 +81384,7 @@
             "text"
           ]
         },
-        "open_weights": false,
+        "open_weights": true,
         "limit": {
           "context": 1000000,
           "output": 128000
@@ -84954,7 +85054,7 @@
             "text"
           ]
         },
-        "open_weights": false,
+        "open_weights": true,
         "limit": {
           "context": 1000000,
           "output": 131072
@@ -88538,6 +88638,147 @@
       }
     }
   },
+  "sensenova": {
+    "id": "sensenova",
+    "env": [
+      "SENSENOVA_API_KEY"
+    ],
+    "npm": "@ai-sdk/openai-compatible",
+    "api": "https://token.sensenova.cn/v1",
+    "name": "SenseNova (China)",
+    "doc": "https://platform.sensenova.cn/docs",
+    "models": {
+      "deepseek-v4-flash": {
+        "id": "deepseek-v4-flash",
+        "name": "DeepSeek V4 Flash",
+        "description": "Fast DeepSeek V4 lane for economical reasoning, coding, and long-context work",
+        "family": "deepseek-flash",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "none",
+              "high"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "interleaved": {
+          "field": "reasoning_content"
+        },
+        "structured_output": true,
+        "temperature": true,
+        "knowledge": "2025-05",
+        "release_date": "2026-04-24",
+        "last_updated": "2026-04-24",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 1000000,
+          "output": 65536
+        },
+        "cost": {
+          "input": 0,
+          "output": 0,
+          "cache_read": 0
+        }
+      },
+      "glm-5.2": {
+        "id": "glm-5.2",
+        "name": "GLM-5.2",
+        "description": "Open flagship GLM for long-horizon coding agents and million-token context work",
+        "family": "glm",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "none",
+              "high"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "interleaved": {
+          "field": "reasoning_content"
+        },
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2026-06-13",
+        "last_updated": "2026-06-13",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 1000000,
+          "output": 131072
+        },
+        "cost": {
+          "input": 0,
+          "output": 0,
+          "cache_read": 0
+        }
+      },
+      "sensenova-6.8-flash-lite": {
+        "id": "sensenova-6.8-flash-lite",
+        "name": "SenseNova 6.8 Flash Lite",
+        "description": "SenseNova lightweight multimodal agent model for real-world complex tasks, data analysis, and complex information presentation",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "none",
+              "low",
+              "medium",
+              "high"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2026-08-11",
+        "last_updated": "2026-08-28",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 262144,
+          "output": 65536
+        },
+        "cost": {
+          "input": 0,
+          "output": 0,
+          "cache_read": 0
+        }
+      }
+    }
+  },
   "zai": {
     "id": "zai",
     "env": [
@@ -88890,7 +89131,7 @@
             "text"
           ]
         },
-        "open_weights": false,
+        "open_weights": true,
         "limit": {
           "context": 1000000,
           "output": 131072
@@ -104411,7 +104652,7 @@
             "text"
           ]
         },
-        "open_weights": false,
+        "open_weights": true,
         "limit": {
           "context": 1000000,
           "output": 131072
@@ -111056,7 +111297,7 @@
             "text"
           ]
         },
-        "open_weights": false,
+        "open_weights": true,
         "limit": {
           "context": 1048576,
           "output": 131072
@@ -112688,7 +112929,7 @@
             "text"
           ]
         },
-        "open_weights": false,
+        "open_weights": true,
         "limit": {
           "context": 1000000,
           "output": 128000
@@ -118607,7 +118848,7 @@
             "text"
           ]
         },
-        "open_weights": false,
+        "open_weights": true,
         "limit": {
           "context": 1000000,
           "output": 128000
@@ -123222,7 +123463,7 @@
             "text"
           ]
         },
-        "open_weights": false,
+        "open_weights": true,
         "limit": {
           "context": 1048576,
           "output": 131072
@@ -125227,7 +125468,7 @@
             "text"
           ]
         },
-        "open_weights": false,
+        "open_weights": true,
         "limit": {
           "context": 1000000,
           "output": 131072
@@ -127317,7 +127558,7 @@
             "text"
           ]
         },
-        "open_weights": false,
+        "open_weights": true,
         "limit": {
           "context": 1000000,
           "output": 131072
@@ -129715,7 +129956,7 @@
             "text"
           ]
         },
-        "open_weights": false,
+        "open_weights": true,
         "limit": {
           "context": 1000000,
           "output": 131072
@@ -129800,7 +130041,7 @@
             "text"
           ]
         },
-        "open_weights": false,
+        "open_weights": true,
         "limit": {
           "context": 1000000,
           "output": 131072
@@ -133911,7 +134152,7 @@
             "text"
           ]
         },
-        "open_weights": false,
+        "open_weights": true,
         "limit": {
           "context": 1000000,
           "output": 131072
@@ -143932,7 +144173,7 @@
             "text"
           ]
         },
-        "open_weights": false,
+        "open_weights": true,
         "limit": {
           "context": 1048576,
           "output": 1048576
@@ -148430,7 +148671,7 @@
             "text"
           ]
         },
-        "open_weights": false,
+        "open_weights": true,
         "limit": {
           "context": 1000000,
           "output": 131072
@@ -149355,6 +149596,94 @@
           "output": 0.83
         }
       },
+      "zai-org/GLM-5.3-Flash": {
+        "id": "zai-org/GLM-5.3-Flash",
+        "name": "GLM-5.3-Flash",
+        "description": "Native multimodal GLM model for efficient coding and long-horizon agent tasks",
+        "family": "glm",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "high",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "interleaved": {
+          "field": "reasoning_content"
+        },
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2026-08-26",
+        "last_updated": "2026-08-29",
+        "modalities": {
+          "input": [
+            "text",
+            "image",
+            "video"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 327680,
+          "output": 16384
+        },
+        "cost": {
+          "input": 0.29,
+          "output": 0.58
+        }
+      },
+      "zai-org/GLM-5.3": {
+        "id": "zai-org/GLM-5.3",
+        "name": "GLM-5.3",
+        "description": "Flagship GLM model for long-horizon coding, agents, and complex project delivery",
+        "family": "glm",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "high",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "interleaved": {
+          "field": "reasoning_content"
+        },
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2026-08-14",
+        "last_updated": "2026-08-29",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 327680,
+          "output": 32768
+        },
+        "cost": {
+          "input": 1.75,
+          "output": 5.82
+        }
+      },
       "zai-org/GLM-4.7": {
         "id": "zai-org/GLM-4.7",
         "name": "GLM 4.7",
@@ -150153,7 +150482,7 @@
             "text"
           ]
         },
-        "open_weights": false,
+        "open_weights": true,
         "limit": {
           "context": 1000000,
           "output": 131072
@@ -150286,7 +150615,7 @@
             "text"
           ]
         },
-        "open_weights": false,
+        "open_weights": true,
         "limit": {
           "context": 1000000,
           "output": 131072
@@ -166125,7 +166454,7 @@
             "text"
           ]
         },
-        "open_weights": false,
+        "open_weights": true,
         "limit": {
           "context": 1048576,
           "output": 262144
@@ -166615,7 +166944,7 @@
             "text"
           ]
         },
-        "open_weights": false,
+        "open_weights": true,
         "limit": {
           "context": 1000000,
           "output": 131072
@@ -171230,7 +171559,7 @@
             "text"
           ]
         },
-        "open_weights": false,
+        "open_weights": true,
         "limit": {
           "context": 1048576,
           "output": 1048576
@@ -175716,7 +176045,7 @@
             "text"
           ]
         },
-        "open_weights": false,
+        "open_weights": true,
         "limit": {
           "context": 1000000,
           "output": 131072
@@ -190633,52 +190962,6 @@
           "output": 180
         }
       },
-      "gpt-5.3-chat": {
-        "id": "gpt-5.3-chat",
-        "name": "gpt-5.3-chat",
-        "description": "GPT-5.3 Chat is an update to ChatGPT's most-used model that makes everyday conversations smoother, more useful, and more directly helpful. It delivers more accurate answers with better contextualization and significantly reduces unnecessary refusals, caveats, and overly cautious phrasing that can interrupt conversational flow.",
-        "family": "gpt",
-        "attachment": true,
-        "reasoning": true,
-        "reasoning_options": [
-          {
-            "type": "effort",
-            "values": [
-              "none",
-              "low",
-              "medium",
-              "high",
-              "max"
-            ]
-          },
-          {
-            "type": "budget_tokens"
-          }
-        ],
-        "tool_call": true,
-        "structured_output": true,
-        "release_date": "2026-03-18",
-        "last_updated": "2026-03-18",
-        "modalities": {
-          "input": [
-            "text",
-            "image"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": false,
-        "limit": {
-          "context": 128000,
-          "output": 16384
-        },
-        "cost": {
-          "input": 1.75,
-          "output": 14,
-          "cache_read": 0.175
-        }
-      },
       "deepseek-v4-flash": {
         "id": "deepseek-v4-flash",
         "name": "DeepSeek V4 Flash",
@@ -193262,7 +193545,7 @@
             "text"
           ]
         },
-        "open_weights": false,
+        "open_weights": true,
         "limit": {
           "context": 1048576,
           "output": 1048576
@@ -194066,7 +194349,7 @@
             "text"
           ]
         },
-        "open_weights": false,
+        "open_weights": true,
         "limit": {
           "context": 1000000,
           "output": 128000
@@ -202970,8 +203253,8 @@
     "name": "TrustedRouter",
     "doc": "https://trustedrouter.com/docs",
     "models": {
-      "cheap": {
-        "id": "cheap",
+      "trustedrouter/cheap": {
+        "id": "trustedrouter/cheap",
         "name": "Cheap",
         "description": "TrustedRouter low-cost routing alias that prefers inexpensive healthy model endpoints.",
         "attachment": true,
@@ -203008,8 +203291,8 @@
           "output": 131072
         }
       },
-      "fast": {
-        "id": "fast",
+      "trustedrouter/fast": {
+        "id": "trustedrouter/fast",
         "name": "Fast",
         "description": "TrustedRouter speed routing alias that prefers low-latency healthy model endpoints.",
         "attachment": true,
@@ -203046,8 +203329,8 @@
           "output": 131072
         }
       },
-      "auto": {
-        "id": "auto",
+      "trustedrouter/auto": {
+        "id": "trustedrouter/auto",
         "name": "Auto",
         "description": "TrustedRouter automatic routing alias that chooses a healthy supported model endpoint for the request.",
         "attachment": true,
@@ -203084,8 +203367,8 @@
           "output": 131072
         }
       },
-      "synth-code": {
-        "id": "synth-code",
+      "trustedrouter/synth-code": {
+        "id": "trustedrouter/synth-code",
         "name": "Synth Code",
         "description": "TrustedRouter code synthesis orchestration alias that combines multiple model responses into one answer.",
         "attachment": true,
@@ -203122,8 +203405,8 @@
           "output": 131072
         }
       },
-      "e2e": {
-        "id": "e2e",
+      "trustedrouter/e2e": {
+        "id": "trustedrouter/e2e",
         "name": "End-to-End Encrypted",
         "description": "TrustedRouter privacy routing alias for end-to-end encrypted provider routes where available.",
         "attachment": true,
@@ -203160,8 +203443,8 @@
           "output": 131072
         }
       },
-      "zdr": {
-        "id": "zdr",
+      "trustedrouter/zdr": {
+        "id": "trustedrouter/zdr",
         "name": "Zero Data Retention",
         "description": "TrustedRouter privacy routing alias that prefers zero data retention model endpoints.",
         "attachment": true,
@@ -203198,8 +203481,8 @@
           "output": 131072
         }
       },
-      "synth": {
-        "id": "synth",
+      "trustedrouter/synth": {
+        "id": "trustedrouter/synth",
         "name": "Synth",
         "description": "TrustedRouter synthesis orchestration alias that combines multiple model responses into one answer.",
         "attachment": true,
@@ -205536,7 +205819,7 @@
             "text"
           ]
         },
-        "open_weights": false,
+        "open_weights": true,
         "limit": {
           "context": 1048576,
           "output": 262144
@@ -217511,7 +217794,7 @@
             "text"
           ]
         },
-        "open_weights": false,
+        "open_weights": true,
         "limit": {
           "context": 1000000,
           "output": 131072
@@ -218839,7 +219122,7 @@
             "text"
           ]
         },
-        "open_weights": false,
+        "open_weights": true,
         "limit": {
           "context": 1000000,
           "output": 131072
@@ -219726,38 +220009,6 @@
           "input": 0.8939,
           "output": 3.7131,
           "cache_read": 0.1788
-        }
-      },
-      "mistral-medium-3": {
-        "id": "mistral-medium-3",
-        "name": "Mistral Medium 3",
-        "description": "Mistral model for multilingual chat, reasoning, and tool-assisted workflows",
-        "family": "mistral-medium",
-        "attachment": true,
-        "reasoning": false,
-        "tool_call": true,
-        "structured_output": true,
-        "temperature": true,
-        "knowledge": "2025-05",
-        "release_date": "2025-05-07",
-        "last_updated": "2025-05-07",
-        "modalities": {
-          "input": [
-            "text",
-            "image"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": false,
-        "limit": {
-          "context": 130000,
-          "output": 40000
-        },
-        "cost": {
-          "input": 0,
-          "output": 0
         }
       },
       "qwen3-5-plus": {
@@ -228117,7 +228368,7 @@
             "text"
           ]
         },
-        "open_weights": false,
+        "open_weights": true,
         "limit": {
           "context": 1000000,
           "output": 1000000
@@ -235569,6 +235820,31 @@
           "output": 0
         }
       },
+      "minimax/minimax-h3-max": {
+        "id": "minimax/minimax-h3-max",
+        "name": "MiniMax H3 Max",
+        "description": "Video model for prompt-guided generation, editing, and motion workflows",
+        "family": "minimax",
+        "attachment": true,
+        "reasoning": false,
+        "tool_call": false,
+        "release_date": "2026-08-27",
+        "last_updated": "2026-08-27",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "video"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 0,
+          "output": 0
+        }
+      },
       "minimax/minimax-m2.1-lightning": {
         "id": "minimax/minimax-m2.1-lightning",
         "name": "MiniMax M2.1 Lightning",
@@ -238397,7 +238673,7 @@
             "text"
           ]
         },
-        "open_weights": false,
+        "open_weights": true,
         "limit": {
           "context": 1048576,
           "output": 131072
@@ -243903,9 +244179,9 @@
           "output": 262144
         },
         "cost": {
-          "input": 0.44,
-          "output": 2.2,
-          "cache_read": 0.044
+          "input": 0.4,
+          "output": 2,
+          "cache_read": 0.04
         }
       },
       "mistral/mistral-small-2603": {
@@ -253744,7 +254020,7 @@
             "text"
           ]
         },
-        "open_weights": false,
+        "open_weights": true,
         "limit": {
           "context": 1048576,
           "output": 131072
@@ -258160,7 +258436,7 @@
             "text"
           ]
         },
-        "open_weights": false,
+        "open_weights": true,
         "limit": {
           "context": 1000000,
           "output": 131072
@@ -262156,7 +262432,7 @@
             "text"
           ]
         },
-        "open_weights": false,
+        "open_weights": true,
         "limit": {
           "context": 1048576,
           "output": 131072
@@ -267390,7 +267666,7 @@
             "text"
           ]
         },
-        "open_weights": false,
+        "open_weights": true,
         "limit": {
           "context": 1048576,
           "output": 131072
@@ -268237,9 +268513,9 @@
           "output": 384000
         },
         "cost": {
-          "input": 0.22,
-          "output": 0.66,
-          "cache_read": 0.007
+          "input": 0.44,
+          "output": 1.32,
+          "cache_read": 0.028
         }
       },
       "arcee-ai/trinity-large-thinking": {
@@ -273044,7 +273320,7 @@
         "open_weights": false,
         "limit": {
           "context": 1047576,
-          "output": 942818
+          "output": 32768
         },
         "cost": {
           "input": 0.1,
@@ -277828,7 +278104,7 @@
         "cost": {
           "input": 0.03,
           "output": 0.16,
-          "cache_read": 0.01
+          "cache_read": 0.013
         }
       },
       "inclusionai/ling-3.0-flash-fin:free": {
@@ -278116,8 +278392,8 @@
         },
         "open_weights": false,
         "limit": {
-          "context": 1048576,
-          "output": 16384
+          "context": 128000,
+          "output": 115200
         },
         "cost": {
           "input": 0.2,
@@ -278247,9 +278523,8 @@
           "output": 16384
         },
         "cost": {
-          "input": 0.165,
-          "output": 0.165,
-          "cache_read": 0.0165
+          "input": 0.019,
+          "output": 0.03
         }
       },
       "mistralai/mistral-medium-3-5": {
@@ -278321,9 +278596,9 @@
           "output": 209715
         },
         "cost": {
-          "input": 0.44,
-          "output": 2.2,
-          "cache_read": 0.044
+          "input": 0.4,
+          "output": 2,
+          "cache_read": 0.04
         }
       },
       "mistralai/mistral-small-2603": {
@@ -278395,9 +278670,8 @@
           "output": 16384
         },
         "cost": {
-          "input": 0.11,
-          "output": 0.33,
-          "cache_read": 0.011
+          "input": 0.075,
+          "output": 0.2
         }
       },
       "mistralai/mistral-small-24b-instruct-2501": {
@@ -279531,8 +279805,8 @@
         },
         "open_weights": false,
         "limit": {
-          "context": 256000,
-          "output": 80000
+          "context": 262144,
+          "output": 144000
         },
         "cost": {
           "input": 0.3,
@@ -289379,7 +289653,7 @@
             "text"
           ]
         },
-        "open_weights": false,
+        "open_weights": true,
         "limit": {
           "context": 1000000,
           "output": 131072
