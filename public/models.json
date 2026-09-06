@@ -16113,7 +16113,10 @@
             "type": "effort",
             "values": [
               "none",
-              "high"
+              "low",
+              "medium",
+              "high",
+              "max"
             ]
           }
         ],
@@ -20848,37 +20851,6 @@
           "cache_read": 0.204
         }
       },
-      "NousResearch/Hermes-4-70B:thinking": {
-        "id": "NousResearch/Hermes-4-70B:thinking",
-        "name": "Hermes 4 (Thinking)",
-        "description": "General-purpose chat model for instruction following, writing, and analysis",
-        "family": "nousresearch",
-        "attachment": false,
-        "reasoning": false,
-        "tool_call": false,
-        "structured_output": false,
-        "release_date": "2025-09-17",
-        "last_updated": "2025-09-17",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 128000,
-          "input": 128000,
-          "output": 8192
-        },
-        "cost": {
-          "input": 0.2006,
-          "output": 0.3995,
-          "cache_read": 0.1003
-        }
-      },
       "NousResearch/hermes-4-405b": {
         "id": "NousResearch/hermes-4-405b",
         "name": "Hermes 4 Large",
@@ -23142,9 +23114,9 @@
         },
         "open_weights": false,
         "limit": {
-          "context": 1000000,
-          "input": 1000000,
-          "output": 32768
+          "context": 400000,
+          "input": 400000,
+          "output": 128000
         },
         "cost": {
           "input": 1.25,
@@ -23163,7 +23135,6 @@
           {
             "type": "effort",
             "values": [
-              "none",
               "low",
               "medium",
               "high",
@@ -23193,10 +23164,10 @@
           "output": 128000
         },
         "cost": {
-          "input": 2,
-          "output": 10,
-          "cache_read": 0.2,
-          "cache_write": 2.5
+          "input": 10,
+          "output": 50,
+          "cache_read": 1,
+          "cache_write": 12.5
         }
       },
       "openai/gpt-6-astra": {
@@ -23366,8 +23337,8 @@
         },
         "open_weights": false,
         "limit": {
-          "context": 922000,
-          "input": 922000,
+          "context": 1050000,
+          "input": 1050000,
           "output": 128000
         },
         "cost": {
@@ -24525,8 +24496,8 @@
         },
         "open_weights": false,
         "limit": {
-          "context": 1000000,
-          "input": 1000000,
+          "context": 1050000,
+          "input": 1050000,
           "output": 128000
         },
         "cost": {
@@ -25421,8 +25392,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 131072,
-          "input": 131072,
+          "context": 32000,
+          "input": 32000,
           "output": 16384
         },
         "cost": {
@@ -50031,9 +50002,9 @@
           "output": 131072
         },
         "cost": {
-          "input": 0.075,
-          "output": 0.25,
-          "cache_read": 0.015
+          "input": 0.15,
+          "output": 0.5,
+          "cache_read": 0.03
         }
       },
       "novita/qwen3-vl-30b-a3b-instruct": {
@@ -51949,9 +51920,9 @@
           "output": 393216
         },
         "cost": {
-          "input": 0.08,
-          "output": 0.16,
-          "cache_read": 0.02
+          "input": 0.05,
+          "output": 0.1,
+          "cache_read": 0.01
         }
       },
       "consensusprotocol/gpt-oss-20b": {
@@ -107112,6 +107083,50 @@
           "cache_read": 0.016
         }
       },
+      "inkling": {
+        "id": "inkling",
+        "name": "Inkling",
+        "description": "Multimodal MoE reasoning model (975B total, 41B active) for text, image, and audio",
+        "family": "ling",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "none",
+              "minimal",
+              "low",
+              "medium",
+              "high",
+              "xhigh"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "temperature": true,
+        "release_date": "2026-08-15",
+        "last_updated": "2026-09-05",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 1048576,
+          "output": 32768
+        },
+        "cost": {
+          "input": 1.0888,
+          "output": 4.40964,
+          "cache_read": 0.185096
+        }
+      },
       "glm-5": {
         "id": "glm-5",
         "name": "GLM-5",
@@ -121709,16 +121724,16 @@
           "output": 128000
         },
         "cost": {
-          "input": 5,
-          "output": 30,
-          "cache_read": 0.5,
-          "cache_write": 6.25,
+          "input": 4,
+          "output": 20,
+          "cache_read": 0.4,
+          "cache_write": 5,
           "tiers": [
             {
-              "input": 10,
-              "output": 45,
-              "cache_read": 1,
-              "cache_write": 12.5,
+              "input": 8,
+              "output": 30,
+              "cache_read": 0.8,
+              "cache_write": 10,
               "tier": {
                 "type": "context",
                 "size": 272000
@@ -121726,10 +121741,74 @@
             }
           ],
           "context_over_200k": {
-            "input": 10,
-            "output": 45,
-            "cache_read": 1,
-            "cache_write": 12.5
+            "input": 8,
+            "output": 30,
+            "cache_read": 0.8,
+            "cache_write": 10
+          }
+        }
+      },
+      "openai/gpt-6-astra": {
+        "id": "openai/gpt-6-astra",
+        "name": "GPT-6 Astra",
+        "description": "GPT-6 Astra is OpenAI's most capable model for complex reasoning, coding, computer use, research, and document creation.",
+        "family": "gpt-astra",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": false,
+        "release_date": "2026-09-04",
+        "last_updated": "2026-09-04",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1050000,
+          "input": 922000,
+          "output": 128000
+        },
+        "cost": {
+          "input": 10,
+          "output": 50,
+          "cache_read": 1,
+          "cache_write": 12.5,
+          "tiers": [
+            {
+              "input": 20,
+              "output": 75,
+              "cache_read": 2,
+              "cache_write": 25,
+              "tier": {
+                "type": "context",
+                "size": 272000
+              }
+            }
+          ],
+          "context_over_200k": {
+            "input": 20,
+            "output": 75,
+            "cache_read": 2,
+            "cache_write": 25
           }
         }
       },
@@ -153586,10 +153665,28 @@
           "output": 128000
         },
         "cost": {
-          "input": 3.125,
-          "output": 18.75,
-          "cache_read": 0.3125,
-          "cache_write": 3.90625
+          "input": 2.5,
+          "output": 15,
+          "cache_read": 0.25,
+          "cache_write": 3.125,
+          "tiers": [
+            {
+              "input": 5,
+              "output": 22.5,
+              "cache_read": 0.5,
+              "cache_write": 6.25,
+              "tier": {
+                "type": "context",
+                "size": 272000
+              }
+            }
+          ],
+          "context_over_200k": {
+            "input": 5,
+            "output": 22.5,
+            "cache_read": 0.5,
+            "cache_write": 6.25
+          }
         }
       },
       "kimi-k3-fast-api": {
@@ -154745,10 +154842,28 @@
           "output": 128000
         },
         "cost": {
-          "input": 6.25,
-          "output": 37.5,
-          "cache_read": 0.625,
-          "cache_write": 7.8125
+          "input": 2.5,
+          "output": 12.5,
+          "cache_read": 0.25,
+          "cache_write": 3.125,
+          "tiers": [
+            {
+              "input": 5,
+              "output": 18.75,
+              "cache_read": 0.5,
+              "cache_write": 6.25,
+              "tier": {
+                "type": "context",
+                "size": 272000
+              }
+            }
+          ],
+          "context_over_200k": {
+            "input": 5,
+            "output": 18.75,
+            "cache_read": 0.5,
+            "cache_write": 6.25
+          }
         }
       },
       "deepseek-v3.2": {
@@ -154945,16 +155060,16 @@
           "output": 128000
         },
         "cost": {
-          "input": 3.125,
-          "output": 18.75,
-          "cache_read": 0.3125,
-          "cache_write": 3.90625,
+          "input": 2.5,
+          "output": 15,
+          "cache_read": 0.25,
+          "cache_write": 3.125,
           "tiers": [
             {
-              "input": 6.25,
-              "output": 28.125,
-              "cache_read": 0.625,
-              "cache_write": 7.8125,
+              "input": 5,
+              "output": 22.5,
+              "cache_read": 0.5,
+              "cache_write": 6.25,
               "tier": {
                 "type": "context",
                 "size": 272000
@@ -154962,10 +155077,10 @@
             }
           ],
           "context_over_200k": {
-            "input": 6.25,
-            "output": 28.125,
-            "cache_read": 0.625,
-            "cache_write": 7.8125
+            "input": 5,
+            "output": 22.5,
+            "cache_read": 0.5,
+            "cache_write": 6.25
           }
         }
       },
@@ -155205,16 +155320,16 @@
           "output": 128000
         },
         "cost": {
-          "input": 1.25,
-          "output": 7.5,
-          "cache_read": 0.125,
-          "cache_write": 1.5625,
+          "input": 0.25,
+          "output": 1.5,
+          "cache_read": 0.025,
+          "cache_write": 0.3125,
           "tiers": [
             {
-              "input": 2.5,
-              "output": 11.25,
-              "cache_read": 0.25,
-              "cache_write": 3.125,
+              "input": 0.5,
+              "output": 2.25,
+              "cache_read": 0.05,
+              "cache_write": 0.625,
               "tier": {
                 "type": "context",
                 "size": 272000
@@ -155222,10 +155337,10 @@
             }
           ],
           "context_over_200k": {
-            "input": 2.5,
-            "output": 11.25,
-            "cache_read": 0.25,
-            "cache_write": 3.125
+            "input": 0.5,
+            "output": 2.25,
+            "cache_read": 0.05,
+            "cache_write": 0.625
           }
         }
       },
@@ -156366,10 +156481,28 @@
           "output": 128000
         },
         "cost": {
-          "input": 0.26666667,
-          "output": 1.6,
-          "cache_read": 0.02666667,
-          "cache_write": 0.33333334
+          "input": 0.25,
+          "output": 1.5,
+          "cache_read": 0.025,
+          "cache_write": 0.3125,
+          "tiers": [
+            {
+              "input": 0.5,
+              "output": 2.25,
+              "cache_read": 0.05,
+              "cache_write": 0.625,
+              "tier": {
+                "type": "context",
+                "size": 272000
+              }
+            }
+          ],
+          "context_over_200k": {
+            "input": 0.5,
+            "output": 2.25,
+            "cache_read": 0.05,
+            "cache_write": 0.625
+          }
         }
       },
       "llama-3.3-70b": {
@@ -156585,16 +156718,16 @@
           "output": 128000
         },
         "cost": {
-          "input": 6.25,
-          "output": 37.5,
-          "cache_read": 0.625,
-          "cache_write": 7.8125,
+          "input": 2.5,
+          "output": 12.5,
+          "cache_read": 0.25,
+          "cache_write": 3.125,
           "tiers": [
             {
-              "input": 12.5,
-              "output": 56.25,
-              "cache_read": 1.25,
-              "cache_write": 15.625,
+              "input": 5,
+              "output": 18.75,
+              "cache_read": 0.5,
+              "cache_write": 6.25,
               "tier": {
                 "type": "context",
                 "size": 272000
@@ -156602,10 +156735,10 @@
             }
           ],
           "context_over_200k": {
-            "input": 12.5,
-            "output": 56.25,
-            "cache_read": 1.25,
-            "cache_write": 15.625
+            "input": 5,
+            "output": 18.75,
+            "cache_read": 0.5,
+            "cache_write": 6.25
           }
         }
       }
@@ -160175,9 +160308,9 @@
           "output": 384000
         },
         "cost": {
-          "input": 0.051,
-          "output": 0.104,
-          "cache_read": 0.0097
+          "input": 0.05,
+          "output": 0.1,
+          "cache_read": 0.01
         }
       },
       "kimi-k2.7-code": {
@@ -162136,9 +162269,9 @@
           "output": 131072
         },
         "cost": {
-          "input": 0.075,
+          "input": 0.1,
           "output": 0.25,
-          "cache_read": 0.015
+          "cache_read": 0.02
         }
       },
       "gpt-4o-mini": {
@@ -185208,9 +185341,9 @@
           "output": 384000
         },
         "cost": {
-          "input": 0.08,
+          "input": 0.06,
           "output": 0.18,
-          "cache_read": 0.016
+          "cache_read": 0.015
         }
       },
       "deepseek-ai/DeepSeek-V3.1": {
@@ -187954,7 +188087,7 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 262144,
+          "context": 256000,
           "output": 16384
         },
         "cost": {
@@ -189891,12 +190024,12 @@
         "open_weights": false,
         "limit": {
           "context": 1048576,
-          "output": 131072
+          "output": 943718
         },
         "cost": {
-          "input": 0.04998,
-          "output": 0.09996,
-          "cache_read": 0.009996
+          "input": 0.045,
+          "output": 0.09,
+          "cache_read": 0.009
         }
       },
       "dots-studio/dots-3-note-preview:free": {
@@ -194542,8 +194675,8 @@
         },
         "open_weights": false,
         "limit": {
-          "context": 32768,
-          "output": 26214
+          "context": 1024000,
+          "output": 819200
         },
         "cost": {
           "input": 0.4,
@@ -195491,7 +195624,7 @@
         "open_weights": true,
         "limit": {
           "context": 1048576,
-          "output": 943718
+          "output": 131072
         },
         "cost": {
           "input": 0.44,
@@ -199963,9 +200096,9 @@
           "output": 235929
         },
         "cost": {
-          "input": 1.15,
-          "output": 3.5,
-          "cache_read": 0.1
+          "input": 1.17,
+          "output": 3.96,
+          "cache_read": 0.234
         }
       },
       "moonshotai/kimi-k2-0905": {
@@ -217687,9 +217820,9 @@
           "output": 131072
         },
         "cost": {
-          "input": 0.075,
-          "output": 0.25,
-          "cache_read": 0.015
+          "input": 0.015,
+          "output": 0.05,
+          "cache_read": 0.003
         }
       },
       "zai/glm-4.5": {
@@ -229435,8 +229568,9 @@
           "output": 16384
         },
         "cost": {
-          "input": 0.08,
-          "output": 0.75
+          "input": 0.3125,
+          "output": 1.25,
+          "cache_read": 0.15625
         }
       },
       "qwen/qwen3.5-plus-20260420": {
@@ -231444,12 +231578,12 @@
         "open_weights": false,
         "limit": {
           "context": 1310720,
-          "output": 131072
+          "output": 943718
         },
         "cost": {
-          "input": 0.04998,
-          "output": 0.09996,
-          "cache_read": 0.009996
+          "input": 0.045,
+          "output": 0.09,
+          "cache_read": 0.009
         }
       },
       "dots-studio/dots-3-note-preview:free": {
@@ -236190,7 +236324,7 @@
         "open_weights": true,
         "limit": {
           "context": 1024000,
-          "output": 26214
+          "output": 819200
         },
         "cost": {
           "input": 0.4,
@@ -237225,12 +237359,12 @@
         "open_weights": true,
         "limit": {
           "context": 1310720,
-          "output": 943718
+          "output": 131072
         },
         "cost": {
-          "input": 0.065,
-          "output": 0.18,
-          "cache_read": 0.016
+          "input": 0.04998,
+          "output": 0.09996,
+          "cache_read": 0.009996
         }
       },
       "deepseek/deepseek-v4-flash": {
@@ -237275,9 +237409,9 @@
           "output": 384000
         },
         "cost": {
-          "input": 0.08526,
-          "output": 0.17052,
-          "cache_read": 0.017052
+          "input": 0.08106,
+          "output": 0.16212,
+          "cache_read": 0.016212
         }
       },
       "deepseek/deepseek-r1": {
@@ -237564,9 +237698,9 @@
           "output": 384000
         },
         "cost": {
-          "input": 0.910716,
-          "output": 1.821432,
-          "cache_read": 0.075893
+          "input": 0.707832,
+          "output": 1.415664,
+          "cache_read": 0.058986
         }
       },
       "deepseek/deepseek-chat-v3-0324": {
@@ -241742,9 +241876,9 @@
           "output": 235929
         },
         "cost": {
-          "input": 1.15,
-          "output": 3.5,
-          "cache_read": 0.1
+          "input": 1.17,
+          "output": 3.96,
+          "cache_read": 0.234
         }
       },
       "moonshotai/kimi-k2-0905": {
@@ -291926,8 +292060,8 @@
       },
       "google/gemini-flash-latest": {
         "id": "google/gemini-flash-latest",
-        "name": "Gemini 3.7 Flash",
-        "description": "High-efficiency Gemini model for agentic workflows, coding, and multimodal reasoning",
+        "name": "Gemini 3.8 Flash",
+        "description": "Google's most intelligent Flash model, engineered for long-horizon software engineering, autonomous agents, and complex enterprise workflows",
         "family": "gemini-flash",
         "attachment": true,
         "reasoning": true,
@@ -291944,9 +292078,8 @@
         "tool_call": true,
         "structured_output": true,
         "temperature": true,
-        "knowledge": "2026-03",
-        "release_date": "2026-08-13",
-        "last_updated": "2026-08-13",
+        "release_date": "2026-09-02",
+        "last_updated": "2026-09-02",
         "modalities": {
           "input": [
             "text",
@@ -292591,6 +292724,52 @@
           "output": 0.28,
           "cache_read": 0.028,
           "cache_write": 0.14
+        }
+      },
+      "databricks/databricks-inkling": {
+        "id": "databricks/databricks-inkling",
+        "name": "Inkling",
+        "description": "Multimodal MoE reasoning model (975B total, 41B active) for text, image, and audio",
+        "family": "ling",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "none",
+              "minimal",
+              "low",
+              "medium",
+              "high",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": false,
+        "temperature": true,
+        "release_date": "2026-07-15",
+        "last_updated": "2026-07-15",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 1000000,
+          "output": 1048576
+        },
+        "cost": {
+          "input": 1.00002,
+          "output": 4.04999,
+          "cache_read": 0.17003,
+          "cache_write": 1.00002
         }
       },
       "databricks/databricks-gpt-oss-120b": {
@@ -294557,16 +294736,15 @@
       },
       "openai/gpt-latest": {
         "id": "openai/gpt-latest",
-        "name": "GPT-5.6 Sol",
-        "description": "Frontier GPT-5.6 model for complex professional work, coding, and agentic workflows",
-        "family": "gpt-sol",
+        "name": "GPT-6 Astra",
+        "description": "GPT-6 Astra is OpenAI's most capable model for complex reasoning, coding, computer use, research, and document creation.",
+        "family": "gpt-astra",
         "attachment": true,
         "reasoning": true,
         "reasoning_options": [
           {
             "type": "effort",
             "values": [
-              "none",
               "low",
               "medium",
               "high",
@@ -294578,9 +294756,8 @@
         "tool_call": true,
         "structured_output": true,
         "temperature": false,
-        "knowledge": "2026-02-16",
-        "release_date": "2026-07-09",
-        "last_updated": "2026-07-09",
+        "release_date": "2026-09-04",
+        "last_updated": "2026-09-04",
         "modalities": {
           "input": [
             "text",
@@ -294598,16 +294775,16 @@
           "output": 128000
         },
         "cost": {
-          "input": 4,
-          "output": 20,
-          "cache_read": 0.4,
-          "cache_write": 5,
+          "input": 10,
+          "output": 50,
+          "cache_read": 1,
+          "cache_write": 12.5,
           "tiers": [
             {
-              "input": 8,
-              "output": 30,
-              "cache_read": 0.8,
-              "cache_write": 10,
+              "input": 20,
+              "output": 75,
+              "cache_read": 2,
+              "cache_write": 25,
               "tier": {
                 "type": "context",
                 "size": 272000
@@ -294615,10 +294792,75 @@
             }
           ],
           "context_over_200k": {
-            "input": 8,
-            "output": 30,
-            "cache_read": 0.8,
-            "cache_write": 10
+            "input": 20,
+            "output": 75,
+            "cache_read": 2,
+            "cache_write": 25
+          }
+        }
+      },
+      "openai/gpt-6-astra": {
+        "id": "openai/gpt-6-astra",
+        "name": "GPT-6 Astra",
+        "description": "GPT-6 Astra is OpenAI's most capable model for complex reasoning, coding, computer use, research, and document creation.",
+        "family": "gpt-astra",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": false,
+        "release_date": "2026-09-04",
+        "last_updated": "2026-09-04",
+        "modalities": {
+          "input": [
+            "text",
+            "image",
+            "pdf"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1050000,
+          "input": 922000,
+          "output": 128000
+        },
+        "cost": {
+          "input": 10,
+          "output": 50,
+          "cache_read": 1,
+          "cache_write": 12.5,
+          "tiers": [
+            {
+              "input": 20,
+              "output": 75,
+              "cache_read": 2,
+              "cache_write": 25,
+              "tier": {
+                "type": "context",
+                "size": 272000
+              }
+            }
+          ],
+          "context_over_200k": {
+            "input": 20,
+            "output": 75,
+            "cache_read": 2,
+            "cache_write": 25
           }
         }
       },
@@ -298797,8 +299039,8 @@
       },
       "vertex/gemini-flash-latest": {
         "id": "vertex/gemini-flash-latest",
-        "name": "Gemini 3.7 Flash",
-        "description": "High-efficiency Gemini model for agentic workflows, coding, and multimodal reasoning",
+        "name": "Gemini 3.8 Flash",
+        "description": "Google's most intelligent Flash model, engineered for long-horizon software engineering, autonomous agents, and complex enterprise workflows",
         "family": "gemini-flash",
         "attachment": true,
         "reasoning": true,
@@ -298815,9 +299057,8 @@
         "tool_call": true,
         "structured_output": true,
         "temperature": true,
-        "knowledge": "2026-03",
-        "release_date": "2026-08-13",
-        "last_updated": "2026-08-13",
+        "release_date": "2026-09-02",
+        "last_updated": "2026-09-02",
         "modalities": {
           "input": [
             "text",
