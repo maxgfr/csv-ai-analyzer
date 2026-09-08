@@ -1,3 +1,10 @@
+## [1.15.1](https://github.com/maxgfr/csv-ai-analyzer/compare/v1.15.0...v1.15.1) (2026-09-08)
+
+
+### Bug Fixes
+
+* register GLM compatible provider and style file picker ([0a81af2](https://github.com/maxgfr/csv-ai-analyzer/commit/0a81af23ba75a5dab41538a52c52b6503ff03012))
+
 # [1.15.0](https://github.com/maxgfr/csv-ai-analyzer/compare/v1.14.7...v1.15.0) (2026-09-08)
 
 
