@@ -156,6 +156,7 @@ export function CSVCompare({
         )}
       {!compareData ? (
         <FileUpload
+          embedded
           csvSettings={csvSettings}
           onClear={() => {}}
           onDataLoaded={(data, name) => {

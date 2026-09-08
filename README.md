@@ -338,6 +338,11 @@ can be retried individually. Custom OpenAI-compatible endpoints use Chat
 Completions; configuring a local endpoint still requires that server's CORS policy
 to allow this application.
 
+Catalog providers using `@ai-sdk/openai-compatible`, including Z.ai/GLM and
+Zhipu, use their catalog API URL and Chat Completions. Structured analyses send
+the expected schema as instructions with JSON-object mode, then validate the
+returned JSON locally. A missing catalog API URL produces a configuration error.
+
 Import, quality checks and comparisons run in Web Workers. Table operations and
 transforms use workers from 10,000 rows. The tested large-file scenario contains
 100,000 rows; very wide files still require proportionally more browser memory.

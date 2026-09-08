@@ -1,4 +1,5 @@
 import { test, expect, type Page, type Route } from "@playwright/test";
+import { readFileSync } from "node:fs";
 async function configure(page: Page) {
   await page.goto("/");
   await page.getByRole("button", { name: "API settings", exact: true }).click();
@@ -38,6 +39,60 @@ async function objectResponse(route: Route, value: unknown) {
     },
   });
 }
+
+test("GLM catalog selection generates a summary through the compatible provider", async ({
+  page,
+}) => {
+  const catalog = JSON.parse(readFileSync("public/models.json", "utf8"));
+  const zai = catalog.zai;
+  await page.route("**/models.json", (route) =>
+    route.fulfill({
+      json: {
+        zai: { ...zai, models: { "glm-4.7": zai.models["glm-4.7"] } },
+      },
+    }),
+  );
+  let requests = 0;
+  await page.route(`${zai.api}/**`, async (route) => {
+    requests++;
+    expect(route.request().url()).toBe(`${zai.api}/chat/completions`);
+    expect(route.request().headers().authorization).toBe(
+      "Bearer test-placeholder",
+    );
+    expect(route.request().postDataJSON()).toMatchObject({
+      model: "glm-4.7",
+      response_format: { type: "json_object" },
+    });
+    await objectResponse(route, {
+      summary: "GLM summary verified",
+      keyInsights: ["Two rows"],
+      dataQuality: "Complete",
+    });
+  });
+  await page.goto("/");
+  await page.getByRole("button", { name: "API settings", exact: true }).click();
+  await page.getByLabel("Provider", { exact: true }).selectOption("zai");
+  await page
+    .getByLabel("Provider API Key", { exact: true })
+    .fill("test-placeholder");
+  await page.getByRole("button", { name: /GLM-4\.7/ }).click();
+  await page
+    .getByRole("button", { name: "Save Configuration", exact: true })
+    .click();
+  await page.getByLabel("Choose CSV or Excel file").setInputFiles({
+    name: "glm.csv",
+    mimeType: "text/csv",
+    buffer: Buffer.from("name,amount\nA,1\nB,2"),
+  });
+  await page.getByRole("button", { name: "Import data", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Generate Summary", exact: true })
+    .click();
+  await expect(
+    page.getByText("GLM summary verified", { exact: true }),
+  ).toBeVisible();
+  expect(requests).toBe(1);
+});
 test("custom endpoint uses chat completions, handles partial failure and retries summary", async ({
   page,
 }) => {

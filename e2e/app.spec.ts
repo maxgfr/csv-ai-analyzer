@@ -148,9 +148,20 @@ test("manual charts, chart exports, PDF, theme and keyboard fullscreen", async (
 });
 test("comparison preserves duplicate keys and extra occurrences", async ({
   page,
-}) => {
+}, testInfo) => {
   await importCSV(page, "id,value\nx,1\nx,2\nx,3");
-  await page.getByLabel("Choose CSV or Excel file").setInputFiles({
+  const input = page.getByLabel("Choose CSV or Excel file");
+  await page
+    .getByText("Choose a file", { exact: true })
+    .scrollIntoViewIfNeeded();
+  await input.focus();
+  await expect(input).toBeFocused();
+  await page.screenshot({ path: testInfo.outputPath("compare-upload.png") });
+  const chooser = page.waitForEvent("filechooser");
+  await input.press("Enter");
+  await (
+    await chooser
+  ).setFiles({
     name: "compare.csv",
     mimeType: "text/csv",
     buffer: Buffer.from("id,value\nx,1\nx,4"),

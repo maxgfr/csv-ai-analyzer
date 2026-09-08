@@ -25,6 +25,7 @@ interface FileUploadProps {
   csvSettings?: CSVSettings;
   currentFileName?: string;
   initialFile?: File;
+  embedded?: boolean;
   onClear: () => void;
 }
 
@@ -32,6 +33,7 @@ export function FileUpload({
   onDataLoaded,
   csvSettings = DEFAULT_CSV_SETTINGS,
   initialFile,
+  embedded = false,
   onClear,
 }: FileUploadProps) {
   const [file, setFile] = useState<File | null>(initialFile ?? null);
@@ -64,10 +66,10 @@ export function FileUpload({
   const control =
     "w-full rounded-lg border border-white/20 bg-gray-900 px-3 py-2 text-sm text-white";
   return (
-    <div className="glass-card space-y-4 p-6">
+    <div className={embedded ? "space-y-4" : "glass-card space-y-4 p-6"}>
       {!file ? (
         <label
-          className={`block cursor-pointer rounded-xl border border-dashed p-8 text-center ${dragging ? "border-violet-400 bg-violet-500/10" : "border-white/30"}`}
+          className={`block cursor-pointer rounded-xl border border-dashed p-6 text-center transition-colors focus-within:outline-2 focus-within:outline-offset-4 focus-within:outline-violet-500 hover:border-violet-400 sm:p-8 ${dragging ? "border-violet-400 bg-violet-500/10" : "border-white/30"}`}
           onDragOver={(e) => {
             e.preventDefault();
             setDragging(true);
@@ -86,11 +88,15 @@ export function FileUpload({
           <span className="mt-1 block text-sm text-gray-400">
             Preview the data and settings before importing.
           </span>
+          <span className="mt-5 inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-violet-600 px-5 py-2.5 text-sm font-semibold text-white">
+            <Upload aria-hidden="true" className="h-4 w-4" />
+            Choose a file
+          </span>
           <input
             aria-label="Choose CSV or Excel file"
             type="file"
             accept={SPREADSHEET_ACCEPT}
-            className="mt-4 block w-full text-sm"
+            className="sr-only"
             onChange={(e) => {
               choose(e.target.files?.[0]);
               e.target.value = "";

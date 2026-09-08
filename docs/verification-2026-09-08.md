@@ -4,6 +4,18 @@ Scope: the Next.js application and the public `csv-charts-ai` workspace package.
 Reference revision: `fce70197fb75f6928f5332a9bebc73b17b9437df`.
 The changes are local; this report does not describe a published release.
 
+## GLM follow-up
+
+The reported `Provider "@ai-sdk/openai-compatible" is not registered` failure
+was reproduced through the application's model resolver without a real key.
+The application now installs and registers the compatible SDK, preserving the
+catalog API URL. JSON schemas are included in instructions when using JSON-object
+mode, with response validation retained. Tests check Z.ai and BigModel request
+URLs, authorization with a placeholder, schema instructions, and parsed summaries.
+The browser regression selects Z.ai/GLM from the catalog and generates a mocked
+summary. The file picker was also styled and its keyboard activation tested in
+CSV Compare. No real API key was used or stored during these checks.
+
 ## Behavior repaired
 
 - Content comparison now matches duplicate rows with cursors instead of repeatedly

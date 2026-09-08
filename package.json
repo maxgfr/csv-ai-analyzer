@@ -32,6 +32,7 @@
     "@ai-sdk/google": "^3.0.52",
     "@ai-sdk/mistral": "^3.0.27",
     "@ai-sdk/openai": "^3.0.47",
+    "@ai-sdk/openai-compatible": "^2.0.74",
     "@t3-oss/env-nextjs": "^0.13.10",
     "csv-charts-ai": "workspace:*",
     "highlight.js": "^11.11.1",
