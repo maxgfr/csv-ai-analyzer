@@ -1,3 +1,10 @@
+## [1.15.2](https://github.com/maxgfr/csv-ai-analyzer/compare/v1.15.1...v1.15.2) (2026-09-08)
+
+
+### Bug Fixes
+
+* improve anomaly readability in light and dark themes ([4bb6905](https://github.com/maxgfr/csv-ai-analyzer/commit/4bb6905547ab776fa07cf630842df0ac2d0fbdc2))
+
 ## [1.15.1](https://github.com/maxgfr/csv-ai-analyzer/compare/v1.15.0...v1.15.1) (2026-09-08)
 
 
