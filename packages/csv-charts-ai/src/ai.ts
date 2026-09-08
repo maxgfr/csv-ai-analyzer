@@ -138,9 +138,11 @@ export function getAIErrorMessage(error: unknown): string {
       message.includes("network") ||
       message.includes("timeout") ||
       message.includes("econnrefused") ||
-      message.includes("fetch failed")
+      message.includes("fetch failed") ||
+      message.includes("failed to fetch") ||
+      message.includes("load failed")
     ) {
-      return "Network error. Please check your internet connection and try again.";
+      return "Network error: the AI provider could not be reached. Check your connection and API URL. If the provider blocks browser requests (CORS), use a server relay you control or a provider that supports browser access. This error does not verify your API key.";
     }
     if (
       message.includes("model") &&

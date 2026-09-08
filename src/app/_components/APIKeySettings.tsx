@@ -670,11 +670,27 @@ export function APIKeySettings({
                 ) && (
                   <div className="mt-3 flex items-start gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 p-3">
                     <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-400" />
-                    <div className="text-sm text-amber-300">
-                      <strong className="font-semibold">Important:</strong> This
-                      provider must be OpenAI-compatible and support{" "}
-                      <strong>client-side requests</strong> (CORS enabled).
-                      Server-only APIs will not work in the browser.
+                    <div className="text-sm leading-relaxed text-(--text-primary)">
+                      {providerId === "zai" ||
+                      providerId === "zai-coding-plan" ? (
+                        <>
+                          <strong className="font-semibold">
+                            Z.ai browser access:
+                          </strong>{" "}
+                          Z.ai currently blocks direct requests from this site
+                          (CORS). Use a server relay you control via Custom
+                          Endpoint, or a provider that supports browser
+                          requests. GitHub Pages cannot run the relay. Changing
+                          your API key will not resolve a CORS block.
+                        </>
+                      ) : (
+                        <>
+                          <strong className="font-semibold">Important:</strong>{" "}
+                          This provider must be OpenAI-compatible and support{" "}
+                          <strong>client-side requests</strong> (CORS enabled).
+                          Server-only APIs will not work in the browser.
+                        </>
+                      )}
                     </div>
                   </div>
                 )}

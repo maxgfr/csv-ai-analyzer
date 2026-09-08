@@ -143,15 +143,25 @@ describe("getAIErrorMessage", () => {
 
   it("detects network errors", () => {
     expect(getAIErrorMessage(new Error("network error"))).toBe(
-      "Network error. Please check your internet connection and try again.",
+      "Network error: the AI provider could not be reached. Check your connection and API URL. If the provider blocks browser requests (CORS), use a server relay you control or a provider that supports browser access. This error does not verify your API key.",
     );
     expect(getAIErrorMessage(new Error("ECONNREFUSED"))).toBe(
-      "Network error. Please check your internet connection and try again.",
+      "Network error: the AI provider could not be reached. Check your connection and API URL. If the provider blocks browser requests (CORS), use a server relay you control or a provider that supports browser access. This error does not verify your API key.",
     );
     expect(getAIErrorMessage(new Error("fetch failed"))).toBe(
-      "Network error. Please check your internet connection and try again.",
+      "Network error: the AI provider could not be reached. Check your connection and API URL. If the provider blocks browser requests (CORS), use a server relay you control or a provider that supports browser access. This error does not verify your API key.",
     );
   });
+
+  it.each(["Failed to fetch", "Load failed"])(
+    "explains browser error '%s' without calling the key invalid",
+    (error) => {
+      const message = getAIErrorMessage(new TypeError(error));
+      expect(message).toContain("CORS");
+      expect(message).toContain("server relay");
+      expect(message).not.toContain("Invalid API key");
+    },
+  );
 
   it("detects model not found errors", () => {
     expect(getAIErrorMessage(new Error("model not found"))).toBe(

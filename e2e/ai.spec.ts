@@ -72,6 +72,9 @@ test("GLM catalog selection generates a summary through the compatible provider"
   await page.goto("/");
   await page.getByRole("button", { name: "API settings", exact: true }).click();
   await page.getByLabel("Provider", { exact: true }).selectOption("zai");
+  await expect(
+    page.getByText("Z.ai browser access:", { exact: true }),
+  ).toBeVisible();
   await page
     .getByLabel("Provider API Key", { exact: true })
     .fill("test-placeholder");
@@ -173,6 +176,26 @@ test("cancel and reimport reject late analysis results", async ({ page }) => {
     page.getByRole("button", { name: "Generate Summary", exact: true }),
   ).toBeEnabled();
   await expect(page.getByText("STALE RESULT", { exact: true })).toHaveCount(0);
+});
+
+test("network failures explain browser access instead of showing Failed to fetch", async ({
+  page,
+}) => {
+  await page.route("**/mock-ai/v1/**", (route) => route.abort("failed"));
+  await configure(page);
+  await page
+    .getByRole("button", { name: "Generate Summary", exact: true })
+    .click();
+  const analysis = page.getByRole("main");
+  await expect(
+    analysis.getByText(/Network error: the AI provider could not be reached/),
+  ).toBeVisible({ timeout: 30000 });
+  await expect(
+    analysis.getByText(/use a server relay you control/),
+  ).toBeVisible();
+  await expect(
+    analysis.getByText("Failed to fetch", { exact: true }),
+  ).toHaveCount(0);
 });
 test("streamed chat completes and is cleared on data change", async ({
   page,

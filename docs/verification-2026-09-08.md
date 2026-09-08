@@ -16,6 +16,19 @@ The browser regression selects Z.ai/GLM from the catalog and generates a mocked
 summary. The file picker was also styled and its keyboard activation tested in
 CSV Compare. No real API key was used or stored during these checks.
 
+### Real browser connectivity follow-up
+
+On 2026-09-08, actual requests from `https://maxgfr.github.io` reproduced
+`TypeError: Failed to fetch` for both Z.ai general and Coding Plan endpoints.
+Their OPTIONS responses omitted `Access-Control-Allow-Origin`; Chromium blocked
+the POST before authorization could be checked. BigModel's general endpoint
+returned HTTP 401 for an intentionally invalid placeholder, with CORS allowed.
+No real credentials were used, and Z.ai keys must not be redirected to BigModel.
+This is a separate limitation from the fixed provider registration bug. The
+earlier mocked GLM tests verify protocol integration, not real connectivity.
+The settings now explain the Z.ai limitation, and browser fetch errors describe
+network/CORS causes and the need for a separately hosted relay when applicable.
+
 ## Behavior repaired
 
 - Content comparison now matches duplicate rows with cursors instead of repeatedly

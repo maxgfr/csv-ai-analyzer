@@ -342,6 +342,11 @@ Catalog providers using `@ai-sdk/openai-compatible`, including Z.ai/GLM and
 Zhipu, use their catalog API URL and Chat Completions. Structured analyses send
 the expected schema as instructions with JSON-object mode, then validate the
 returned JSON locally. A missing catalog API URL produces a configuration error.
+Z.ai's public API was observed rejecting browser preflight requests from GitHub
+Pages (2026-09-08). Its catalog entry therefore warns that a server relay is
+required. The relay must be hosted separately and controlled by the user; this
+static application does not include a hosted relay. Network errors cannot
+determine whether an API key is valid.
 
 Import, quality checks and comparisons run in Web Workers. Table operations and
 transforms use workers from 10,000 rows. The tested large-file scenario contains
