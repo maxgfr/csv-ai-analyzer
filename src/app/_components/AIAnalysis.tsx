@@ -61,12 +61,6 @@ interface AIAnalysisProps {
   ) => void;
 }
 
-const SEVERITY_COLORS = {
-  low: "bg-blue-500/20 text-blue-400 border-blue-500/30",
-  medium: "bg-amber-500/20 text-amber-400 border-amber-500/30",
-  high: "bg-red-500/20 text-red-400 border-red-500/30",
-};
-
 const SEVERITY_LABELS = {
   low: "Low",
   medium: "Medium",
@@ -853,40 +847,48 @@ export function AIAnalysis({
                   </button>
                 </div>
 
-                <div className="max-h-[400px] space-y-3 overflow-y-auto pr-2">
+                <ol
+                  aria-label="Detected anomalies"
+                  tabIndex={0}
+                  className="max-h-[min(60vh,36rem)] space-y-4 overflow-y-auto overscroll-contain rounded-xl pr-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500"
+                >
                   {anomaliesResult.map((anomaly, i) => (
-                    <div
+                    <li
                       key={`anomaly-${i}`}
-                      className={`rounded-xl border p-4 ${SEVERITY_COLORS[anomaly.severity]}`}
+                      className="anomaly-card min-w-0 rounded-xl border p-4 sm:p-5"
                     >
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1">
-                          <div className="mb-1 flex items-center gap-2">
-                            <span className="rounded-full bg-white/10 px-2 py-0.5 text-xs">
-                              Row {anomaly.row}
-                            </span>
-                            <span className="rounded-full bg-white/10 px-2 py-0.5 text-xs">
-                              {anomaly.column}
-                            </span>
-                            <span
-                              className={`rounded-full px-2 py-0.5 text-xs ${SEVERITY_COLORS[anomaly.severity]}`}
-                            >
-                              {SEVERITY_LABELS[anomaly.severity]}
-                            </span>
-                          </div>
-                          <p className="text-sm">{anomaly.issue}</p>
-                          <p className="mt-1 text-xs text-gray-500">
-                            Value:{" "}
-                            <code className="rounded bg-white/10 px-1">
-                              {anomaly.value}
-                            </code>
-                          </p>
+                      <div className="flex flex-wrap items-start justify-between gap-3">
+                        <div className="flex min-w-0 flex-1 flex-wrap items-baseline gap-x-3 gap-y-1">
+                          <span className="shrink-0 text-sm text-(--text-secondary) tabular-nums">
+                            Row {anomaly.row}
+                          </span>
+                          <h4 className="min-w-0 text-base font-semibold wrap-anywhere">
+                            {anomaly.column}
+                          </h4>
                         </div>
-                        <AlertTriangle className="h-5 w-5 shrink-0" />
+                        <span
+                          data-severity={anomaly.severity}
+                          className="anomaly-severity inline-flex shrink-0 items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-semibold"
+                        >
+                          <AlertTriangle
+                            aria-hidden="true"
+                            className="h-3.5 w-3.5"
+                          />
+                          {SEVERITY_LABELS[anomaly.severity]}
+                        </span>
                       </div>
-                    </div>
+                      <p className="mt-3 max-w-[75ch] text-base leading-relaxed wrap-anywhere">
+                        {anomaly.issue}
+                      </p>
+                      <dl className="mt-3 flex flex-wrap items-baseline gap-x-2 gap-y-1 text-sm">
+                        <dt className="text-(--text-secondary)">Value:</dt>
+                        <dd className="min-w-0 rounded-md bg-(--bg-input) px-2 py-1 font-mono wrap-anywhere">
+                          {anomaly.value || "(empty)"}
+                        </dd>
+                      </dl>
+                    </li>
                   ))}
-                </div>
+                </ol>
               </div>
             )}
           </div>

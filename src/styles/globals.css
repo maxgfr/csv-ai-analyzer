@@ -22,6 +22,13 @@
     --text-primary: #ffffff;
     --text-secondary: #9ca3af;
     --text-tertiary: #6b7280;
+    --anomaly-surface: #161b2a;
+    --anomaly-low-bg: #172554;
+    --anomaly-low-text: #bfdbfe;
+    --anomaly-medium-bg: #451a03;
+    --anomaly-medium-text: #fde68a;
+    --anomaly-high-bg: #450a0a;
+    --anomaly-high-text: #fecaca;
     --text-heading-from: #ffffff;
     --text-heading-to: #9ca3af;
     --text-hero-from: #ffffff;
@@ -68,6 +75,13 @@
     --text-primary: #0f172a;
     --text-secondary: #475569;
     --text-tertiary: #64748b;
+    --anomaly-surface: #ffffff;
+    --anomaly-low-bg: #dbeafe;
+    --anomaly-low-text: #1e40af;
+    --anomaly-medium-bg: #fef3c7;
+    --anomaly-medium-text: #92400e;
+    --anomaly-high-bg: #fee2e2;
+    --anomaly-high-text: #991b1b;
     --text-heading-from: #1e293b;
     --text-heading-to: #475569;
     --text-hero-from: #1e293b;
@@ -211,6 +225,27 @@
 
 /* ======== Component styles ======== */
 @layer components {
+  .anomaly-card {
+    background-color: var(--anomaly-surface);
+    border-color: var(--border-glass);
+    color: var(--text-primary);
+  }
+
+  .anomaly-severity[data-severity="low"] {
+    background-color: var(--anomaly-low-bg);
+    color: var(--anomaly-low-text);
+  }
+
+  .anomaly-severity[data-severity="medium"] {
+    background-color: var(--anomaly-medium-bg);
+    color: var(--anomaly-medium-text);
+  }
+
+  .anomaly-severity[data-severity="high"] {
+    background-color: var(--anomaly-high-bg);
+    color: var(--anomaly-high-text);
+  }
+
   .btn-primary {
     @apply px-5 py-2.5 rounded-xl font-medium text-white
            bg-gradient-to-r from-violet-600 to-purple-600

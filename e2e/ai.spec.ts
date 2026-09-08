@@ -225,3 +225,82 @@ test("streamed chat completes and is cleared on data change", async ({
     page.getByText("Hello from the dataset.", { exact: true }),
   ).toHaveCount(0);
 });
+
+test("anomalies remain readable in light and dark themes", async ({
+  page,
+}, testInfo) => {
+  await page.route("**/mock-ai/v1/**", async (route) =>
+    objectResponse(route, {
+      anomalies: [
+        {
+          row: 1,
+          column: "PageViews",
+          value: "1016",
+          severity: "medium",
+          issue:
+            "Valeur basse à vérifier dans le contexte du jeu de données. Comparez cette observation avec les autres périodes avant de la modifier.",
+        },
+        {
+          row: 2,
+          column: "BounceRate",
+          value: "35.3",
+          severity: "low",
+          issue:
+            "Cette valeur est inférieure à la moyenne. Une variation habituelle peut expliquer cet écart.",
+        },
+        {
+          row: 2,
+          column: "VeryLongColumnNameWithoutSpacesToCheckSmallScreenWrapping",
+          value: "MissingValueWithALongUnbrokenIdentifierToCheckWrapping",
+          severity: "high",
+          issue:
+            "Vérifiez la valeur source et le format de cette colonne avant de poursuivre l’analyse.",
+        },
+      ],
+    }),
+  );
+  await configure(page);
+  await page.getByRole("button", { name: "Anomalies", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Detect Anomalies", exact: true })
+    .click();
+  const list = page.getByRole("list", { name: "Detected anomalies" });
+  await expect(list.getByRole("listitem")).toHaveCount(3);
+  for (const theme of ["Light", "Dark"]) {
+    await page
+      .getByRole("button", { name: `Switch to ${theme} theme` })
+      .click();
+    const contrasts = await list.evaluate((element) => {
+      const luminance = (color: string) => {
+        const rgb = color
+          .match(/[\d.]+/g)!
+          .slice(0, 3)
+          .map(Number)
+          .map((v) => {
+            v /= 255;
+            return v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
+          });
+        return rgb[0]! * 0.2126 + rgb[1]! * 0.7152 + rgb[2]! * 0.0722;
+      };
+      return Array.from(
+        element.querySelectorAll(".anomaly-card, .anomaly-severity"),
+      ).map((card) => {
+        const style = getComputedStyle(card);
+        const a = luminance(style.color),
+          b = luminance(style.backgroundColor);
+        return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+      });
+    });
+    expect(contrasts).toHaveLength(6);
+    for (const contrast of contrasts)
+      expect(contrast).toBeGreaterThanOrEqual(4.5);
+    expect(
+      await list.evaluate(
+        (element) => element.scrollWidth <= element.clientWidth + 1,
+      ),
+    ).toBe(true);
+    await list.screenshot({
+      path: testInfo.outputPath(`anomalies-${theme.toLowerCase()}.png`),
+    });
+  }
+});
