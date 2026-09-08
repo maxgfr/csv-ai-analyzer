@@ -31,6 +31,15 @@ jobs:
       - name: Test csv-charts-ai package
         run: pnpm --filter csv-charts-ai test
 
+      - name: Test application
+        run: pnpm test
+
+      - name: Install browser
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Browser tests
+        run: pnpm test:e2e
+
       - name: Type check
         run: pnpm run typecheck
 
@@ -39,3 +48,13 @@ jobs:
 
       - name: Build
         run: pnpm run build
+
+      - name: Verify static social images
+        run: test -f out/opengraph-image && test -f out/twitter-image
+
+      - name: Upload browser traces
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-test-results
+          path: test-results/

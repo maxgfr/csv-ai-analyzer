@@ -1,0 +1,148 @@
+{
+  "node": "v24.19.0",
+  "platform": "darwin",
+  "arch": "arm64",
+  "measurements": [
+    {
+      "rows": 1000,
+      "operation": "parse",
+      "medianMs": 0.53,
+      "maxHeapDeltaMiB": 1.03,
+      "runs": 5
+    },
+    {
+      "rows": 1000,
+      "operation": "summary",
+      "medianMs": 0.23,
+      "maxHeapDeltaMiB": 0.14,
+      "runs": 5
+    },
+    {
+      "rows": 1000,
+      "operation": "chart",
+      "medianMs": 0.24,
+      "maxHeapDeltaMiB": 0.05,
+      "runs": 5
+    },
+    {
+      "rows": 1000,
+      "operation": "diff",
+      "medianMs": 0.85,
+      "maxHeapDeltaMiB": 1.49,
+      "runs": 5
+    },
+    {
+      "rows": 1000,
+      "operation": "duplicateDiff",
+      "medianMs": 1.06,
+      "maxHeapDeltaMiB": 1.13,
+      "runs": 5
+    },
+    {
+      "rows": 1000,
+      "operation": "filter",
+      "medianMs": 0.05,
+      "maxHeapDeltaMiB": 0.01,
+      "runs": 5
+    },
+    {
+      "rows": 1000,
+      "operation": "sort",
+      "medianMs": 0.14,
+      "maxHeapDeltaMiB": 0.02,
+      "runs": 5
+    },
+    {
+      "rows": 10000,
+      "operation": "parse",
+      "medianMs": 3.89,
+      "maxHeapDeltaMiB": 4.85,
+      "runs": 5
+    },
+    {
+      "rows": 10000,
+      "operation": "summary",
+      "medianMs": 3.06,
+      "maxHeapDeltaMiB": 1.18,
+      "runs": 5
+    },
+    {
+      "rows": 10000,
+      "operation": "chart",
+      "medianMs": 1.56,
+      "maxHeapDeltaMiB": 0.32,
+      "runs": 5
+    },
+    {
+      "rows": 10000,
+      "operation": "diff",
+      "medianMs": 10.07,
+      "maxHeapDeltaMiB": 15.2,
+      "runs": 5
+    },
+    {
+      "rows": 10000,
+      "operation": "duplicateDiff",
+      "medianMs": 8.15,
+      "maxHeapDeltaMiB": 9.39,
+      "runs": 5
+    },
+    {
+      "rows": 10000,
+      "operation": "filter",
+      "medianMs": 0.68,
+      "maxHeapDeltaMiB": 0.15,
+      "runs": 5
+    },
+    {
+      "rows": 10000,
+      "operation": "sort",
+      "medianMs": 4.97,
+      "maxHeapDeltaMiB": 0.21,
+      "runs": 5
+    },
+    {
+      "rows": 100000,
+      "operation": "parse",
+      "medianMs": 56.62,
+      "maxHeapDeltaMiB": 49.67,
+      "runs": 5
+    },
+    {
+      "rows": 100000,
+      "operation": "summary",
+      "medianMs": 52.64,
+      "maxHeapDeltaMiB": 11.98,
+      "runs": 5
+    },
+    {
+      "rows": 100000,
+      "operation": "chart",
+      "medianMs": 33.89,
+      "maxHeapDeltaMiB": 0.96,
+      "runs": 5
+    },
+    {
+      "rows": 100000,
+      "operation": "diff",
+      "medianMs": 250.94,
+      "maxHeapDeltaMiB": 69.65,
+      "runs": 5
+    },
+    {
+      "rows": 100000,
+      "operation": "filter",
+      "medianMs": 4.19,
+      "maxHeapDeltaMiB": 1.19,
+      "runs": 5
+    },
+    {
+      "rows": 100000,
+      "operation": "sort",
+      "medianMs": 55.19,
+      "maxHeapDeltaMiB": 2.28,
+      "runs": 5
+    }
+  ],
+  "notes": "Sequential follow-up after builds completed. Same harness except 100k duplicateDiff skipped. Shared machine, not isolated timing."
+}

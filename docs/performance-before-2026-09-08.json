@@ -1,0 +1,156 @@
+{
+  "node": "v24.19.0",
+  "platform": "darwin",
+  "arch": "arm64",
+  "measurements": [
+    {
+      "rows": 1000,
+      "operation": "parse",
+      "medianMs": 0.61,
+      "runs": 5,
+      "maxHeapDeltaMiB": 0.59
+    },
+    {
+      "rows": 1000,
+      "operation": "summary",
+      "medianMs": 0.76,
+      "runs": 5,
+      "maxHeapDeltaMiB": 0.32
+    },
+    {
+      "rows": 1000,
+      "operation": "chart",
+      "medianMs": 0.12,
+      "runs": 5,
+      "maxHeapDeltaMiB": 0.18
+    },
+    {
+      "rows": 1000,
+      "operation": "diff",
+      "medianMs": 1.27,
+      "runs": 5,
+      "maxHeapDeltaMiB": 1.2
+    },
+    {
+      "rows": 1000,
+      "operation": "duplicateDiff",
+      "medianMs": 8.13,
+      "runs": 5,
+      "maxHeapDeltaMiB": 0.94
+    },
+    {
+      "rows": 1000,
+      "operation": "filter",
+      "medianMs": 0.08,
+      "runs": 5,
+      "maxHeapDeltaMiB": 0.01
+    },
+    {
+      "rows": 1000,
+      "operation": "sort",
+      "medianMs": 0.09,
+      "runs": 5,
+      "maxHeapDeltaMiB": 0.02
+    },
+    {
+      "rows": 10000,
+      "operation": "parse",
+      "medianMs": 2.29,
+      "runs": 5,
+      "maxHeapDeltaMiB": 5.19
+    },
+    {
+      "rows": 10000,
+      "operation": "summary",
+      "medianMs": 6.36,
+      "runs": 5,
+      "maxHeapDeltaMiB": 2.85
+    },
+    {
+      "rows": 10000,
+      "operation": "chart",
+      "medianMs": 2.19,
+      "runs": 5,
+      "maxHeapDeltaMiB": 0.31
+    },
+    {
+      "rows": 10000,
+      "operation": "diff",
+      "medianMs": 15.59,
+      "runs": 5,
+      "maxHeapDeltaMiB": 12.18
+    },
+    {
+      "rows": 10000,
+      "operation": "duplicateDiff",
+      "medianMs": 1534.49,
+      "runs": 5,
+      "maxHeapDeltaMiB": 9.43
+    },
+    {
+      "rows": 10000,
+      "operation": "filter",
+      "medianMs": 0.76,
+      "runs": 5,
+      "maxHeapDeltaMiB": 0.16
+    },
+    {
+      "rows": 10000,
+      "operation": "sort",
+      "medianMs": 4.56,
+      "runs": 5,
+      "maxHeapDeltaMiB": 0.21
+    },
+    {
+      "rows": 100000,
+      "operation": "parse",
+      "medianMs": 45.06,
+      "runs": 5,
+      "maxHeapDeltaMiB": 53.39
+    },
+    {
+      "rows": 100000,
+      "operation": "summary",
+      "medianMs": 54.28,
+      "runs": 5,
+      "maxHeapDeltaMiB": 28.31
+    },
+    {
+      "rows": 100000,
+      "operation": "chart",
+      "medianMs": 7.23,
+      "runs": 5,
+      "maxHeapDeltaMiB": 1.27
+    },
+    {
+      "rows": 100000,
+      "operation": "diff",
+      "medianMs": 212.78,
+      "runs": 5,
+      "maxHeapDeltaMiB": 75.66
+    },
+    {
+      "rows": 100000,
+      "operation": "duplicateDiff",
+      "medianMs": 227420.95,
+      "runs": 1,
+      "maxHeapDeltaMiB": 37.44
+    },
+    {
+      "rows": 100000,
+      "operation": "filter",
+      "medianMs": 2.58,
+      "runs": 5,
+      "maxHeapDeltaMiB": 1.19
+    },
+    {
+      "rows": 100000,
+      "operation": "sort",
+      "medianMs": 23.81,
+      "runs": 5,
+      "maxHeapDeltaMiB": 2.28
+    }
+  ],
+  "revision": "fce70197fb75f6928f5332a9bebc73b17b9437df",
+  "notes": "Median of five runs except 100k duplicateDiff (one run). Heap is end-minus-start, not peak memory. Shared machine; timings are not a performance guarantee."
+}

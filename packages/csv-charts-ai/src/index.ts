@@ -13,11 +13,11 @@ export {
 export type { ProviderConfig, ProviderFactory } from "./providers";
 
 // CSV parsing
-export { parseCSV } from "./csv-parser";
+export { parseCSV, detectCSVDelimiter } from "./csv-parser";
 export type { ParseCSVOptions } from "./csv-parser";
 
 // XLSX parsing
-export { parseXLSX, convertXLSXRows } from "./xlsx-parser";
+export { parseXLSX, convertXLSXRows, listXLSXSheets } from "./xlsx-parser";
 export type { ParseXLSXOptions } from "./xlsx-parser";
 
 // Data processing
@@ -92,3 +92,12 @@ export type {
   AnalyzeOptions,
   SuggestQuestionsOptions,
 } from "./analyze";
+
+export { analyzeDataQuality } from "./data-quality";
+export type { DataQualityResult } from "./data-quality";
+export {
+  parseNumericValue,
+  parseDateValue,
+  inferValuesType,
+  uniqueHeaders,
+} from "./values";

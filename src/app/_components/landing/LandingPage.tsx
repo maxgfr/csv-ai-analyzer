@@ -5,6 +5,8 @@ import { Hero } from "./Hero";
 import { FeaturesGrid } from "./FeaturesGrid";
 import { HowItWorks } from "./HowItWorks";
 import { generateDatasetById } from "~/lib/sample-data";
+import { inferColumnType } from "~/lib/csv-parser";
+import type { ImportSource } from "~/lib/data-tasks";
 import type { CSVData, CSVSettings } from "~/lib/csv-parser";
 import type { StoredSettings } from "~/lib/storage";
 
@@ -16,7 +18,11 @@ interface LandingPageProps {
   onApiSettingsChange: (settings: StoredSettings | null) => void;
   onFileLoaded: (content: string, fileName: string) => void;
   onClearFile: () => void;
-  onDataLoaded: (data: CSVData, fileName: string) => void;
+  onDataLoaded: (
+    data: CSVData,
+    fileName: string,
+    source?: ImportSource,
+  ) => void;
 }
 
 export function LandingPage({
@@ -41,7 +47,9 @@ export function LandingPage({
       rows: dataset.rows,
       columns: dataset.headers.map((name, index) => ({
         name,
-        type: "string" as const,
+        type: inferColumnType(
+          dataset.rows.slice(0, 100).map((row) => row[index] ?? ""),
+        ),
         index,
       })),
       rowCount: dataset.rows.length,

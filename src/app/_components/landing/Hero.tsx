@@ -6,6 +6,7 @@ import { APIKeyButton } from "../APIKeySettings";
 import { CSVSettingsButton } from "../CSVSettings";
 import { ThemeToggle } from "../ThemeToggle";
 import { SAMPLE_DATASETS } from "~/lib/sample-data";
+import type { ImportSource } from "~/lib/data-tasks";
 import type { CSVData, CSVSettings } from "~/lib/csv-parser";
 import type { StoredSettings } from "~/lib/storage";
 
@@ -17,7 +18,11 @@ interface HeroProps {
   onSettingsChange: (settings: CSVSettings) => void;
   onApiSettingsChange: (settings: StoredSettings | null) => void;
   onFileLoaded: (content: string, fileName: string) => void;
-  onDataLoaded: (data: CSVData, fileName: string) => void;
+  onDataLoaded: (
+    data: CSVData,
+    fileName: string,
+    source?: ImportSource,
+  ) => void;
   onClearFile: () => void;
   onLoadSample: (datasetId: string) => void;
   onToggleSampleDropdown: () => void;

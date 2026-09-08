@@ -310,3 +310,53 @@ csv-ai-analyzer/
 ## 📝 License
 
 MIT - Use as you wish!
+
+## Data exploration and reliability
+
+Imports now show the first 20 rows before confirmation. Choose a CSV delimiter,
+encoding and header mode, or select an Excel sheet. The original file stays in
+memory so **Reimport with different settings** can re-read it; reimport resets
+transforms, comparison, charts and AI results. CSV imports preserve extra cells
+using generated headers and report irregular row widths and renamed headers.
+
+The table previews the transformed data. **Search visible columns** searches all
+its rows before pagination and only changes the preview; exports and AI analyses
+continue to use the complete transformed dataset. **Local data quality** counts
+missing values, inferred-type mismatches and repeated rows without contacting AI.
+Types are inferred from up to 100 rows; quality checks scan the full dataset.
+
+**Manual column selection** creates charts without an API key. Numeric operations
+accept complete finite numbers, grouped thousands (`1,234.50`, `1 234.50`) and
+decimal commas (`12,50`). A comma followed by exactly three digits is interpreted
+as a thousands separator. Ambiguous local dates use day/month/year; Excel dates
+are converted to ISO strings. Normalize ambiguous input before analysis.
+
+Stop controls cancel active AI requests and retry delays. Changing the dataset
+invalidates dependent results, and late responses cannot populate the new
+analysis. Completed parts of a cancelled analysis remain available. Failed parts
+can be retried individually. Custom OpenAI-compatible endpoints use Chat
+Completions; configuring a local endpoint still requires that server's CORS policy
+to allow this application.
+
+Import, quality checks and comparisons run in Web Workers. Table operations and
+transforms use workers from 10,000 rows. The tested large-file scenario contains
+100,000 rows; very wide files still require proportionally more browser memory.
+
+### Verification
+
+```sh
+pnpm install --frozen-lockfile
+pnpm test:all
+pnpm typecheck
+pnpm lint
+pnpm exec playwright install chromium
+pnpm test:e2e
+pnpm build
+pnpm benchmark
+```
+
+Development, production build and application tests build the workspace library
+automatically. Browser tests cover desktop and mobile layouts and use simulated
+AI responses, without credentials or billable requests. See
+[the verification report](docs/verification-2026-09-08.md) for measured results and
+compatibility notes.

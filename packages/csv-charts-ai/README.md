@@ -558,3 +558,50 @@ Install only the provider(s) you need and register them at startup (see [Provide
 ## License
 
 MIT
+
+## Import diagnostics and local quality
+
+```ts
+import { parseXLSX, listXLSXSheets, analyzeDataQuality } from "csv-charts-ai";
+
+const sheets = await listXLSXSheets(file);
+const data = await parseXLSX(file, {
+  sheet: sheets[0],           // name or one-based index; defaults to the first sheet
+  preserveExtraColumns: true // generated names retain cells beyond the header width
+});
+const quality = analyzeDataQuality(data);
+// { rowCount, duplicateRows, columns: [{ name, missing, invalid }] }
+```
+
+Both Excel entry points support browsers and Web Workers. `duplicateRows` counts
+occurrences beyond the first exact row; `invalid` counts nonempty values that do
+not match the inferred column type. These functions never change the input.
+Excel dates are emitted as ISO strings. Duplicate/empty headers receive distinct
+names, including case-insensitive collisions.
+
+Existing parser signatures remain valid. `parseCSV` retains its existing behavior
+of padding/truncating rows to the header width; the web application's import
+preserves extra cells and reports normalization separately. `parseXLSX` likewise
+retains its original width unless `preserveExtraColumns` is enabled.
+
+Key-based `computeDiff` now matches duplicate-key occurrences in file order and
+reports all remaining rows as added/removed. Its optional `duplicateKeys` result
+contains repeated-occurrence counts for inputs `a` and `b`. Content matching uses
+unambiguous keys and consumes each occurrence once.
+
+Chart sorting considers all valid rows before limiting the result. When X and Y
+have the same name, the numeric output gets a distinct key so it cannot overwrite
+the X label. Consumers rendering processed data should use
+`processChartDataMultiSeries(...).yKey`. Multi-series names that conflict with the
+X key are also disambiguated. The React chart components handle these keys.
+
+Shared helpers `detectCSVDelimiter`, `inferValuesType`, `uniqueHeaders`,
+`parseNumericValue` and `parseDateValue` are available for adapters. Numeric parsing
+rejects partial strings and non-finite values, supports decimal commas, and treats
+commas followed by groups of three digits as thousands separators. Local dates
+use day/month/year when ambiguous; missing/invalid numeric and date values return
+`null`.
+
+`fromSDK` selects a provider's `.chat()` method when an explicit base URL is used
+and that method exists, supporting OpenAI-compatible Chat Completions servers.
+Ordinary provider configurations retain their SDK's default model API.

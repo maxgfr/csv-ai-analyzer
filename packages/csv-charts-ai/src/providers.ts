@@ -109,6 +109,9 @@ export function fromSDK(
       ...(config.baseURL && { baseURL: config.baseURL }),
       ...(config.headers && { headers: config.headers }),
     });
+    // OpenAI-compatible servers generally implement Chat Completions rather than Responses.
+    if (config.baseURL && typeof provider.chat === "function")
+      return provider.chat(config.model) as LanguageModel;
     return provider(config.model) as LanguageModel;
   };
 }

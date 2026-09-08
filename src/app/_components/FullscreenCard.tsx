@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useFocusTrap } from "~/lib/use-focus-trap";
 import { Maximize2, Minimize2, X } from "lucide-react";
 
 interface FullscreenCardProps {
@@ -12,21 +13,22 @@ export function FullscreenCard({
   children,
   className = "",
 }: FullscreenCardProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+
+  useFocusTrap(containerRef, isFullscreen);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
   useEffect(() => {
-    if (isFullscreen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    if (!isFullscreen) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
     return () => {
-      document.body.style.overflow = "";
+      document.body.style.overflow = previous;
     };
   }, [isFullscreen]);
 
@@ -46,6 +48,10 @@ export function FullscreenCard({
   // and never lose state. We toggle CSS classes instead of using a portal.
   return (
     <div
+      ref={containerRef}
+      role={isFullscreen ? "dialog" : undefined}
+      aria-modal={isFullscreen || undefined}
+      aria-label={isFullscreen ? "Fullscreen view" : undefined}
       className={
         isFullscreen
           ? "fixed inset-0 z-[99999] flex flex-col overflow-auto"
@@ -60,7 +66,7 @@ export function FullscreenCard({
         className={
           isFullscreen
             ? "fixed top-4 right-4 z-[100000] flex gap-2"
-            : "absolute top-4 right-4 z-50 opacity-0 transition-opacity group-hover:opacity-100"
+            : "absolute top-4 right-4 z-50 opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100"
         }
       >
         {isMounted &&

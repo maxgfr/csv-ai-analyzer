@@ -27,21 +27,38 @@ export async function withRetry<T>(
   fn: () => Promise<T>,
   maxRetries = 2,
   baseDelay = 1000,
+  signal?: AbortSignal,
 ): Promise<T> {
   let lastError: unknown;
 
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    signal?.throwIfAborted();
     try {
-      return await fn();
+      const result = await fn();
+      signal?.throwIfAborted();
+      return result;
     } catch (error) {
+      signal?.throwIfAborted();
       lastError = error;
+      if (error instanceof Error && error.name === "AbortError") throw error;
 
       if (!isRetryableError(error) || attempt === maxRetries) {
         throw error;
       }
 
       const delay = baseDelay * 2 ** attempt;
-      await new Promise((resolve) => setTimeout(resolve, delay));
+      await new Promise<void>((resolve, reject) => {
+        const abort = () => {
+          clearTimeout(timer);
+          reject(signal?.reason);
+        };
+        const timer = setTimeout(() => {
+          signal?.removeEventListener("abort", abort);
+          resolve();
+        }, delay);
+        signal?.addEventListener("abort", abort, { once: true });
+        if (signal?.aborted) abort();
+      });
     }
   }
 

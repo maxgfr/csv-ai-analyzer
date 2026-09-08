@@ -26,3 +26,5 @@ coverage
 .DS_Store
 *.log
 .env*.local
+test-results
+playwright-report

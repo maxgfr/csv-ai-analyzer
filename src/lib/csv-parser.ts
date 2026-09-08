@@ -1,5 +1,10 @@
 import Papa, { type ParseResult } from "papaparse";
-import { generateDataSummary as pkgGenerateDataSummary } from "csv-charts-ai";
+import {
+  inferValuesType,
+  detectCSVDelimiter,
+  uniqueHeaders,
+  generateDataSummary as pkgGenerateDataSummary,
+} from "csv-charts-ai";
 
 export interface CSVColumn {
   name: string;
@@ -28,85 +33,62 @@ export const DEFAULT_CSV_SETTINGS: CSVSettings = {
   skipEmptyLines: true,
 };
 
-const detectDelimiter = (sample: string): string => {
-  const delimiters = [",", ";", "\t", "|"];
-  const counts = delimiters.map((d) => ({
-    delimiter: d,
-    count: (sample.match(new RegExp(`\\${d}`, "g")) ?? []).length,
-  }));
-  const best = counts.reduce((a, b) => (a.count > b.count ? a : b));
-  return best.count > 0 ? best.delimiter : ",";
-};
+export const inferColumnType = inferValuesType;
 
-export const inferColumnType = (
-  values: string[],
-): "string" | "number" | "date" | "boolean" => {
-  const sampleSize = Math.min(values.length, 100);
-  const sample = values.slice(0, sampleSize).filter((v) => v.trim() !== "");
-
-  if (sample.length === 0) return "string";
-
-  // Check for boolean
-  const booleanValues = ["true", "false", "yes", "no", "1", "0", "oui", "non"];
-  const isBool = sample.every((v) =>
-    booleanValues.includes(v.toLowerCase().trim()),
-  );
-  if (isBool) return "boolean";
-
-  // Check for number
-  const isNumber = sample.every((v) => {
-    const cleaned = v.replace(/[\s,]/g, "");
-    return !isNaN(parseFloat(cleaned)) && isFinite(Number(cleaned));
-  });
-  if (isNumber) return "number";
-
-  // Check for date
-  const datePatterns = [
-    /^\d{4}-\d{2}-\d{2}$/,
-    /^\d{2}\/\d{2}\/\d{4}$/,
-    /^\d{2}-\d{2}-\d{4}$/,
-    /^\d{4}\/\d{2}\/\d{2}$/,
-  ];
-  const isDate = sample.every((v) =>
-    datePatterns.some((pattern) => pattern.test(v.trim())),
-  );
-  if (isDate) return "date";
-
-  return "string";
-};
-
-export const parseCSV = (
+export const parseCSVWithDiagnostics = (
   content: string,
   settings: CSVSettings = DEFAULT_CSV_SETTINGS,
-): CSVData => {
-  const delimiter =
-    settings.delimiter || detectDelimiter(content.slice(0, 2000));
+): { data: CSVData; warnings: string[] } => {
+  const delimiter = settings.delimiter || detectCSVDelimiter(content);
 
   const result: ParseResult<string[]> = Papa.parse<string[]>(content, {
     delimiter,
-    skipEmptyLines: settings.skipEmptyLines,
+    skipEmptyLines: settings.skipEmptyLines ? "greedy" : false,
   });
 
-  const allRows: string[][] = result.data;
+  const fatal = result.errors.find((error) => error.type === "Quotes");
+  if (fatal) throw new Error(fatal.message);
+  const allRows: string[][] = content.trim() ? result.data : [];
 
   if (allRows.length === 0) {
     return {
-      headers: [],
-      rows: [],
-      columns: [],
-      rowCount: 0,
+      data: { headers: [], rows: [], columns: [], rowCount: 0 },
+      warnings: [],
     };
   }
 
-  const firstRow = allRows[0] ?? [];
+  const firstRow = [...(allRows[0] ?? [])];
+  const width = allRows.reduce(
+    (max, row) => Math.max(max, row.length),
+    firstRow.length,
+  );
+  while (firstRow.length < width) firstRow.push("");
   const headers: string[] = settings.hasHeader
-    ? firstRow.map((h: string, i: number) => h.trim() || `Column ${i + 1}`)
+    ? uniqueHeaders(firstRow)
     : firstRow.map((_: string, i: number) => `Column ${i + 1}`);
 
-  const dataRows: string[][] = settings.hasHeader ? allRows.slice(1) : allRows;
+  const rawDataRows = settings.hasHeader ? allRows.slice(1) : allRows;
+  const warnings: string[] = [];
+  if (
+    settings.hasHeader &&
+    headers.some((h, i) => h !== (firstRow[i] ?? "").trim())
+  )
+    warnings.push(
+      "Repeated or empty headers were renamed to keep columns distinct.",
+    );
+  const irregular = rawDataRows.filter(
+    (row) => row.length !== (allRows[0]?.length ?? 0),
+  ).length;
+  if (irregular)
+    warnings.push(
+      `${irregular} rows have a different width from the first row. Missing cells were filled; extra columns were preserved.`,
+    );
+  const dataRows = rawDataRows.map((row) =>
+    headers.map((_, i) => row[i] ?? ""),
+  );
 
   const columns: CSVColumn[] = headers.map((name, index) => {
-    const columnValues = dataRows.map((row) => row[index] ?? "");
+    const columnValues = dataRows.slice(0, 100).map((row) => row[index] ?? "");
     return {
       name,
       type: inferColumnType(columnValues),
@@ -115,17 +97,26 @@ export const parseCSV = (
   });
 
   return {
-    headers,
-    rows: dataRows,
-    columns,
-    rowCount: dataRows.length,
+    data: { headers, rows: dataRows, columns, rowCount: dataRows.length },
+    warnings,
   };
 };
+
+export const parseCSV = (
+  content: string,
+  settings: CSVSettings = DEFAULT_CSV_SETTINGS,
+): CSVData => parseCSVWithDiagnostics(content, settings).data;
 
 /**
  * Generate a detailed human-readable summary of CSV data.
  * Delegates to the csv-charts-ai package (CSVData is structurally identical to TabularData).
  */
+const summaries = new WeakMap<CSVData, string>();
 export const generateDataSummary = (data: CSVData): string => {
-  return pkgGenerateDataSummary(data);
+  let summary = summaries.get(data);
+  if (summary === undefined) {
+    summary = pkgGenerateDataSummary(data);
+    summaries.set(data, summary);
+  }
+  return summary;
 };

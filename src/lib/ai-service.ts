@@ -67,6 +67,7 @@ export interface CustomAnalysisResult {
 
 export interface AIServiceConfig {
   apiKey: string;
+  signal?: AbortSignal;
   model?: ModelId;
   providerId?: string;
   providerNpm?: string;
@@ -117,22 +118,27 @@ export const generateChartSuggestions = async (
   columns: string[],
 ): Promise<ChartConfig[]> => {
   const model = getModel(config);
-  return withRetry(() =>
-    suggestCharts({
-      model,
-      data: {
-        headers: columns,
-        rows: [],
-        columns: columns.map((name, index) => ({
-          name,
-          type: "string" as const,
-          index,
-        })),
-        rowCount: 0,
-      },
-      dataSummary,
-      language: LANGUAGE_NAMES[config.language ?? "en"],
-    }),
+  return withRetry(
+    () =>
+      suggestCharts({
+        model,
+        data: {
+          headers: columns,
+          rows: [],
+          columns: columns.map((name, index) => ({
+            name,
+            type: "string" as const,
+            index,
+          })),
+          rowCount: 0,
+        },
+        dataSummary,
+        signal: config.signal,
+        language: LANGUAGE_NAMES[config.language ?? "en"],
+      }),
+    2,
+    1000,
+    config.signal,
   );
 };
 
@@ -143,23 +149,28 @@ export const generateCustomChart = async (
   columns: string[],
 ): Promise<ChartConfig | null> => {
   const model = getModel(config);
-  return withRetry(() =>
-    suggestCustomChart({
-      model,
-      data: {
-        headers: columns,
-        rows: [],
-        columns: columns.map((name, index) => ({
-          name,
-          type: "string" as const,
-          index,
-        })),
-        rowCount: 0,
-      },
-      dataSummary,
-      prompt: userPrompt,
-      language: LANGUAGE_NAMES[config.language ?? "en"],
-    }),
+  return withRetry(
+    () =>
+      suggestCustomChart({
+        model,
+        data: {
+          headers: columns,
+          rows: [],
+          columns: columns.map((name, index) => ({
+            name,
+            type: "string" as const,
+            index,
+          })),
+          rowCount: 0,
+        },
+        dataSummary,
+        prompt: userPrompt,
+        signal: config.signal,
+        language: LANGUAGE_NAMES[config.language ?? "en"],
+      }),
+    2,
+    1000,
+    config.signal,
   );
 };
 
@@ -170,14 +181,19 @@ export const repairChartSuggestion = async (
   errorContext: string,
 ): Promise<ChartConfig | null> => {
   const model = getModel(config);
-  return withRetry(() =>
-    repairChart({
-      model,
-      failedChart,
-      columns,
-      errorContext,
-      language: LANGUAGE_NAMES[config.language ?? "en"],
-    }),
+  return withRetry(
+    () =>
+      repairChart({
+        model,
+        failedChart,
+        columns,
+        errorContext,
+        signal: config.signal,
+        language: LANGUAGE_NAMES[config.language ?? "en"],
+      }),
+    2,
+    1000,
+    config.signal,
   );
 };
 
@@ -186,18 +202,23 @@ export const generateDataSummary = async (
   dataSummary: string,
 ): Promise<DataSummaryResult> => {
   const model = getModel(config);
-  return withRetry(() =>
-    summarizeData({
-      model,
-      data: {
-        headers: ["_"],
-        rows: [],
-        columns: [{ name: "_", type: "string", index: 0 }],
-        rowCount: 0,
-      },
-      dataSummary,
-      language: LANGUAGE_NAMES[config.language ?? "en"],
-    }),
+  return withRetry(
+    () =>
+      summarizeData({
+        model,
+        data: {
+          headers: ["_"],
+          rows: [],
+          columns: [{ name: "_", type: "string", index: 0 }],
+          rowCount: 0,
+        },
+        dataSummary,
+        signal: config.signal,
+        language: LANGUAGE_NAMES[config.language ?? "en"],
+      }),
+    2,
+    1000,
+    config.signal,
   );
 };
 
@@ -207,13 +228,18 @@ export const detectAnomalies = async (
   data: TabularData,
 ): Promise<AnomalyResult[]> => {
   const model = getModel(config);
-  return withRetry(() =>
-    pkgDetectAnomalies({
-      model,
-      data,
-      dataSummary,
-      language: LANGUAGE_NAMES[config.language ?? "en"],
-    }),
+  return withRetry(
+    () =>
+      pkgDetectAnomalies({
+        model,
+        data,
+        dataSummary,
+        signal: config.signal,
+        language: LANGUAGE_NAMES[config.language ?? "en"],
+      }),
+    2,
+    1000,
+    config.signal,
   );
 };
 
@@ -226,7 +252,9 @@ export const streamCustomAnalysis = async (
   conversationHistory: Array<{ prompt: string; response: string }> = [],
 ): Promise<void> => {
   const model = getModel(config);
-  return streamAskAboutData({
+  config.signal?.throwIfAborted();
+  await streamAskAboutData({
+    signal: config.signal,
     model,
     data: {
       headers: ["_"],
@@ -238,9 +266,14 @@ export const streamCustomAnalysis = async (
     dataSummary,
     history: conversationHistory,
     language: LANGUAGE_NAMES[config.language ?? "en"],
-    onChunk,
-    onComplete,
+    onChunk: (chunk) => {
+      if (!config.signal?.aborted) onChunk(chunk);
+    },
+    onComplete: (text) => {
+      if (!config.signal?.aborted) onComplete(text);
+    },
   });
+  config.signal?.throwIfAborted();
 };
 
 export const fetchSuggestedQuestions = async (
@@ -248,18 +281,23 @@ export const fetchSuggestedQuestions = async (
   dataSummary: string,
 ): Promise<SuggestedQuestion[]> => {
   const model = getModel(config);
-  return withRetry(() =>
-    pkgSuggestQuestions({
-      model,
-      data: {
-        headers: ["_"],
-        rows: [],
-        columns: [{ name: "_", type: "string", index: 0 }],
-        rowCount: 0,
-      },
-      dataSummary,
-      language: LANGUAGE_NAMES[config.language ?? "en"],
-      count: 6,
-    }),
+  return withRetry(
+    () =>
+      pkgSuggestQuestions({
+        model,
+        data: {
+          headers: ["_"],
+          rows: [],
+          columns: [{ name: "_", type: "string", index: 0 }],
+          rowCount: 0,
+        },
+        dataSummary,
+        signal: config.signal,
+        language: LANGUAGE_NAMES[config.language ?? "en"],
+        count: 6,
+      }),
+    2,
+    1000,
+    config.signal,
   );
 };

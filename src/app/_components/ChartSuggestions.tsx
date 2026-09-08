@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import {
   Sparkles,
@@ -13,6 +13,8 @@ import {
   Settings2,
   X,
 } from "lucide-react";
+import { useRequestScope } from "~/lib/use-request-scope";
+import { validateChart } from "~/lib/chart-validation";
 import { type CSVData, generateDataSummary } from "~/lib/csv-parser";
 import {
   generateChartSuggestions,
@@ -78,6 +80,7 @@ export function ChartSuggestions({
   externalError,
   disabled = false,
 }: ChartSuggestionsProps) {
+  const requests = useRequestScope(data, apiSettings);
   const [isLoading, setIsLoading] = useState(false);
   const [isCustomLoading, setIsCustomLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -94,8 +97,27 @@ export function ChartSuggestions({
     aggregation: "sum",
   });
 
-  // Reset internal state when data changes (new file loaded)
+  useEffect(
+    () => () => {
+      toast.dismiss("chart-gen-toast");
+      toast.dismiss("custom-chart-toast");
+    },
+    [requests],
+  );
+
   useEffect(() => {
+    if (disabled) {
+      requests.cancelAll();
+      setIsLoading(false);
+      setIsCustomLoading(false);
+    }
+  }, [disabled, requests]);
+
+  const previousData = useRef(data);
+  // Reset only for a different dataset, including after Suspense reconnects.
+  useEffect(() => {
+    if (previousData.current === data) return;
+    previousData.current = data;
     setSuggestions([]);
     setSelectedCharts(new Set());
     setError(null);
@@ -124,19 +146,18 @@ export function ChartSuggestions({
 
   // Auto-apply charts whenever selection or suggestions change
   useEffect(() => {
-    if (suggestions.length > 0) {
-      const selected = suggestions.filter((s) => selectedCharts.has(s.id));
-      onChartsGenerated(selected);
-    }
+    const selected = suggestions.filter((s) => selectedCharts.has(s.id));
+    onChartsGenerated(selected);
   }, [selectedCharts, suggestions, onChartsGenerated]);
 
-  const getConfig = (): AIServiceConfig | null => {
+  const getConfig = (action: string): AIServiceConfig | null => {
     // Allow custom endpoint without API key
     const hasValidConfig = apiSettings?.customEndpoint
       ? !!apiSettings.customModel
       : !!apiSettings?.apiKey;
     if (!hasValidConfig) return null;
     return {
+      signal: requests.start(action),
       apiKey: apiSettings!.apiKey,
       model: apiSettings!.model,
       providerId: apiSettings!.providerId,
@@ -149,7 +170,7 @@ export function ChartSuggestions({
   };
 
   const handleGenerate = async () => {
-    const config = getConfig();
+    const config = getConfig("charts");
     if (!config) {
       setError("Please configure your API settings first");
       toast.error("Configuration Required", {
@@ -188,6 +209,7 @@ export function ChartSuggestions({
         id: "chart-gen-toast",
       });
     } catch (err) {
+      if (config.signal?.aborted) return;
       const errorMessage =
         err instanceof Error
           ? err.message
@@ -199,14 +221,14 @@ export function ChartSuggestions({
         id: "chart-gen-toast",
       });
     } finally {
-      setIsLoading(false);
+      if (!config.signal?.aborted) setIsLoading(false);
     }
   };
 
   const handleCustomChart = async () => {
     if (!customPrompt.trim()) return;
 
-    const config = getConfig();
+    const config = getConfig("custom");
     if (!config) {
       setError("Please configure your API settings first");
       toast.error("Configuration Required", {
@@ -262,6 +284,7 @@ export function ChartSuggestions({
         });
       }
     } catch (err) {
+      if (config.signal?.aborted) return;
       const errorMessage =
         err instanceof Error
           ? err.message
@@ -273,7 +296,7 @@ export function ChartSuggestions({
         id: "custom-chart-toast",
       });
     } finally {
-      setIsCustomLoading(false);
+      if (!config.signal?.aborted) setIsCustomLoading(false);
     }
   };
 
@@ -322,7 +345,7 @@ export function ChartSuggestions({
     }
 
     const newChart: ChartSuggestion = {
-      id: `chart-manual-${Date.now()}`,
+      id: `chart-manual-${crypto.randomUUID()}`,
       type: manualConfig.type,
       title: manualConfig.title,
       description: `${manualConfig.type} chart showing ${yColumn} by ${manualConfig.xColumn}`,
@@ -334,6 +357,13 @@ export function ChartSuggestions({
         yColumn: yColumn,
       },
     };
+
+    const validationError = validateChart(data, newChart);
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+    setError(null);
 
     // Add to suggestions and select it (auto-apply via useEffect)
     setSuggestions((prev) => [...prev, newChart]);
@@ -355,6 +385,21 @@ export function ChartSuggestions({
 
   return (
     <div className="glass-card animate-fade-in flex flex-1 flex-col p-6">
+      {(isLoading || isCustomLoading) && (
+        <button
+          type="button"
+          onClick={() => {
+            requests.cancelAll();
+            setIsLoading(false);
+            setIsCustomLoading(false);
+            toast.dismiss("chart-gen-toast");
+            toast.dismiss("custom-chart-toast");
+          }}
+          className="mb-4 self-start rounded-lg border border-white/20 px-3 py-2 text-sm"
+        >
+          Stop chart generation
+        </button>
+      )}
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <div className="rounded-xl border border-amber-500/30 bg-linear-to-br from-amber-500/20 to-orange-500/20 p-3">
@@ -430,8 +475,8 @@ export function ChartSuggestions({
         </div>
       )}
 
-      {suggestions.length > 0 && (
-        <div className="space-y-4">
+      <div className="space-y-4">
+        {suggestions.length > 0 && (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {suggestions.map((suggestion) => (
               <div
@@ -495,270 +540,298 @@ export function ChartSuggestions({
               </div>
             ))}
           </div>
+        )}
 
-          {/* Custom Chart Input */}
-          {showCustomInput ? (
-            <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-              <div className="mb-3 flex items-center gap-3">
-                <MessageSquare className="h-5 w-5 text-violet-400" />
-                <h4 className="font-medium text-white">Describe your chart</h4>
+        {/* Custom Chart Input */}
+        {showCustomInput ? (
+          <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+            <div className="mb-3 flex items-center gap-3">
+              <MessageSquare className="h-5 w-5 text-violet-400" />
+              <h4 className="font-medium text-white">Describe your chart</h4>
+            </div>
+            <div className="flex gap-3">
+              <input
+                type="text"
+                value={customPrompt}
+                onChange={(e) => setCustomPrompt(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    void handleCustomChart();
+                  }
+                }}
+                placeholder="e.g., Bar chart showing sales by region..."
+                className="input-field flex-1"
+                disabled={isCustomLoading}
+              />
+              <button
+                type="button"
+                onClick={handleCustomChart}
+                disabled={isCustomLoading || !customPrompt.trim()}
+                className="btn-primary px-4 disabled:opacity-50"
+              >
+                {isCustomLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Send className="h-4 w-4" />
+                )}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowCustomInput(false);
+                  setCustomPrompt("");
+                }}
+                className="btn-secondary px-4"
+              >
+                Cancel
+              </button>
+            </div>
+            <p className="mt-2 text-xs text-gray-500">
+              Available columns: {data.headers.join(", ")}
+            </p>
+          </div>
+        ) : showManualCreate ? (
+          <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+            <div className="mb-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Settings2 className="h-5 w-5 text-cyan-400" />
+                <h4 className="font-medium text-white">
+                  Create Chart Manually
+                </h4>
               </div>
-              <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => setShowManualCreate(false)}
+                className="rounded-lg p-1 text-gray-400 transition-colors hover:bg-white/10 hover:text-white"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              {/* Chart Title */}
+              <div className="md:col-span-2">
+                <label
+                  htmlFor="manual-title"
+                  className="mb-1 block text-sm text-gray-400"
+                >
+                  Chart Title *
+                </label>
                 <input
                   type="text"
-                  value={customPrompt}
-                  onChange={(e) => setCustomPrompt(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && !e.shiftKey) {
-                      e.preventDefault();
-                      void handleCustomChart();
-                    }
-                  }}
-                  placeholder="e.g., Bar chart showing sales by region..."
-                  className="input-field flex-1"
-                  disabled={isCustomLoading}
-                />
-                <button
-                  type="button"
-                  onClick={handleCustomChart}
-                  disabled={isCustomLoading || !customPrompt.trim()}
-                  className="btn-primary px-4 disabled:opacity-50"
-                >
-                  {isCustomLoading ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Send className="h-4 w-4" />
-                  )}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowCustomInput(false);
-                    setCustomPrompt("");
-                  }}
-                  className="btn-secondary px-4"
-                >
-                  Cancel
-                </button>
-              </div>
-              <p className="mt-2 text-xs text-gray-500">
-                Available columns: {data.headers.join(", ")}
-              </p>
-            </div>
-          ) : showManualCreate ? (
-            <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-              <div className="mb-4 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <Settings2 className="h-5 w-5 text-cyan-400" />
-                  <h4 className="font-medium text-white">
-                    Create Chart Manually
-                  </h4>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setShowManualCreate(false)}
-                  className="rounded-lg p-1 text-gray-400 transition-colors hover:bg-white/10 hover:text-white"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                {/* Chart Title */}
-                <div className="md:col-span-2">
-                  <label className="mb-1 block text-sm text-gray-400">
-                    Chart Title *
-                  </label>
-                  <input
-                    type="text"
-                    value={manualConfig.title}
-                    onChange={(e) =>
-                      setManualConfig((prev) => ({
-                        ...prev,
-                        title: e.target.value,
-                      }))
-                    }
-                    placeholder="e.g., Sales by Region"
-                    className="input-field w-full"
-                  />
-                </div>
-
-                {/* Chart Type */}
-                <div>
-                  <label className="mb-1 block text-sm text-gray-400">
-                    Chart Type
-                  </label>
-                  <select
-                    value={manualConfig.type}
-                    onChange={(e) =>
-                      setManualConfig((prev) => ({
-                        ...prev,
-                        type: e.target.value as ChartType,
-                      }))
-                    }
-                    className="input-field w-full"
-                  >
-                    {CHART_TYPES.map((type) => (
-                      <option key={type.id} value={type.id}>
-                        {type.icon} {type.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Aggregation */}
-                <div>
-                  <label className="mb-1 block text-sm text-gray-400">
-                    Aggregation
-                  </label>
-                  <select
-                    value={manualConfig.aggregation}
-                    onChange={(e) =>
-                      setManualConfig((prev) => ({
-                        ...prev,
-                        aggregation: e.target.value as AggregationType,
-                      }))
-                    }
-                    className="input-field w-full"
-                  >
-                    {AGGREGATION_TYPES.map((agg) => (
-                      <option key={agg.id} value={agg.id}>
-                        {agg.name} - {agg.description}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* X Column */}
-                <div>
-                  <label className="mb-1 block text-sm text-gray-400">
-                    X Axis (Categories) *
-                  </label>
-                  <select
-                    value={manualConfig.xColumn}
-                    onChange={(e) =>
-                      setManualConfig((prev) => ({
-                        ...prev,
-                        xColumn: e.target.value,
-                      }))
-                    }
-                    className="input-field w-full"
-                  >
-                    <option value="">Select column...</option>
-                    {data.headers.map((header) => (
-                      <option key={header} value={header}>
-                        {header}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Y Column */}
-                <div>
-                  <label className="mb-1 block text-sm text-gray-400">
-                    Y Axis (Values){" "}
-                    {manualConfig.aggregation !== "count" && "*"}
-                  </label>
-                  <select
-                    value={manualConfig.yColumn}
-                    onChange={(e) =>
-                      setManualConfig((prev) => ({
-                        ...prev,
-                        yColumn: e.target.value,
-                      }))
-                    }
-                    className="input-field w-full"
-                  >
-                    <option value="">
-                      {manualConfig.aggregation === "count"
-                        ? "(Optional for count)"
-                        : "Select column..."}
-                    </option>
-                    {data.headers.map((header) => (
-                      <option key={header} value={header}>
-                        {header}
-                      </option>
-                    ))}
-                  </select>
-                  {manualConfig.aggregation === "count" && (
-                    <p className="mt-1 text-xs text-gray-500">
-                      Optional: leave empty to count occurrences of X values
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              <div className="mt-4 flex justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={() => setShowManualCreate(false)}
-                  className="btn-secondary"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={handleManualCreate}
-                  disabled={
-                    !manualConfig.title.trim() ||
-                    !manualConfig.xColumn ||
-                    (manualConfig.aggregation !== "count" &&
-                      !manualConfig.yColumn)
+                  id="manual-title"
+                  value={manualConfig.title}
+                  onChange={(e) =>
+                    setManualConfig((prev) => ({
+                      ...prev,
+                      title: e.target.value,
+                    }))
                   }
-                  className="btn-primary disabled:opacity-50"
+                  placeholder="e.g., Sales by Region"
+                  className="input-field w-full"
+                />
+              </div>
+
+              {/* Chart Type */}
+              <div>
+                <label
+                  htmlFor="manual-type"
+                  className="mb-1 block text-sm text-gray-400"
                 >
-                  <Check className="mr-2 h-4 w-4" />
-                  Create Chart
-                </button>
+                  Chart Type
+                </label>
+                <select
+                  id="manual-type"
+                  value={manualConfig.type}
+                  onChange={(e) =>
+                    setManualConfig((prev) => ({
+                      ...prev,
+                      type: e.target.value as ChartType,
+                    }))
+                  }
+                  className="input-field w-full"
+                >
+                  {CHART_TYPES.map((type) => (
+                    <option key={type.id} value={type.id}>
+                      {type.icon} {type.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Aggregation */}
+              <div>
+                <label
+                  htmlFor="manual-aggregation"
+                  className="mb-1 block text-sm text-gray-400"
+                >
+                  Aggregation
+                </label>
+                <select
+                  id="manual-aggregation"
+                  value={manualConfig.aggregation}
+                  onChange={(e) =>
+                    setManualConfig((prev) => ({
+                      ...prev,
+                      aggregation: e.target.value as AggregationType,
+                    }))
+                  }
+                  className="input-field w-full"
+                >
+                  {AGGREGATION_TYPES.map((agg) => (
+                    <option key={agg.id} value={agg.id}>
+                      {agg.name} - {agg.description}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* X Column */}
+              <div>
+                <label
+                  htmlFor="manual-x"
+                  className="mb-1 block text-sm text-gray-400"
+                >
+                  X Axis (Categories) *
+                </label>
+                <select
+                  id="manual-x"
+                  value={manualConfig.xColumn}
+                  onChange={(e) =>
+                    setManualConfig((prev) => ({
+                      ...prev,
+                      xColumn: e.target.value,
+                    }))
+                  }
+                  className="input-field w-full"
+                >
+                  <option value="">Select column...</option>
+                  {data.headers.map((header) => (
+                    <option key={header} value={header}>
+                      {header}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Y Column */}
+              <div>
+                <label
+                  htmlFor="manual-y"
+                  className="mb-1 block text-sm text-gray-400"
+                >
+                  Y Axis (Values) {manualConfig.aggregation !== "count" && "*"}
+                </label>
+                <select
+                  id="manual-y"
+                  value={manualConfig.yColumn}
+                  onChange={(e) =>
+                    setManualConfig((prev) => ({
+                      ...prev,
+                      yColumn: e.target.value,
+                    }))
+                  }
+                  className="input-field w-full"
+                >
+                  <option value="">
+                    {manualConfig.aggregation === "count"
+                      ? "(Optional for count)"
+                      : "Select column..."}
+                  </option>
+                  {data.headers.map((header) => (
+                    <option key={header} value={header}>
+                      {header}
+                    </option>
+                  ))}
+                </select>
+                {manualConfig.aggregation === "count" && (
+                  <p className="mt-1 text-xs text-gray-500">
+                    Optional: leave empty to count occurrences of X values
+                  </p>
+                )}
               </div>
             </div>
-          ) : (
-            <div className="flex gap-3">
+
+            <div className="mt-4 flex justify-end gap-3">
               <button
                 type="button"
-                onClick={() => setShowCustomInput(true)}
-                className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-dashed border-white/20 p-4 text-gray-400 transition-all hover:border-violet-500/50 hover:bg-violet-500/5 hover:text-violet-400"
+                onClick={() => setShowManualCreate(false)}
+                className="btn-secondary"
               >
-                <MessageSquare className="h-4 w-4" />
-                AI Chart from description
+                Cancel
               </button>
               <button
                 type="button"
-                onClick={() => setShowManualCreate(true)}
-                className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-dashed border-white/20 p-4 text-gray-400 transition-all hover:border-cyan-500/50 hover:bg-cyan-500/5 hover:text-cyan-400"
+                onClick={handleManualCreate}
+                disabled={
+                  !manualConfig.title.trim() ||
+                  !manualConfig.xColumn ||
+                  (manualConfig.aggregation !== "count" &&
+                    !manualConfig.yColumn)
+                }
+                className="btn-primary disabled:opacity-50"
               >
-                <Settings2 className="h-4 w-4" />
-                Manual column selection
+                <Check className="mr-2 h-4 w-4" />
+                Create Chart
               </button>
             </div>
-          )}
-
-          <div className="flex items-center justify-between border-t border-white/10 pt-4">
+          </div>
+        ) : (
+          <div className="flex gap-3">
             <button
               type="button"
-              onClick={handleGenerate}
-              disabled={disabled || isLoading}
-              className="btn-secondary inline-flex items-center gap-2 text-sm"
+              disabled={
+                disabled ||
+                (!apiSettings?.apiKey && !apiSettings?.customEndpoint)
+              }
+              onClick={() => setShowCustomInput(true)}
+              className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-dashed border-white/20 p-4 text-gray-400 transition-all hover:border-violet-500/50 hover:bg-violet-500/5 hover:text-violet-400"
             >
-              {isLoading ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  Generating...
-                </>
-              ) : (
-                <>
-                  <RefreshCw className="h-4 w-4" />
-                  Regenerate
-                </>
-              )}
+              <MessageSquare className="h-4 w-4" />
+              AI Chart from description
             </button>
-            <span className="text-sm text-gray-400">
-              {selectedCharts.size} chart{selectedCharts.size !== 1 ? "s" : ""}{" "}
-              selected
-            </span>
+            <button
+              type="button"
+              disabled={disabled}
+              onClick={() => setShowManualCreate(true)}
+              className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-dashed border-white/20 p-4 text-gray-400 transition-all hover:border-cyan-500/50 hover:bg-cyan-500/5 hover:text-cyan-400"
+            >
+              <Settings2 className="h-4 w-4" />
+              Manual column selection
+            </button>
           </div>
+        )}
+
+        <div className="flex items-center justify-between border-t border-white/10 pt-4">
+          <button
+            type="button"
+            onClick={handleGenerate}
+            disabled={
+              disabled ||
+              isLoading ||
+              (!apiSettings?.apiKey && !apiSettings?.customEndpoint)
+            }
+            className="btn-secondary inline-flex items-center gap-2 text-sm"
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Generating...
+              </>
+            ) : (
+              <>
+                <RefreshCw className="h-4 w-4" />
+                Regenerate
+              </>
+            )}
+          </button>
+          <span className="text-sm text-gray-400">
+            {selectedCharts.size} chart{selectedCharts.size !== 1 ? "s" : ""}{" "}
+            selected
+          </span>
         </div>
-      )}
+      </div>
     </div>
   );
 }

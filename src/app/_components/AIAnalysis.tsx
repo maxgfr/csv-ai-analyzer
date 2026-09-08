@@ -40,7 +40,7 @@ import {
 import type { StoredSettings } from "~/lib/storage";
 import { useChatStore } from "~/lib/chat-store";
 import { ChartDisplay } from "./ChartDisplay";
-import { exportToPDF } from "~/lib/pdf-export";
+import { useRequestScope } from "~/lib/use-request-scope";
 
 interface AIAnalysisProps {
   data: CSVData;
@@ -51,6 +51,14 @@ interface AIAnalysisProps {
   externalSummaryError?: string | null;
   externalAnomaliesError?: string | null;
   disabled?: boolean;
+  onSummaryChange?: (
+    result: DataSummaryResult | null,
+    error: string | null,
+  ) => void;
+  onAnomaliesChange?: (
+    result: AnomalyResult[] | null,
+    error: string | null,
+  ) => void;
 }
 
 const SEVERITY_COLORS = {
@@ -74,7 +82,10 @@ export function AIAnalysis({
   externalSummaryError,
   externalAnomaliesError,
   disabled = false,
+  onSummaryChange,
+  onAnomaliesChange,
 }: AIAnalysisProps) {
+  const requests = useRequestScope(data, apiSettings);
   // Independent loading states for each analysis type
   const [isLoadingSummary, setIsLoadingSummary] = useState(false);
   const [isLoadingAnomalies, setIsLoadingAnomalies] = useState(false);
@@ -126,6 +137,25 @@ export function AIAnalysis({
     insights: true,
     quality: true,
   });
+
+  useEffect(
+    () => () => {
+      ["summary-toast", "anomalies-toast", "custom-query-toast"].forEach((id) =>
+        toast.dismiss(id),
+      );
+    },
+    [requests],
+  );
+
+  useEffect(() => {
+    if (disabled) {
+      requests.cancelAll();
+      setIsLoadingSummary(false);
+      setIsLoadingAnomalies(false);
+      setLoadingCustom(false);
+      setStreaming("");
+    }
+  }, [disabled, requests, setLoadingCustom, setStreaming]);
 
   // Auto-scroll to bottom of chat
   useEffect(() => {
@@ -223,8 +253,9 @@ export function AIAnalysis({
     toast.success("Report exported as Markdown");
   }, [summaryResult, anomaliesResult, customHistory]);
 
-  const handleExportPDF = useCallback(() => {
+  const handleExportPDF = useCallback(async () => {
     try {
+      const { exportToPDF } = await import("~/lib/pdf-export");
       exportToPDF({
         fileName: fileName ?? "analysis",
         data,
@@ -239,13 +270,14 @@ export function AIAnalysis({
     }
   }, [fileName, data, summaryResult, anomaliesResult, customHistory]);
 
-  const getConfig = (): AIServiceConfig | null => {
+  const getConfig = (action: string): AIServiceConfig | null => {
     // Allow custom endpoint without API key
     const hasValidConfig = apiSettings?.customEndpoint
       ? !!apiSettings.customModel
       : !!apiSettings?.apiKey;
     if (!hasValidConfig) return null;
     return {
+      signal: requests.start(action),
       apiKey: apiSettings!.apiKey,
       model: apiSettings!.model,
       providerId: apiSettings!.providerId,
@@ -267,7 +299,7 @@ export function AIAnalysis({
     )
       return;
 
-    const config = getConfig();
+    const config = getConfig("suggestions");
     if (!config) return;
 
     suggestionsLoadedRef.current = true;
@@ -290,10 +322,10 @@ export function AIAnalysis({
     return () => {
       cancelled = true;
     };
-  }, [activeTab]);
+  }, [activeTab, data, apiSettings]);
 
   const handleGenerateSummary = async () => {
-    const config = getConfig();
+    const config = getConfig("summary");
     if (!config) {
       setSummaryError("Please configure your API settings");
       toast.error("Configuration Required", {
@@ -302,6 +334,7 @@ export function AIAnalysis({
       return;
     }
 
+    onSummaryChange?.(summaryResult, null);
     setIsLoadingSummary(true);
     setSummaryError(null);
     toast.loading("Generating Summary", {
@@ -313,29 +346,32 @@ export function AIAnalysis({
       const csvSummary = generateCSVSummary(data);
       const result = await generateDataSummary(config, csvSummary);
       setSummaryResult(result);
+      onSummaryChange?.(result, null);
       setSummaryError(null);
       toast.success("Summary Generated", {
         description: "Data summary is ready!",
         id: "summary-toast",
       });
     } catch (err) {
+      if (config.signal?.aborted) return;
       const errorMessage =
         err instanceof Error
           ? err.message
           : "Unable to analyze data. Please try again.";
       setSummaryError(errorMessage);
+      onSummaryChange?.(null, errorMessage);
       console.error("Data summary failed:", err);
       toast.error("Summary Failed", {
         description: errorMessage,
         id: "summary-toast",
       });
     } finally {
-      setIsLoadingSummary(false);
+      if (!config.signal?.aborted) setIsLoadingSummary(false);
     }
   };
 
   const handleDetectAnomalies = async () => {
-    const config = getConfig();
+    const config = getConfig("anomalies");
     if (!config) {
       setAnomaliesError("Please configure your API settings");
       toast.error("Configuration Required", {
@@ -344,6 +380,7 @@ export function AIAnalysis({
       return;
     }
 
+    onAnomaliesChange?.(anomaliesResult, null);
     setIsLoadingAnomalies(true);
     setAnomaliesError(null);
     toast.loading("Detecting Anomalies", {
@@ -356,31 +393,34 @@ export function AIAnalysis({
 
       const result = await detectAnomalies(config, csvSummary, data);
       setAnomaliesResult(result);
+      onAnomaliesChange?.(result, null);
       setAnomaliesError(null);
       toast.success("Anomalies Detected", {
         description: `Found ${result.length} potential anomal${result.length === 1 ? "y" : "ies"}`,
         id: "anomalies-toast",
       });
     } catch (err) {
+      if (config.signal?.aborted) return;
       const errorMessage =
         err instanceof Error
           ? err.message
           : "Unable to detect anomalies. Please try again.";
       setAnomaliesError(errorMessage);
+      onAnomaliesChange?.(null, errorMessage);
       console.error("Anomaly detection failed:", err);
       toast.error("Detection Failed", {
         description: errorMessage,
         id: "anomalies-toast",
       });
     } finally {
-      setIsLoadingAnomalies(false);
+      if (!config.signal?.aborted) setIsLoadingAnomalies(false);
     }
   };
 
   const handleCustomAnalysis = async () => {
     if (!customPrompt.trim()) return;
 
-    const config = getConfig();
+    const config = getConfig("chat");
     if (!config) {
       setError("Please configure your API settings");
       toast.error("Configuration Required", {
@@ -433,7 +473,7 @@ export function AIAnalysis({
               data.headers,
             )
               .then((result) => {
-                if (result) {
+                if (result && !config.signal?.aborted) {
                   updateMessageAt(messageIndex, { chart: result });
                 }
               })
@@ -445,6 +485,7 @@ export function AIAnalysis({
         customHistory, // Pass current history
       );
     } catch (err) {
+      if (config.signal?.aborted) return;
       let errorMessage = "Unable to analyze. Please try again.";
       if (err instanceof Error && err.message && err.message.trim() !== "") {
         errorMessage = err.message;
@@ -475,6 +516,25 @@ export function AIAnalysis({
 
   return (
     <div className="glass-card animate-fade-in flex flex-1 flex-col p-6">
+      {(isLoadingSummary || isLoadingAnomalies || isLoadingCustom) && (
+        <button
+          type="button"
+          onClick={() => {
+            requests.cancelAll();
+            setIsLoadingSummary(false);
+            setIsLoadingAnomalies(false);
+            setLoadingCustom(false);
+            setStreaming("");
+            setIsLoadingSuggestions(false);
+            ["summary-toast", "anomalies-toast", "custom-query-toast"].forEach(
+              (id) => toast.dismiss(id),
+            );
+          }}
+          className="mb-4 self-start rounded-lg border border-white/20 px-3 py-2 text-sm"
+        >
+          Stop analysis
+        </button>
+      )}
       {/* Header */}
       <div className="mb-6 flex items-center gap-4">
         <div className="rounded-xl border border-emerald-500/30 bg-linear-to-br from-emerald-500/20 to-teal-500/20 p-3">
@@ -840,7 +900,10 @@ export function AIAnalysis({
               <div className="flex justify-end">
                 <button
                   type="button"
-                  onClick={clearChat}
+                  onClick={() => {
+                    requests.cancelAll();
+                    clearChat();
+                  }}
                   className="flex items-center gap-1.5 rounded-lg bg-white/5 px-3 py-1.5 text-sm text-gray-400 transition-colors hover:bg-red-500/10 hover:text-red-400"
                   title="Clear chat history"
                 >

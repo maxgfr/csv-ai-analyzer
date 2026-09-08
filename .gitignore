@@ -53,3 +53,6 @@ yarn-error.log*
 
 # vscode
 .vscode/*
+# Browser tests
+/test-results/
+/playwright-report/

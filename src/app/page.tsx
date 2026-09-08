@@ -1,10 +1,14 @@
 "use client";
 
-import { useState, useEffect, lazy, Suspense } from "react";
+import { useState, useEffect, useCallback, lazy, Suspense } from "react";
 import { toast } from "sonner";
 import { DataTable } from "./_components/DataTable";
 import { FullscreenCard } from "./_components/FullscreenCard";
-import { ChartDisplay } from "~/app/_components/ChartDisplay";
+const ChartDisplay = lazy(() =>
+  import("./_components/ChartDisplay").then((m) => ({
+    default: m.ChartDisplay,
+  })),
+);
 import { APIKeyButton } from "~/app/_components/APIKeySettings";
 import { CSVSettingsButton } from "~/app/_components/CSVSettings";
 import { ClientOnly } from "./_components/ClientOnly";
@@ -51,9 +55,17 @@ import {
 import { loadApiSettings, type StoredSettings } from "~/lib/storage";
 import { clearChatStore, getChatStore } from "~/lib/chat-store";
 import { Sparkles, Loader2, ArrowLeft, FileDown } from "lucide-react";
-import { exportToPDF, captureChartImages } from "~/lib/pdf-export";
+import { useRequestScope } from "~/lib/use-request-scope";
+import type { ImportSource } from "~/lib/data-tasks";
+import { FileUpload } from "./_components/FileUpload";
+import { DataQuality } from "./_components/DataQuality";
 
 export default function HomePage() {
+  const [sourceVersion, setSourceVersion] = useState(0);
+  const [source, setSource] = useState<ImportSource>();
+  const [showImport, setShowImport] = useState(false);
+  const [dataVersion, setDataVersion] = useState(0);
+  const [isTransforming, setIsTransforming] = useState(false);
   const [csvData, setCsvData] = useState<CSVData | null>(null);
   const [currentFileName, setCurrentFileName] = useState<string | undefined>(
     undefined,
@@ -90,9 +102,32 @@ export default function HomePage() {
 
   // Data used for analysis — transformed data if available, otherwise raw
   const effectiveData = workingData ?? csvData;
+  const requests = useRequestScope(effectiveData, apiSettings);
+  const invalidate = useCallback(() => {
+    requests.cancelAll();
+    setIsAnalyzingAll(false);
+    setGeneratedCharts([]);
+    setAnalysisResults({ summary: null, anomalies: null, charts: null });
+    setSummaryError(null);
+    setAnomaliesError(null);
+    setChartGenerationError(null);
+    clearChatStore();
+    setDataVersion((v) => v + 1);
+    toast.dismiss("analysis-toast");
+  }, [requests]);
+  useEffect(() => {
+    if (isTransforming) invalidate();
+  }, [isTransforming]);
+  const handleTransformed = useCallback((next: CSVData | null) => {
+    setWorkingData((previous) => (previous === next ? previous : next));
+  }, []);
+  useEffect(() => {
+    invalidate();
+  }, [effectiveData, apiSettings]);
 
   const handleFileLoaded = (content: string, fileName: string) => {
     const data = parseCSV(content, csvSettings);
+    setSourceVersion((v) => v + 1);
     setCsvData(data);
     setCurrentFileName(fileName);
     setWorkingData(null);
@@ -108,6 +143,9 @@ export default function HomePage() {
   };
 
   const handleClearFile = () => {
+    requests.cancelAll();
+    setSource(undefined);
+    setShowImport(false);
     setCsvData(null);
     setCurrentFileName(undefined);
     setWorkingData(null);
@@ -122,7 +160,16 @@ export default function HomePage() {
     });
   };
 
-  const handleDataLoaded = (data: CSVData, fileName: string) => {
+  const handleDataLoaded = (
+    data: CSVData,
+    fileName: string,
+    imported?: ImportSource,
+  ) => {
+    requests.cancelAll();
+    setSource(imported);
+    setShowImport(false);
+    if (imported) setCsvSettings(imported.settings);
+    setSourceVersion((v) => v + 1);
     setCsvData(data);
     setCurrentFileName(fileName);
     setWorkingData(null);
@@ -132,7 +179,7 @@ export default function HomePage() {
     setSummaryError(null);
     setAnomaliesError(null);
     clearChatStore();
-    toast.success("Sample Data Loaded", {
+    toast.success("Data Loaded", {
       description: `${fileName} loaded with ${data.rows.length} rows`,
     });
   };
@@ -145,6 +192,7 @@ export default function HomePage() {
     const analysisData = effectiveData ?? csvData;
     if (!analysisData || !hasValidConfig) return;
 
+    const signal = requests.start("all");
     setIsAnalyzingAll(true);
     setAnalysisResults({ summary: null, anomalies: null, charts: null });
     setGeneratedCharts([]);
@@ -157,6 +205,7 @@ export default function HomePage() {
     });
 
     const config = {
+      signal,
       apiKey: apiSettings!.apiKey,
       model: apiSettings!.model,
       providerId: apiSettings!.providerId,
@@ -171,11 +220,13 @@ export default function HomePage() {
 
     const summaryPromise = generateDataSummary(config, csvSummary)
       .then((summary) => {
+        if (signal.aborted) return null;
         setSummaryError(null);
         setAnalysisResults((prev) => ({ ...prev, summary }));
         return summary;
       })
       .catch((error: unknown) => {
+        if (signal.aborted) return null;
         let errorMessage = "Unable to generate summary. Please try again.";
         if (
           error instanceof Error &&
@@ -197,11 +248,13 @@ export default function HomePage() {
 
     const anomaliesPromise = detectAnomalies(config, csvSummary, analysisData)
       .then((anomalies) => {
+        if (signal.aborted) return null;
         setAnomaliesError(null);
         setAnalysisResults((prev) => ({ ...prev, anomalies }));
         return anomalies;
       })
       .catch((error: unknown) => {
+        if (signal.aborted) return null;
         let errorMessage = "Unable to detect anomalies. Please try again.";
         if (
           error instanceof Error &&
@@ -227,6 +280,7 @@ export default function HomePage() {
       analysisData.headers,
     )
       .then((charts) => {
+        if (signal.aborted) return null;
         setChartGenerationError(null);
         setAnalysisResults((prev) => ({ ...prev, charts }));
         if (charts && charts.length > 0) {
@@ -240,6 +294,7 @@ export default function HomePage() {
         return charts;
       })
       .catch((error: unknown) => {
+        if (signal.aborted) return null;
         let errorMessage = "Unable to generate charts. Please try again.";
         if (
           error instanceof Error &&
@@ -259,18 +314,30 @@ export default function HomePage() {
         return null;
       });
 
-    await Promise.all([summaryPromise, anomaliesPromise, chartsPromise]);
+    const completed = await Promise.all([
+      summaryPromise,
+      anomaliesPromise,
+      chartsPromise,
+    ]);
+    if (signal.aborted) return;
     setIsAnalyzingAll(false);
 
-    toast.success("Analysis Complete", {
-      description: "Your CSV analysis has finished successfully!",
-      id: "analysis-toast",
-    });
+    toast[completed.every((result) => result !== null) ? "success" : "warning"](
+      "Analysis Complete",
+      {
+        description: completed.every((result) => result !== null)
+          ? "Your analysis is ready."
+          : "Some analyses failed. Retry them individually below.",
+        id: "analysis-toast",
+      },
+    );
   };
 
   const handleGlobalPDFExport = async () => {
     if (!csvData) return;
     try {
+      const { exportToPDF, captureChartImages } =
+        await import("~/lib/pdf-export");
       const chatStore = getChatStore();
       // Capture chart images from the DOM if charts are rendered
       const chartImages =
@@ -299,7 +366,9 @@ export default function HomePage() {
       : !!apiSettings?.apiKey;
     if (!csvData || !hasValidCfg) return;
 
+    const signal = requests.start(`repair-${failedChart.id}`);
     const config = {
+      signal,
       apiKey: apiSettings!.apiKey,
       model: apiSettings!.model,
       providerId: apiSettings!.providerId,
@@ -318,10 +387,11 @@ export default function HomePage() {
       const repairedChart = await repairChartSuggestion(
         config,
         failedChart,
-        csvData.headers,
+        (effectiveData ?? csvData).headers,
         "Failed to render chart with current configuration",
       );
 
+      if (signal.aborted) return;
       if (repairedChart) {
         setGeneratedCharts((prev) =>
           prev.map((c) => (c.id === failedChart.id ? repairedChart : c)),
@@ -337,6 +407,7 @@ export default function HomePage() {
         });
       }
     } catch (error) {
+      if (signal.aborted) return;
       const message =
         error instanceof Error ? error.message : "Failed to regenerate chart";
       toast.error("Regeneration Error", {
@@ -388,7 +459,7 @@ export default function HomePage() {
                   "color-mix(in srgb, var(--bg-body-start) 80%, transparent)",
               }}
             >
-              <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3 md:px-8">
+              <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-3 px-4 py-3 sm:flex-nowrap md:px-8">
                 {/* Left: Back + File info */}
                 <button
                   onClick={handleClearFile}
@@ -409,8 +480,9 @@ export default function HomePage() {
                 </div>
 
                 {/* Right: Actions */}
-                <div className="flex items-center gap-2">
+                <div className="flex w-full items-center justify-end gap-2 sm:w-auto">
                   <button
+                    disabled={isTransforming}
                     onClick={handleGlobalPDFExport}
                     className="flex items-center gap-1.5 rounded-lg bg-violet-500/10 px-3 py-2 text-sm text-violet-400 transition-colors hover:bg-violet-500/20 hover:text-violet-300"
                     title="Export full report as PDF"
@@ -437,9 +509,32 @@ export default function HomePage() {
               <section>
                 <SectionLabel label="Data" />
                 <div className="space-y-4">
+                  {source && (
+                    <button
+                      type="button"
+                      onClick={() => setShowImport((v) => !v)}
+                      className="rounded-lg border border-white/20 px-3 py-2 text-sm"
+                    >
+                      {showImport
+                        ? "Close import settings"
+                        : "Reimport with different settings"}
+                    </button>
+                  )}
+                  {showImport && source && (
+                    <FileUpload
+                      initialFile={source.file}
+                      csvSettings={csvSettings}
+                      onDataLoaded={handleDataLoaded}
+                      onClear={() => setShowImport(false)}
+                    />
+                  )}
+                  <DataQuality data={effectiveData ?? csvData} />
                   {/* Data Table - Full width */}
                   <FullscreenCard className="overflow-hidden rounded-2xl border border-white/10 bg-slate-900/50">
-                    <DataTable data={csvData} />
+                    <DataTable
+                      key={sourceVersion}
+                      data={effectiveData ?? csvData}
+                    />
                   </FullscreenCard>
 
                   {/* Data Transform + CSV Compare - Side by side */}
@@ -447,13 +542,16 @@ export default function HomePage() {
                     <div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-2">
                       <FullscreenCard className="flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-slate-900/50">
                         <DataTransform
+                          key={`transform-${sourceVersion}`}
                           data={csvData}
-                          onTransformed={setWorkingData}
+                          onTransformed={handleTransformed}
+                          onPendingChange={setIsTransforming}
                         />
                       </FullscreenCard>
 
                       <FullscreenCard className="flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-slate-900/50">
                         <CSVCompare
+                          key={`compare-${sourceVersion}`}
                           primaryData={csvData}
                           primaryFileName={currentFileName}
                           csvSettings={csvSettings}
@@ -471,9 +569,27 @@ export default function HomePage() {
                     AI Insights
                   </span>
                   <div className="h-px flex-1 bg-white/[0.06]" />
+                  {isAnalyzingAll && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        requests.cancelAll();
+                        setIsAnalyzingAll(false);
+                        toast.dismiss("analysis-toast");
+                      }}
+                      className="rounded-lg border border-white/20 px-3 py-2 text-sm"
+                    >
+                      Cancel analysis
+                    </button>
+                  )}
                   <button
                     onClick={handleRunAllAnalysis}
-                    disabled={isAnalyzingAll || !hasValidConfig}
+                    disabled={
+                      isAnalyzingAll ||
+                      isTransforming ||
+                      !effectiveData?.rowCount ||
+                      !hasValidConfig
+                    }
                     className={`flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold shadow-lg transition-all duration-200 ${
                       !hasValidConfig
                         ? "cursor-not-allowed bg-gray-800 text-gray-500 shadow-none"
@@ -502,36 +618,61 @@ export default function HomePage() {
                   <div className="space-y-4">
                     <FullscreenCard className="overflow-hidden rounded-2xl border border-white/10 bg-slate-900/50">
                       <AIAnalysis
+                        key={`analysis-${dataVersion}`}
                         data={effectiveData ?? csvData}
                         fileName={currentFileName}
                         apiSettings={apiSettings}
+                        onSummaryChange={(summary, error) => {
+                          setAnalysisResults((prev) => ({ ...prev, summary }));
+                          setSummaryError(error);
+                        }}
+                        onAnomaliesChange={(anomalies, error) => {
+                          setAnalysisResults((prev) => ({
+                            ...prev,
+                            anomalies,
+                          }));
+                          setAnomaliesError(error);
+                        }}
                         externalSummary={analysisResults.summary}
                         externalAnomalies={analysisResults.anomalies}
                         externalSummaryError={summaryError}
                         externalAnomaliesError={anomaliesError}
-                        disabled={isAnalyzingAll}
+                        disabled={
+                          isAnalyzingAll ||
+                          isTransforming ||
+                          !effectiveData?.rowCount
+                        }
                       />
                     </FullscreenCard>
 
                     <FullscreenCard className="overflow-hidden rounded-2xl border border-white/10 bg-slate-900/50">
                       <ChartSuggestions
+                        key={`charts-${dataVersion}`}
                         data={effectiveData ?? csvData}
                         apiSettings={apiSettings}
                         onChartsGenerated={setGeneratedCharts}
                         externalSuggestions={analysisResults.charts}
                         externalError={chartGenerationError}
-                        disabled={isAnalyzingAll}
+                        disabled={
+                          isAnalyzingAll ||
+                          isTransforming ||
+                          !effectiveData?.rowCount
+                        }
                       />
                     </FullscreenCard>
 
                     {generatedCharts && generatedCharts.length > 0 && (
                       <FullscreenCard className="overflow-hidden rounded-2xl border border-white/10 bg-slate-900/50">
-                        <ChartDisplay
-                          data={effectiveData ?? csvData}
-                          charts={generatedCharts}
-                          fileName={currentFileName}
-                          onRegenerate={handleRegenerateChart}
-                        />
+                        <Suspense fallback={<LazyFallback />}>
+                          <ChartDisplay
+                            data={effectiveData ?? csvData}
+                            charts={generatedCharts}
+                            fileName={currentFileName}
+                            onRegenerate={
+                              hasValidConfig ? handleRegenerateChart : undefined
+                            }
+                          />
+                        </Suspense>
                       </FullscreenCard>
                     )}
                   </div>

@@ -1,3 +1,4 @@
+import { inferValuesType, uniqueHeaders } from "./values";
 import type { TabularData } from "./types";
 
 export interface ParseCSVOptions {
@@ -54,14 +55,13 @@ export function parseCSV(
   const normalized = csv
     .replace(/^\uFEFF/, "")
     .replace(/\r\n/g, "\n")
-    .replace(/\r/g, "\n")
-    .trim();
+    .replace(/\r/g, "\n");
 
-  if (normalized.length === 0) {
+  if (normalized.trim().length === 0) {
     return { headers: [], rows: [], columns: [], rowCount: 0 };
   }
 
-  const delimiter = options.delimiter ?? detectDelimiter(normalized);
+  const delimiter = options.delimiter ?? detectCSVDelimiter(normalized);
   const allRows = parseRows(normalized, delimiter, skipEmpty);
 
   if (allRows.length === 0) {
@@ -78,7 +78,7 @@ export function parseCSV(
   });
 
   const headers = hasHeader
-    ? normalizedRows[0]!
+    ? uniqueHeaders(normalizedRows[0]!)
     : normalizedRows[0]!.map((_, i) => `Column ${i + 1}`);
   const dataRows = hasHeader ? normalizedRows.slice(1) : normalizedRows;
 
@@ -98,8 +98,19 @@ export function parseCSV(
 
 // ============ Delimiter Detection ============
 
-function detectDelimiter(csv: string): string {
-  const firstLines = csv.split("\n").slice(0, 5);
+export function detectCSVDelimiter(csv: string): string {
+  const firstLines: string[] = [];
+  let quoted = false;
+  let start = 0;
+  for (let i = 0; i < csv.length && firstLines.length < 5; i++) {
+    if (csv[i] === '"') quoted = !quoted;
+    if (csv[i] === "\n" && !quoted) {
+      firstLines.push(csv.slice(start, i));
+      start = i + 1;
+    }
+  }
+  if (firstLines.length < 5 && start < csv.length)
+    firstLines.push(csv.slice(start));
   const candidates: Record<string, number[]> = {
     ",": [],
     ";": [],
@@ -188,74 +199,24 @@ function parseRows(
     }
   }
 
+  if (inQuotes)
+    throw new Error(
+      "Unclosed quoted field. Check the CSV delimiter and quotes.",
+    );
+
   // Last field/row
   current.push(field);
-  if (!skipEmpty || current.some((c) => c.trim() !== "")) {
+  if (
+    (!skipEmpty &&
+      (field !== "" || current.length > 1 || !csv.endsWith("\n"))) ||
+    current.some((c) => c.trim() !== "")
+  ) {
     rows.push(current);
   }
 
   return rows;
 }
 
-// ============ Type Inference ============
-
-const BOOLEAN_VALUES = new Set([
-  "true",
-  "false",
-  "yes",
-  "no",
-  "vrai",
-  "faux",
-  "oui",
-  "non",
-]);
-
-const DATE_PATTERNS = [
-  /^\d{4}-\d{2}-\d{2}$/, // 2024-01-15
-  /^\d{2}\/\d{2}\/\d{4}$/, // 01/15/2024
-  /^\d{2}-\d{2}-\d{4}$/, // 01-15-2024
-  /^\d{4}\/\d{2}\/\d{2}$/, // 2024/01/15
-  /^\d{4}-\d{2}-\d{2}T/, // ISO 8601
-  /^\d{2}\.\d{2}\.\d{4}$/, // 15.01.2024
-  /^\w{3,9}\s\d{1,2},?\s\d{4}$/, // Jan 15, 2024 / January 15, 2024
-];
-
-function inferColumnType(
-  rows: string[][],
-  colIndex: number,
-): "string" | "number" | "date" | "boolean" {
-  const sampleSize = Math.min(rows.length, 100);
-  let numbers = 0;
-  let dates = 0;
-  let booleans = 0;
-  let total = 0;
-
-  for (let i = 0; i < sampleSize; i++) {
-    const value = rows[i]?.[colIndex]?.trim() ?? "";
-    if (value === "") continue;
-    total++;
-
-    if (BOOLEAN_VALUES.has(value.toLowerCase())) {
-      booleans++;
-    }
-
-    // Check number (handle "1,234.56" and "1 234.56" formats)
-    const cleaned = value.replace(/[\s,]/g, "");
-    if (cleaned !== "" && !isNaN(Number(cleaned))) {
-      numbers++;
-    }
-
-    if (DATE_PATTERNS.some((p) => p.test(value))) {
-      dates++;
-    }
-  }
-
-  if (total === 0) return "string";
-
-  const threshold = 0.8;
-  // Check booleans first (only if NOT also numbers)
-  if (booleans / total >= threshold && numbers / total < 0.5) return "boolean";
-  if (dates / total >= threshold) return "date";
-  if (numbers / total >= threshold) return "number";
-  return "string";
+function inferColumnType(rows: string[][], colIndex: number) {
+  return inferValuesType(rows.slice(0, 100).map((row) => row[colIndex] ?? ""));
 }

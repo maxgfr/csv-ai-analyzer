@@ -1,3 +1,4 @@
+import { parseNumericValue } from "./values";
 import { generateObject, type LanguageModel } from "ai";
 import { z } from "zod";
 import type { ChartConfig, TabularData } from "./types";
@@ -171,7 +172,9 @@ export function summarizeTabularData(data: TabularData): string {
     const values = data.rows.map((r) => r[idx] ?? "").filter((v) => v !== "");
 
     if (col.type === "number") {
-      const nums = values.map(Number).filter((n) => !isNaN(n));
+      const nums = values
+        .map(parseNumericValue)
+        .filter((n): n is number => n !== null);
       if (nums.length > 0) {
         const min = nums.reduce((a, b) => (b < a ? b : a), nums[0]!);
         const max = nums.reduce((a, b) => (b > a ? b : a), nums[0]!);
@@ -213,36 +216,46 @@ export function generateDataSummary(data: TabularData): string {
   summary.push("\nColumns:");
 
   data.columns.forEach((col) => {
-    const values = data.rows.map((row) => row[col.index] ?? "");
-    const nonEmpty = values.filter((v) => v.trim() !== "");
-
     if (col.type === "number") {
-      const numbers = nonEmpty
-        .map((v) => parseFloat(v.replace(/[\s,]/g, "").replace(",", ".")))
-        .filter((n) => !isNaN(n));
-
-      if (numbers.length > 0) {
-        // Use reduce instead of Math.min/max spread to avoid stack overflow on large arrays
-        const min = numbers.reduce((a, b) => (b < a ? b : a), numbers[0]!);
-        const max = numbers.reduce((a, b) => (b > a ? b : a), numbers[0]!);
-        const avg = numbers.reduce((a, b) => a + b, 0) / numbers.length;
+      let count = 0,
+        min = Infinity,
+        max = -Infinity,
+        sum = 0;
+      for (const row of data.rows) {
+        const value = parseNumericValue(row[col.index] ?? "");
+        if (value === null) continue;
+        count++;
+        sum += value;
+        if (value < min) min = value;
+        if (value > max) max = value;
+      }
+      if (count > 0) {
+        const avg = sum / count;
         summary.push(
-          `- ${col.name} (number): min=${min.toFixed(2)}, max=${max.toFixed(2)}, avg=${avg.toFixed(2)}, ${numbers.length} values`,
+          `- ${col.name} (number): min=${min.toFixed(2)}, max=${max.toFixed(2)}, avg=${avg.toFixed(2)}, ${count} values`,
         );
       } else {
         summary.push(`- ${col.name} (number): no valid values`);
       }
     } else if (col.type === "string") {
-      const uniqueValues = new Set(nonEmpty);
+      const uniqueValues = new Set<string>();
+      for (const row of data.rows) {
+        const value = row[col.index] ?? "";
+        if (value.trim()) uniqueValues.add(value);
+      }
       const uniqueCount = uniqueValues.size;
       const sampleValues = Array.from(uniqueValues).slice(0, 5).join(", ");
       summary.push(
         `- ${col.name} (text): ${uniqueCount} unique values, examples: ${sampleValues}`,
       );
     } else if (col.type === "date") {
-      summary.push(`- ${col.name} (date): ${nonEmpty.length} values`);
+      summary.push(
+        `- ${col.name} (date): ${data.rows.reduce((n, row) => n + ((row[col.index] ?? "").trim() ? 1 : 0), 0)} values`,
+      );
     } else if (col.type === "boolean") {
-      summary.push(`- ${col.name} (boolean): ${nonEmpty.length} values`);
+      summary.push(
+        `- ${col.name} (boolean): ${data.rows.reduce((n, row) => n + ((row[col.index] ?? "").trim() ? 1 : 0), 0)} values`,
+      );
     }
   });
 

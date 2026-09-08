@@ -13,27 +13,27 @@ import {
   ChevronDown,
   SlidersHorizontal,
 } from "lucide-react";
+import { useDataTask } from "~/lib/use-data-task";
+import {
+  transformData,
+  type ColumnFilter,
+  type SortConfig,
+} from "~/lib/data-operations";
 import type { CSVData } from "~/lib/csv-parser";
 
 interface DataTransformProps {
   data: CSVData;
+  onPendingChange?: (pending: boolean) => void;
   onTransformed?: (data: CSVData | null) => void;
-}
-
-interface ColumnFilter {
-  column: string;
-  operator: "eq" | "neq" | "gt" | "lt" | "contains" | "empty" | "not_empty";
-  value: string;
-}
-
-interface SortConfig {
-  column: string;
-  direction: "asc" | "desc";
 }
 
 type Section = "columns" | "sort" | "filters";
 
-export function DataTransform({ data, onTransformed }: DataTransformProps) {
+export function DataTransform({
+  data,
+  onTransformed,
+  onPendingChange,
+}: DataTransformProps) {
   const [filters, setFilters] = useState<ColumnFilter[]>([]);
   const [excludedColumns, setExcludedColumns] = useState<Set<string>>(
     new Set(),
@@ -74,6 +74,7 @@ export function DataTransform({ data, onTransformed }: DataTransformProps) {
   const toggleColumn = (col: string) => {
     setExcludedColumns((prev) => {
       const next = new Set(prev);
+      if (!next.has(col) && next.size >= data.headers.length - 1) return prev;
       if (next.has(col)) {
         next.delete(col);
       } else {
@@ -89,95 +90,47 @@ export function DataTransform({ data, onTransformed }: DataTransformProps) {
     setSortConfig(null);
   };
 
-  const transformedData = useMemo((): CSVData => {
-    let rows = [...data.rows];
-
-    // Apply filters
-    for (const filter of filters) {
-      if (
-        !filter.value &&
-        filter.operator !== "empty" &&
-        filter.operator !== "not_empty"
-      )
-        continue;
-      const colIdx = data.headers.indexOf(filter.column);
-      if (colIdx === -1) continue;
-
-      rows = rows.filter((row) => {
-        const val = String(row[colIdx] ?? "").toLowerCase();
-        const target = filter.value.toLowerCase();
-        switch (filter.operator) {
-          case "eq":
-            return val === target;
-          case "neq":
-            return val !== target;
-          case "gt":
-            return parseFloat(val) > parseFloat(target);
-          case "lt":
-            return parseFloat(val) < parseFloat(target);
-          case "contains":
-            return val.includes(target);
-          case "empty":
-            return val.trim() === "";
-          case "not_empty":
-            return val.trim() !== "";
-          default:
-            return true;
-        }
-      });
-    }
-
-    // Apply sort
-    if (sortConfig) {
-      const sortIdx = data.headers.indexOf(sortConfig.column);
-      if (sortIdx !== -1) {
-        const col = data.columns.find((c) => c.name === sortConfig.column);
-        rows.sort((a, b) => {
-          const aVal = a[sortIdx] ?? "";
-          const bVal = b[sortIdx] ?? "";
-          let cmp: number;
-          if (col?.type === "number") {
-            cmp = parseFloat(String(aVal)) - parseFloat(String(bVal));
-          } else {
-            cmp = String(aVal).localeCompare(String(bVal));
-          }
-          return sortConfig.direction === "desc" ? -cmp : cmp;
-        });
-      }
-    }
-
-    // Apply column exclusion
-    const includedColumns = data.columns.filter(
-      (c) => !excludedColumns.has(c.name),
-    );
-    const includedIndices = includedColumns.map((c) => c.index);
-    const filteredHeaders = includedColumns.map((c) => c.name);
-    const filteredRows = rows.map((row) =>
-      includedIndices.map((idx) => row[idx] ?? ""),
-    );
-    const filteredColumns = includedColumns.map((c, i) => ({
-      ...c,
-      index: i,
-    }));
-
-    return {
-      headers: filteredHeaders,
-      rows: filteredRows,
-      columns: filteredColumns,
-      rowCount: filteredRows.length,
-    };
-  }, [data, filters, excludedColumns, sortConfig]);
-
   const hasTransforms =
-    filters.length > 0 || excludedColumns.size > 0 || sortConfig !== null;
+    filters.some(
+      (f) => f.value || f.operator === "empty" || f.operator === "not_empty",
+    ) ||
+    excludedColumns.size > 0 ||
+    sortConfig !== null;
+  const task = useMemo(
+    () => ({
+      data,
+      options: {
+        filters,
+        excludedColumns: [...excludedColumns],
+        sort: sortConfig,
+      },
+    }),
+    [data, filters, excludedColumns, sortConfig],
+  );
+  const asyncTask = useDataTask(
+    "transform",
+    hasTransforms && data.rowCount >= 10000 ? task : null,
+  );
+  const transformedData = useMemo(
+    () =>
+      data.rowCount >= 10000 && hasTransforms
+        ? asyncTask.result
+        : transformData(data, task.options),
+    [data, task, asyncTask.result, hasTransforms],
+  );
+  useEffect(() => {
+    onPendingChange?.(asyncTask.pending || !!asyncTask.error);
+    return () => onPendingChange?.(false);
+  }, [asyncTask.pending, asyncTask.error, onPendingChange]);
 
   // Auto-apply transforms to downstream analysis
   useEffect(() => {
-    if (!onTransformed) return;
+    if (!onTransformed || !transformedData) return;
     onTransformed(hasTransforms ? transformedData : null);
   }, [transformedData, hasTransforms, onTransformed]);
 
   const handleExport = useCallback(() => {
+    if (!transformedData) return;
     const escapeField = (v: string) => `"${v.replace(/"/g, '""')}"`;
     const csv = [
       transformedData.headers.map(escapeField).join(","),
@@ -200,6 +153,16 @@ export function DataTransform({ data, onTransformed }: DataTransformProps) {
 
   return (
     <div className="glass-card animate-fade-in flex flex-1 flex-col p-6">
+      {asyncTask.pending && (
+        <p role="status" className="mb-3 text-sm text-gray-300">
+          Applying transforms…
+        </p>
+      )}
+      {asyncTask.error && (
+        <p role="alert" className="mb-3 text-sm text-red-400">
+          {asyncTask.error}
+        </p>
+      )}
       {/* Header */}
       <div className="mb-4 flex items-center gap-4">
         <div className="rounded-xl border border-fuchsia-500/30 bg-linear-to-br from-fuchsia-500/20 to-pink-500/20 p-3">
@@ -222,7 +185,7 @@ export function DataTransform({ data, onTransformed }: DataTransformProps) {
           <div className="flex items-center gap-2">
             <span className="text-sm text-gray-400">
               <span className="font-mono text-fuchsia-400">
-                {transformedData.rowCount}
+                {transformedData?.rowCount}
               </span>{" "}
               / <span className="font-mono">{data.rowCount}</span> rows
             </span>
@@ -405,7 +368,7 @@ export function DataTransform({ data, onTransformed }: DataTransformProps) {
                 </p>
               )}
               {filters.map((filter, i) => (
-                <div key={i} className="flex items-center gap-2">
+                <div key={i} className="flex flex-wrap items-center gap-2">
                   <select
                     value={filter.column}
                     onChange={(e) =>
@@ -449,10 +412,11 @@ export function DataTransform({ data, onTransformed }: DataTransformProps) {
                             ? "Number..."
                             : "Value..."
                         }
-                        className="flex-1 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-sm text-white placeholder-gray-500 focus:border-violet-500/50 focus:outline-none"
+                        className="min-w-0 flex-1 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-sm text-white placeholder-gray-500 focus:border-violet-500/50 focus:outline-none"
                       />
                     )}
                   <button
+                    aria-label={`Remove filter ${i + 1}`}
                     onClick={() => removeFilter(i)}
                     className="rounded-lg p-1.5 text-gray-500 hover:bg-red-500/10 hover:text-red-400"
                   >
@@ -473,7 +437,7 @@ export function DataTransform({ data, onTransformed }: DataTransformProps) {
       </div>
 
       {/* Empty rows warning */}
-      {hasTransforms && transformedData.rowCount === 0 && (
+      {hasTransforms && transformedData?.rowCount === 0 && (
         <div className="mt-4 flex items-center gap-2 rounded-lg border border-amber-500/20 bg-amber-500/10 px-4 py-3 text-sm text-amber-400">
           <AlertTriangle className="h-4 w-4 shrink-0" />
           No rows match your current filters. Try adjusting your conditions.
@@ -483,6 +447,7 @@ export function DataTransform({ data, onTransformed }: DataTransformProps) {
       {/* Export */}
       <div className="mt-auto border-t border-white/5 pt-4">
         <button
+          disabled={!transformedData}
           onClick={handleExport}
           className="flex items-center gap-1.5 rounded-lg bg-white/5 px-3 py-2 text-sm text-gray-400 transition-colors hover:bg-white/10 hover:text-white"
         >

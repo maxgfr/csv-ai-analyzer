@@ -920,6 +920,7 @@ export function APIKeyButton({
     <>
       <button
         type="button"
+        aria-label="API settings"
         onClick={() => setIsOpen(true)}
         className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-sm transition-colors ${
           hasKey

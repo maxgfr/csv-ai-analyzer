@@ -248,6 +248,7 @@ export function CSVSettingsButton({
     <>
       <button
         type="button"
+        aria-label="Parser settings"
         onClick={() => setIsOpen(true)}
         className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-gray-400 transition-colors hover:bg-white/10 hover:text-white"
       >

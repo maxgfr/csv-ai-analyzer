@@ -1,3 +1,4 @@
+import { parseNumericValue } from "./values";
 import type {
   TabularData,
   ChartConfig,
@@ -27,7 +28,9 @@ export const processChartDataMultiSeries = (
   sortOrder: SortOrder = "none",
   limit = 20,
 ): ProcessedChartResult => {
-  let result: ChartDataPoint[] = [];
+  const result: ChartDataPoint[] = [];
+  if (limit <= 0 || Number.isNaN(limit))
+    return { data: [], seriesKeys: [], yKey: chart.yAxis };
 
   // Find actual columns (case-insensitive match)
   const xColDef = data.columns.find(
@@ -49,7 +52,8 @@ export const processChartDataMultiSeries = (
 
   // For count aggregation, we don't need a valid Y column - we just count occurrences
   const isCountMode = chart.aggregation === "count";
-  const yCol = yColDef?.name ?? "count";
+  const rawYCol = yColDef?.name ?? "count";
+  const yCol = rawYCol === xCol ? `${rawYCol} (value)` : rawYCol;
   const yIdx = yColDef?.index ?? -1;
 
   // GroupBy mode: create multi-series data (not supported for pie/scatter)
@@ -87,8 +91,8 @@ export const processChartDataMultiSeries = (
         }
         current.count++;
       } else if (yIdx >= 0) {
-        const yVal = parseFloat(String(row[yIdx] ?? "0"));
-        if (!isNaN(yVal)) {
+        const yVal = parseNumericValue(row[yIdx] ?? "");
+        if (yVal !== null) {
           let current = xGroup.get(groupVal);
           if (!current) {
             current = { sum: 0, count: 0, min: Infinity, max: -Infinity };
@@ -102,12 +106,21 @@ export const processChartDataMultiSeries = (
       }
     });
 
-    const seriesKeys = Array.from(allGroups).slice(0, 8); // max 8 series
+    const groupNames = Array.from(allGroups).slice(0, 8);
+    const occupied = new Set([xCol, ...allGroups]);
+    const seriesKeys = groupNames.map((name) => {
+      if (name !== xCol) return name;
+      let key = `${name} (series)`;
+      let suffix = 2;
+      while (occupied.has(key)) key = `${name} (series ${suffix++})`;
+      occupied.add(key);
+      return key;
+    });
 
     grouped.forEach((groupMap, xKey) => {
       const point: ChartDataPoint = { [xCol]: xKey };
-      seriesKeys.forEach((groupKey) => {
-        const stats = groupMap.get(groupKey);
+      seriesKeys.forEach((groupKey, index) => {
+        const stats = groupMap.get(groupNames[index]!);
         if (stats) {
           let value: number;
           switch (chart.aggregation) {
@@ -129,9 +142,17 @@ export const processChartDataMultiSeries = (
             default:
               value = stats.sum;
           }
-          point[groupKey] = Math.round(value * 100) / 100;
+          Object.defineProperty(point, groupKey, {
+            value: Math.round(value * 100) / 100,
+            enumerable: true,
+            configurable: true,
+          });
         } else {
-          point[groupKey] = 0;
+          Object.defineProperty(point, groupKey, {
+            value: 0,
+            enumerable: true,
+            configurable: true,
+          });
         }
       });
       result.push(point);
@@ -173,8 +194,8 @@ export const processChartDataMultiSeries = (
         }
         current.count++;
       } else if (yIdx >= 0) {
-        const yVal = parseFloat(String(row[yIdx] ?? "0"));
-        if (!isNaN(yVal)) {
+        const yVal = parseNumericValue(row[yIdx] ?? "");
+        if (yVal !== null) {
           let current = groups.get(xVal);
           if (!current) {
             current = { sum: 0, count: 0, min: Infinity, max: -Infinity };
@@ -212,13 +233,12 @@ export const processChartDataMultiSeries = (
       result.push({ [xCol]: key, [yCol]: Math.round(value * 100) / 100 });
     });
   } else if (yIdx >= 0) {
-    result = data.rows
-      .slice(0, Math.min(limit * 2, data.rows.length))
-      .map((row) => ({
-        [xCol]: row[xIdx] ?? "",
-        [yCol]: parseFloat(String(row[yIdx] ?? "0")),
-      }))
-      .filter((item) => !isNaN(item[yCol] as number));
+    for (const row of data.rows) {
+      const value = parseNumericValue(row[yIdx] ?? "");
+      if (value === null) continue;
+      result.push({ [xCol]: row[xIdx] ?? "", [yCol]: value });
+      if (sortOrder === "none" && result.length >= limit) break;
+    }
   }
 
   // Apply sorting

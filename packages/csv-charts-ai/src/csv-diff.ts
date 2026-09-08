@@ -27,6 +27,8 @@ export interface DiffResult {
   onlyInB: string[];
   rows: DiffRow[];
   counts: DiffCounts;
+  /** Number of repeated key occurrences in each input. */
+  duplicateKeys?: { a: number; b: number };
 }
 
 export interface DiffOptions {
@@ -51,6 +53,7 @@ export function computeDiff(
   const onlyInB = compareData.headers.filter((h) => !aHeaderSet.has(h));
 
   const rows: DiffRow[] = [];
+  let duplicateKeys: { a: number; b: number } | undefined;
 
   // Pre-compute header → index maps to avoid O(n) indexOf calls per row
   const aHeaderIdx = new Map<string, number>();
@@ -89,34 +92,43 @@ export function computeDiff(
         : "index";
 
   if (effectiveMode === "content") {
-    const makeKey = (row: (string | number)[], idxMap: Map<string, number>) =>
-      commonHeaders
-        .map((h) => String(row[idxMap.get(h)!] ?? ""))
-        .join("\0");
+    const makeKey = (row: (string | number)[], indices: number[]) => {
+      let key = "";
+      for (const index of indices) {
+        const value = String(row[index] ?? "");
+        key += `${value.length}:${value}`;
+      }
+      return key;
+    };
+    const aIndices = commonIdxPairs.map((pair) => pair.aIdx);
+    const bIndices = commonIdxPairs.map((pair) => pair.bIdx);
 
-    const aMap = new Map<string, { row: (string | number)[]; idx: number }[]>();
+    const aMap = new Map<string, number[]>();
     for (let i = 0; i < primaryData.rows.length; i++) {
-      const key = makeKey(primaryData.rows[i]!, aHeaderIdx);
+      const key = makeKey(primaryData.rows[i]!, aIndices);
       const list = aMap.get(key) ?? [];
-      list.push({ row: primaryData.rows[i]!, idx: i });
+      list.push(i);
       aMap.set(key, list);
     }
 
-    const matchedAIndices = new Set<number>();
+    const matchedAIndices = new Uint8Array(primaryData.rows.length);
+    const cursors = new Map<string, number>();
 
     for (let i = 0; i < compareData.rows.length; i++) {
-      const key = makeKey(compareData.rows[i]!, bHeaderIdx);
+      const key = makeKey(compareData.rows[i]!, bIndices);
       const candidates = aMap.get(key);
 
       if (candidates) {
-        const match = candidates.find((c) => !matchedAIndices.has(c.idx));
-        if (match) {
-          matchedAIndices.add(match.idx);
+        const cursor = cursors.get(key) ?? 0;
+        const match = candidates[cursor];
+        cursors.set(key, cursor + 1);
+        if (match !== undefined) {
+          matchedAIndices[match] = 1;
           rows.push({
-            indexA: match.idx,
+            indexA: match,
             indexB: i,
             status: "same",
-            rowA: match.row,
+            rowA: primaryData.rows[match]!,
             rowB: compareData.rows[i]!,
             changedCols: new Set(),
           });
@@ -143,7 +155,7 @@ export function computeDiff(
     }
 
     for (let i = 0; i < primaryData.rows.length; i++) {
-      if (!matchedAIndices.has(i)) {
+      if (!matchedAIndices[i]) {
         rows.push({
           indexA: i,
           indexB: null,
@@ -195,56 +207,59 @@ export function computeDiff(
     const keyIdxA = aHeaderIdx.get(keyColumn)!;
     const keyIdxB = bHeaderIdx.get(keyColumn)!;
 
-    const aMap = new Map<string, { row: (string | number)[]; idx: number }>();
-    const bMap = new Map<string, { row: (string | number)[]; idx: number }>();
-
-    for (let i = 0; i < primaryData.rows.length; i++) {
-      const key = String(primaryData.rows[i]![keyIdxA] ?? "");
-      if (!aMap.has(key)) aMap.set(key, { row: primaryData.rows[i]!, idx: i });
-    }
+    const bMap = new Map<string, { indices: number[]; cursor: number }>();
+    duplicateKeys = { a: 0, b: 0 };
     for (let i = 0; i < compareData.rows.length; i++) {
       const key = String(compareData.rows[i]![keyIdxB] ?? "");
-      if (!bMap.has(key)) bMap.set(key, { row: compareData.rows[i]!, idx: i });
+      const bucket = bMap.get(key);
+      if (bucket) {
+        bucket.indices.push(i);
+        duplicateKeys.b++;
+      } else bMap.set(key, { indices: [i], cursor: 0 });
     }
-
-    const processedBKeys = new Set<string>();
-
-    for (const [key, aEntry] of aMap) {
-      const bEntry = bMap.get(key);
-      if (bEntry) {
-        processedBKeys.add(key);
-        const changedCols = getChangedCols(aEntry.row, bEntry.row);
+    const seenA = new Set<string>();
+    const matchedB = new Set<number>();
+    for (let i = 0; i < primaryData.rows.length; i++) {
+      const rowA = primaryData.rows[i]!;
+      const key = String(rowA[keyIdxA] ?? "");
+      if (seenA.has(key)) duplicateKeys.a++;
+      seenA.add(key);
+      const bucket = bMap.get(key);
+      const indexB = bucket?.indices[bucket.cursor];
+      if (indexB !== undefined && bucket) {
+        bucket.cursor++;
+        matchedB.add(indexB);
+        const rowB = compareData.rows[indexB]!;
+        const changedCols = getChangedCols(rowA, rowB);
         rows.push({
-          indexA: aEntry.idx,
-          indexB: bEntry.idx,
-          status: changedCols.size > 0 ? "changed" : "same",
-          rowA: aEntry.row,
-          rowB: bEntry.row,
+          indexA: i,
+          indexB,
+          rowA,
+          rowB,
           changedCols,
+          status: changedCols.size ? "changed" : "same",
         });
       } else {
         rows.push({
-          indexA: aEntry.idx,
+          indexA: i,
           indexB: null,
-          status: "removed",
-          rowA: aEntry.row,
+          rowA,
           rowB: null,
+          status: "removed",
           changedCols: new Set(),
         });
       }
     }
-
-    for (const [key, bEntry] of bMap) {
-      if (!processedBKeys.has(key)) {
+    for (let i = 0; i < compareData.rows.length; i++) {
+      if (!matchedB.has(i))
         rows.push({
           indexA: null,
-          indexB: bEntry.idx,
-          status: "added",
+          indexB: i,
           rowA: null,
-          rowB: bEntry.row,
+          rowB: compareData.rows[i]!,
+          status: "added",
           changedCols: new Set(),
         });
-      }
     }
   }
 
@@ -254,5 +269,12 @@ export function computeDiff(
     counts[r.status]++;
   }
 
-  return { commonHeaders, onlyInA, onlyInB, rows, counts };
+  return {
+    commonHeaders,
+    onlyInA,
+    onlyInB,
+    rows,
+    counts,
+    ...(duplicateKeys && { duplicateKeys }),
+  };
 }

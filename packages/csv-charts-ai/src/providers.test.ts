@@ -185,3 +185,17 @@ describe("provider registry", () => {
     });
   });
 });
+
+it("uses Chat Completions for OpenAI-compatible base URLs", () => {
+  const responses = vi.fn();
+  const chat = vi.fn().mockReturnValue({ modelId: "local-chat" });
+  const provider = Object.assign(responses, { chat });
+  const factory = fromSDK(() => provider);
+  factory({
+    apiKey: "",
+    model: "local-model",
+    baseURL: "http://localhost:11434/v1",
+  });
+  expect(chat).toHaveBeenCalledWith("local-model");
+  expect(responses).not.toHaveBeenCalled();
+});

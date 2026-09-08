@@ -23,7 +23,6 @@ import type { CSVData } from "~/lib/csv-parser";
 import type { ChartSuggestion } from "~/lib/ai-service";
 import { useTheme } from "~/lib/theme";
 import { FullscreenCard } from "./FullscreenCard";
-import { exportChartsPDF } from "~/lib/pdf-export";
 
 const lucideIcons = {
   RefreshCw,
@@ -55,6 +54,7 @@ export function ChartDisplay({
 
   const handleExportChartsPDF = async () => {
     try {
+      const { exportChartsPDF } = await import("~/lib/pdf-export");
       await exportChartsPDF(charts, fileName);
       toast.success("Charts PDF exported");
     } catch (e) {

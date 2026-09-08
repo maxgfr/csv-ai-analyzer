@@ -1,166 +1,267 @@
 "use client";
 
-import { useCallback, useState } from "react";
-import { Upload, File, X, AlertCircle } from "lucide-react";
-import type { CSVData, CSVSettings } from "~/lib/csv-parser";
+import { useEffect, useMemo, useState } from "react";
+import { Upload, X } from "lucide-react";
 import {
-  isXLSXFile,
+  DEFAULT_CSV_SETTINGS,
+  type CSVData,
+  type CSVSettings,
+} from "~/lib/csv-parser";
+import {
   isSupportedFile,
+  isXLSXFile,
   SPREADSHEET_ACCEPT,
-  parseXLSX,
 } from "~/lib/xlsx-parser";
+import { useDataTask } from "~/lib/use-data-task";
+import type { ImportSource } from "~/lib/data-tasks";
 
 interface FileUploadProps {
-  onFileLoaded: (content: string, fileName: string) => void;
-  onDataLoaded: (data: CSVData, fileName: string) => void;
+  onFileLoaded?: (content: string, fileName: string) => void;
+  onDataLoaded: (
+    data: CSVData,
+    fileName: string,
+    source?: ImportSource,
+  ) => void;
   csvSettings?: CSVSettings;
   currentFileName?: string;
+  initialFile?: File;
   onClear: () => void;
 }
 
 export function FileUpload({
-  onFileLoaded,
   onDataLoaded,
-  csvSettings,
-  currentFileName,
+  csvSettings = DEFAULT_CSV_SETTINGS,
+  initialFile,
   onClear,
 }: FileUploadProps) {
-  const [isDragging, setIsDragging] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const handleFile = useCallback(
-    async (file: File) => {
-      if (!isSupportedFile(file.name)) {
-        setError("Please upload a CSV or Excel (.xlsx) file");
-        return;
-      }
-
-      setError(null);
-
-      try {
-        if (isXLSXFile(file.name)) {
-          const data = await parseXLSX(file, {
-            hasHeader: csvSettings?.hasHeader ?? true,
-            skipEmptyLines: csvSettings?.skipEmptyLines ?? true,
-          });
-          onDataLoaded(data, file.name);
-        } else {
-          const content = await file.text();
-          onFileLoaded(content, file.name);
-        }
-      } catch {
-        setError("Error reading file. Please check the file format.");
-      }
-    },
-    [onFileLoaded, onDataLoaded, csvSettings],
+  const [file, setFile] = useState<File | null>(initialFile ?? null);
+  const [settings, setSettings] = useState(csvSettings);
+  const [sheet, setSheet] = useState<string>();
+  const [error, setError] = useState<string>();
+  const [dragging, setDragging] = useState(false);
+  useEffect(() => setSettings(csvSettings), [csvSettings]);
+  const input = useMemo(
+    () => (file ? { file, settings, sheet } : null),
+    [file, settings, sheet],
   );
-
-  const handleDrop = useCallback(
-    (e: React.DragEvent) => {
-      e.preventDefault();
-      setIsDragging(false);
-
-      const file = e.dataTransfer.files[0];
-      if (file) {
-        void handleFile(file);
-      }
-    },
-    [handleFile],
-  );
-
-  const handleDragOver = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(true);
-  }, []);
-
-  const handleDragLeave = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-  }, []);
-
-  const handleInputChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      if (file) {
-        void handleFile(file);
-      }
-    },
-    [handleFile],
-  );
-
-  if (currentFileName) {
-    return (
-      <div className="glass-card animate-fade-in p-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="rounded-xl border border-green-500/30 bg-gradient-to-br from-green-500/20 to-emerald-500/20 p-3">
-              <File className="h-6 w-6 text-green-400" />
-            </div>
-            <div>
-              <p className="font-medium text-white">{currentFileName}</p>
-              <p className="text-sm text-gray-400">File loaded</p>
-            </div>
+  const task = useDataTask("import", input);
+  // Keep the selector visible during re-parsing, while the new result is pending.
+  const [sheets, setSheets] = useState<string[]>([]);
+  useEffect(() => {
+    if (task.result) setSheets(task.result.sheets);
+  }, [task.result]);
+  const choose = (next: File | undefined) => {
+    if (!next) return;
+    if (!isSupportedFile(next.name)) {
+      setError("Please choose a CSV or Excel (.xlsx) file.");
+      return;
+    }
+    setError(undefined);
+    setFile(next);
+    setSheet(undefined);
+    setSheets([]);
+  };
+  const control =
+    "w-full rounded-lg border border-white/20 bg-gray-900 px-3 py-2 text-sm text-white";
+  return (
+    <div className="glass-card space-y-4 p-6">
+      {!file ? (
+        <label
+          className={`block cursor-pointer rounded-xl border border-dashed p-8 text-center ${dragging ? "border-violet-400 bg-violet-500/10" : "border-white/30"}`}
+          onDragOver={(e) => {
+            e.preventDefault();
+            setDragging(true);
+          }}
+          onDragLeave={() => setDragging(false)}
+          onDrop={(e) => {
+            e.preventDefault();
+            setDragging(false);
+            choose(e.dataTransfer.files[0]);
+          }}
+        >
+          <Upload className="mx-auto mb-3 h-8 w-8 text-violet-400" />
+          <span className="block text-lg font-medium text-white">
+            Drag &amp; drop your CSV or Excel file
+          </span>
+          <span className="mt-1 block text-sm text-gray-400">
+            Preview the data and settings before importing.
+          </span>
+          <input
+            aria-label="Choose CSV or Excel file"
+            type="file"
+            accept={SPREADSHEET_ACCEPT}
+            className="mt-4 block w-full text-sm"
+            onChange={(e) => {
+              choose(e.target.files?.[0]);
+              e.target.value = "";
+            }}
+          />
+        </label>
+      ) : (
+        <>
+          <div className="flex items-center justify-between gap-3">
+            <h3 className="min-w-0 truncate font-semibold text-white">
+              Import preview — {file.name}
+            </h3>
+            <button
+              type="button"
+              aria-label="Cancel import"
+              onClick={() => {
+                setFile(null);
+                setSheet(undefined);
+                setSheets([]);
+                onClear();
+              }}
+              className="rounded-lg p-2 hover:bg-white/10"
+            >
+              <X className="h-5 w-5" />
+            </button>
           </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {!isXLSXFile(file.name) && (
+              <>
+                <label className="text-sm text-gray-300">
+                  Delimiter
+                  <select
+                    aria-label="Import delimiter"
+                    className={control}
+                    value={settings.delimiter}
+                    onChange={(e) =>
+                      setSettings({ ...settings, delimiter: e.target.value })
+                    }
+                  >
+                    <option value="">Auto-detect</option>
+                    <option value=",">Comma</option>
+                    <option value=";">Semicolon</option>
+                    <option value={"\t"}>Tab</option>
+                    <option value="|">Pipe</option>
+                  </select>
+                </label>
+                <label className="text-sm text-gray-300">
+                  Encoding
+                  <select
+                    aria-label="Import encoding"
+                    className={control}
+                    value={settings.encoding}
+                    onChange={(e) =>
+                      setSettings({ ...settings, encoding: e.target.value })
+                    }
+                  >
+                    <option>UTF-8</option>
+                    <option>ISO-8859-1</option>
+                    <option>Windows-1252</option>
+                  </select>
+                </label>
+              </>
+            )}
+            {sheets.length > 0 && (
+              <label className="text-sm text-gray-300">
+                Excel sheet
+                <select
+                  aria-label="Excel sheet"
+                  className={control}
+                  value={sheet ?? sheets[0]}
+                  onChange={(e) => setSheet(e.target.value)}
+                >
+                  {sheets.map((name) => (
+                    <option key={name}>{name}</option>
+                  ))}
+                </select>
+              </label>
+            )}
+            <label className="flex items-center gap-2 text-sm text-gray-300">
+              <input
+                type="checkbox"
+                checked={settings.hasHeader}
+                onChange={(e) =>
+                  setSettings({ ...settings, hasHeader: e.target.checked })
+                }
+              />
+              First row contains headers
+            </label>
+            <label className="flex items-center gap-2 text-sm text-gray-300">
+              <input
+                type="checkbox"
+                checked={settings.skipEmptyLines}
+                onChange={(e) =>
+                  setSettings({ ...settings, skipEmptyLines: e.target.checked })
+                }
+              />
+              Skip empty rows
+            </label>
+          </div>
+          {task.pending && (
+            <p role="status" className="text-sm text-gray-300">
+              Reading file and preparing preview…
+            </p>
+          )}
+          {task.result && (
+            <>
+              <p className="text-sm text-gray-300">
+                {task.result.data.rowCount} rows ·{" "}
+                {task.result.data.headers.length} columns · first 20 rows shown
+              </p>
+              {task.result.warnings.map((warning) => (
+                <p
+                  role="status"
+                  key={warning}
+                  className="text-sm text-amber-400"
+                >
+                  {warning}
+                </p>
+              ))}
+              <div className="max-h-72 overflow-auto rounded-lg border border-white/10">
+                <table className="w-full text-left text-sm">
+                  <thead>
+                    <tr>
+                      {task.result.data.headers.map((h) => (
+                        <th
+                          key={h}
+                          className="px-3 py-2 whitespace-nowrap text-gray-300"
+                        >
+                          {h}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {task.result.data.rows.slice(0, 20).map((row, i) => (
+                      <tr key={i}>
+                        {row.map((cell, j) => (
+                          <td
+                            key={j}
+                            className="max-w-64 truncate px-3 py-1 text-gray-400"
+                            title={cell}
+                          >
+                            {cell}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
+          )}
           <button
             type="button"
-            onClick={onClear}
-            className="flex items-center gap-2 rounded-xl border-2 border-red-500 bg-red-600 px-4 py-2.5 font-medium text-white shadow-lg shadow-red-500/25 transition-all duration-200 hover:bg-red-500"
-            title="Remove file"
+            disabled={
+              !task.result || task.pending || !task.result.data.headers.length
+            }
+            onClick={() => {
+              if (task.result && input)
+                onDataLoaded(task.result.data, file.name, input);
+            }}
+            className="rounded-xl bg-violet-600 px-4 py-2 font-medium text-white hover:bg-violet-500 disabled:opacity-50"
           >
-            <X className="h-4 w-4" />
-            <span className="text-sm">Clear</span>
+            Import data
           </button>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="space-y-4">
-      <label
-        className={`glass-card glass-card-hover block cursor-pointer p-8 text-center transition-all duration-300 ${
-          isDragging ? "bg-violet-500/10 ring-2 ring-violet-500" : ""
-        } `}
-        onDrop={handleDrop}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-      >
-        <input
-          type="file"
-          accept={SPREADSHEET_ACCEPT}
-          onChange={handleInputChange}
-          className="hidden"
-        />
-        <div className="flex flex-col items-center gap-4">
-          <div
-            className={`rounded-2xl p-4 transition-all duration-300 ${
-              isDragging
-                ? "scale-110 bg-violet-500/20"
-                : "border border-violet-500/20 bg-gradient-to-br from-violet-500/10 to-purple-500/10"
-            } `}
-          >
-            <Upload
-              className={`h-8 w-8 ${isDragging ? "text-violet-400" : "text-violet-500"}`}
-            />
-          </div>
-          <div>
-            <p className="mb-1 text-lg font-medium text-white">
-              {isDragging
-                ? "Drop your file here"
-                : "Drag & drop your CSV or Excel file"}
-            </p>
-            <p className="text-sm text-gray-400">
-              Supports .csv and .xlsx files
-            </p>
-          </div>
-        </div>
-      </label>
-
-      {error && (
-        <div className="animate-fade-in flex items-center gap-2 rounded-xl border border-red-500/30 bg-red-500/10 p-4">
-          <AlertCircle className="h-5 w-5 flex-shrink-0 text-red-400" />
-          <p className="text-sm text-red-400">{error}</p>
-        </div>
+        </>
+      )}
+      {(error || task.error) && (
+        <p role="alert" className="text-sm text-red-400">
+          {error || task.error}
+        </p>
       )}
     </div>
   );

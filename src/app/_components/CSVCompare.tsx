@@ -3,7 +3,6 @@
 import { useState, useMemo, useEffect } from "react";
 import {
   GitCompareArrows,
-  Upload,
   X,
   ArrowUpRight,
   ArrowDownRight,
@@ -18,53 +17,18 @@ import {
   ArrowRight,
   ScanSearch,
 } from "lucide-react";
-import { toast } from "sonner";
+import { useDataTask } from "~/lib/use-data-task";
+import { FileUpload } from "./FileUpload";
 import {
   type CSVData,
   type CSVSettings,
   DEFAULT_CSV_SETTINGS,
-  parseCSV,
 } from "~/lib/csv-parser";
-import {
-  isXLSXFile,
-  isSupportedFile,
-  SPREADSHEET_ACCEPT,
-  parseXLSX,
-} from "~/lib/xlsx-parser";
-
-import {
-  computeDiff,
-  type MatchMode,
-  type DiffStatus,
-  type DiffResult as BaseDiffResult,
-} from "~/lib/csv-diff";
+import type { MatchMode, DiffStatus } from "~/lib/csv-diff";
 
 /* ── Types ── */
 
 type DiffFilter = "all" | "changes" | "added" | "removed";
-
-interface ColumnStat {
-  column: string;
-  type: "numeric" | "categorical";
-  primary: {
-    count?: number;
-    avg?: number;
-    min?: number;
-    max?: number;
-    distinct?: number;
-  };
-  compare: {
-    count?: number;
-    avg?: number;
-    min?: number;
-    max?: number;
-    distinct?: number;
-  };
-}
-
-interface DiffResult extends BaseDiffResult {
-  stats: ColumnStat[];
-}
 
 /* ── Constants ── */
 
@@ -85,12 +49,17 @@ export function CSVCompare({
 }: CSVCompareProps) {
   const [compareData, setCompareData] = useState<CSVData | null>(null);
   const [compareFileName, setCompareFileName] = useState("");
-  const [isDragging, setIsDragging] = useState(false);
+
   const [matchMode, setMatchMode] = useState<MatchMode>("index");
   const [keyColumn, setKeyColumn] = useState("");
   const [diffFilter, setDiffFilter] = useState<DiffFilter>("changes");
   const [currentPage, setCurrentPage] = useState(0);
   const [showStats, setShowStats] = useState(false);
+  const handleRemove = () => {
+    setCompareData(null);
+    setCompareFileName("");
+    setCurrentPage(0);
+  };
 
   // Auto-select a valid key column when compare data or primary headers change
   useEffect(() => {
@@ -103,131 +72,16 @@ export function CSVCompare({
     }
   }, [primaryData.headers, compareData, keyColumn]);
 
-  /* ── File handling ── */
-
-  const handleFile = async (file: File) => {
-    if (!isSupportedFile(file.name)) {
-      toast.error("Invalid file type", {
-        description: "Please upload a .csv or .xlsx file.",
-      });
-      return;
-    }
-
-    try {
-      let data: CSVData;
-      if (isXLSXFile(file.name)) {
-        data = await parseXLSX(file, {
-          hasHeader: csvSettings.hasHeader,
-          skipEmptyLines: csvSettings.skipEmptyLines,
-        });
-      } else {
-        const content = await file.text();
-        data = parseCSV(content, csvSettings);
-      }
-      setCompareData(data);
-      setCompareFileName(file.name);
-      setCurrentPage(0);
-      setDiffFilter("changes");
-      toast.success("Comparison file loaded", {
-        description: `${file.name} — ${data.rowCount} rows, ${data.headers.length} columns`,
-      });
-    } catch {
-      toast.error("Failed to parse file", {
-        description: "Please check that the file is a valid CSV or Excel file.",
-      });
-    }
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-    const file = e.dataTransfer.files[0];
-    if (file && isSupportedFile(file.name)) {
-      void handleFile(file);
-    } else if (file) {
-      toast.error("Invalid file type", {
-        description: "Please upload a .csv or .xlsx file.",
-      });
-    }
-  };
-
-  const handleRemove = () => {
-    setCompareData(null);
-    setCompareFileName("");
-    setCurrentPage(0);
-    setDiffFilter("changes");
-    setShowStats(false);
-  };
-
-  /* ── Diff computation ── */
-
-  const diff = useMemo((): DiffResult | null => {
-    if (!compareData) return null;
-
-    const baseDiff = computeDiff(primaryData, compareData, {
-      matchMode,
-      keyColumn,
-    });
-
-    // Column-level stats
-    const { commonHeaders } = baseDiff;
-    const stats: ColumnStat[] = commonHeaders.map((header) => {
-      const pIdx = primaryData.headers.indexOf(header);
-      const cIdx = compareData.headers.indexOf(header);
-      const pCol = primaryData.columns.find((c) => c.name === header);
-
-      if (pCol?.type !== "number") {
-        const pDistinct = new Set(primaryData.rows.map((r) => r[pIdx])).size;
-        const cDistinct = new Set(compareData.rows.map((r) => r[cIdx])).size;
-        return {
-          column: header,
-          type: "categorical" as const,
-          primary: { distinct: pDistinct },
-          compare: { distinct: cDistinct },
-        };
-      }
-
-      const pValues = primaryData.rows
-        .map((r) => parseFloat(String(r[pIdx] ?? "")))
-        .filter((v) => !isNaN(v));
-      const cValues = compareData.rows
-        .map((r) => parseFloat(String(r[cIdx] ?? "")))
-        .filter((v) => !isNaN(v));
-
-      if (pValues.length === 0 && cValues.length === 0) {
-        return {
-          column: header,
-          type: "categorical" as const,
-          primary: { distinct: 0 },
-          compare: { distinct: 0 },
-        };
-      }
-
-      const avg = (arr: number[]) =>
-        arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0;
-      const min = (arr: number[]) => (arr.length ? Math.min(...arr) : 0);
-      const max = (arr: number[]) => (arr.length ? Math.max(...arr) : 0);
-
-      return {
-        column: header,
-        type: "numeric" as const,
-        primary: {
-          count: pValues.length,
-          avg: avg(pValues),
-          min: min(pValues),
-          max: max(pValues),
-        },
-        compare: {
-          count: cValues.length,
-          avg: avg(cValues),
-          min: min(cValues),
-          max: max(cValues),
-        },
-      };
-    });
-
-    return { ...baseDiff, stats };
-  }, [primaryData, compareData, matchMode, keyColumn]);
+  const task = useMemo(
+    () =>
+      compareData
+        ? { a: primaryData, b: compareData, options: { matchMode, keyColumn } }
+        : null,
+    [primaryData, compareData, matchMode, keyColumn],
+  );
+  const asyncDiff = useDataTask("diff", task);
+  const diff = asyncDiff.result ?? null;
+  useEffect(() => setCurrentPage(0), [task, diffFilter]);
 
   /* ── Filtered & paginated rows ── */
 
@@ -291,43 +145,26 @@ export function CSVCompare({
         )}
       </div>
 
+      {asyncDiff.pending && <p role="status">Comparing files…</p>}
+      {asyncDiff.error && <p role="alert">{asyncDiff.error}</p>}
+      {diff?.duplicateKeys &&
+        (diff.duplicateKeys.a > 0 || diff.duplicateKeys.b > 0) && (
+          <p role="status" className="mb-3 text-sm text-amber-400">
+            Repeated keys: {diff.duplicateKeys.a} in A, {diff.duplicateKeys.b}{" "}
+            in B. Occurrences are matched in file order; all rows are preserved.
+          </p>
+        )}
       {!compareData ? (
-        /* ── Upload zone ── */
-        <div
-          onDragOver={(e) => {
-            e.preventDefault();
-            setIsDragging(true);
+        <FileUpload
+          csvSettings={csvSettings}
+          onClear={() => {}}
+          onDataLoaded={(data, name) => {
+            setCompareData(data);
+            setCompareFileName(name);
+            setCurrentPage(0);
+            setDiffFilter("changes");
           }}
-          onDragLeave={() => setIsDragging(false)}
-          onDrop={handleDrop}
-          className={`flex flex-1 flex-col items-center justify-center rounded-xl border-2 border-dashed p-10 transition-all ${
-            isDragging
-              ? "scale-[1.01] border-cyan-500 bg-cyan-500/10"
-              : "border-white/10 bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.04]"
-          }`}
-        >
-          <div className="mb-4 rounded-full border border-white/10 bg-white/5 p-4">
-            <Upload className="h-6 w-6 text-gray-500" />
-          </div>
-          <p className="mb-1 text-sm font-medium text-gray-300">
-            Drop a CSV or Excel file here
-          </p>
-          <p className="mb-4 text-xs text-gray-500">
-            Supports .csv and .xlsx files
-          </p>
-          <label className="cursor-pointer rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-4 py-2 text-sm font-medium text-cyan-400 transition-colors hover:bg-cyan-500/20">
-            Browse files
-            <input
-              type="file"
-              accept={SPREADSHEET_ACCEPT}
-              className="hidden"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) void handleFile(file);
-              }}
-            />
-          </label>
-        </div>
+        />
       ) : (
         /* ── Comparison view ── */
         <div className="flex flex-1 flex-col space-y-5 overflow-y-auto">

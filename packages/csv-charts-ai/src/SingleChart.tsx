@@ -74,12 +74,7 @@ export function SingleChart({
         col.name.toLowerCase() === chart.xAxis.toLowerCase(),
     )?.name ?? chart.xAxis;
 
-  const yColName =
-    data.columns.find(
-      (col) =>
-        col.name === chart.yAxis ||
-        col.name.toLowerCase() === chart.yAxis.toLowerCase(),
-    )?.name ?? chart.yAxis;
+  const yColName = processed.yKey;
 
   // Calculate average for trend line
   const average = useMemo(() => {
@@ -132,68 +127,67 @@ export function SingleChart({
    * Serialize the live SVG directly (no cloneNode — that breaks namespaces)
    * and inject a background rect via string manipulation.
    */
-  const getSvgString = useCallback(
-    (bgColor: string) => {
-      const container = chartContainerRef.current;
-      if (!container) return null;
+  const getSvgString = useCallback((bgColor: string) => {
+    const container = chartContainerRef.current;
+    if (!container) return null;
 
-      // Recharts v3 legend icons are also <svg class="recharts-surface"> (14×14).
-      // Pick the largest SVG so we always get the main chart, not an icon.
-      const allSvgs = container.querySelectorAll("svg.recharts-surface");
-      let svgElement: Element | null = null;
-      let maxArea = 0;
-      for (const svg of allSvgs) {
-        const r = svg.getBoundingClientRect();
-        const area = r.width * r.height;
-        if (area > maxArea) {
-          maxArea = area;
-          svgElement = svg;
-        }
+    // Recharts v3 legend icons are also <svg class="recharts-surface"> (14×14).
+    // Pick the largest SVG so we always get the main chart, not an icon.
+    const allSvgs = container.querySelectorAll("svg.recharts-surface");
+    let svgElement: Element | null = null;
+    let maxArea = 0;
+    for (const svg of allSvgs) {
+      const r = svg.getBoundingClientRect();
+      const area = r.width * r.height;
+      if (area > maxArea) {
+        maxArea = area;
+        svgElement = svg;
       }
-      if (!svgElement) svgElement = container.querySelector("svg");
-      if (!svgElement) return null;
+    }
+    if (!svgElement) svgElement = container.querySelector("svg");
+    if (!svgElement) return null;
 
-      const rect = svgElement.getBoundingClientRect();
-      if (rect.width === 0 || rect.height === 0) return null;
+    const rect = svgElement.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) return null;
 
-      let svg = new XMLSerializer().serializeToString(svgElement);
+    let svg = new XMLSerializer().serializeToString(svgElement);
 
-      const openTag = svg.match(/<svg[^>]*>/);
-      if (!openTag) return null;
+    const openTag = svg.match(/<svg[^>]*>/);
+    if (!openTag) return null;
 
-      // Fix the opening <svg> tag for standalone rendering:
-      // Recharts sets style="width:100%;height:100%" for responsive layout,
-      // but percentage dimensions break standalone SVG/PNG rendering (no parent
-      // container to resolve against → renders at tiny default size).
-      let tag = openTag[0];
-      tag = tag.replace(/style="([^"]*)"/, (_m, styles: string) => {
-        const kept = styles
-          .split(";")
-          .map((p) => p.trim())
-          .filter((p) => {
-            const name = p.split(":")[0]?.trim().toLowerCase();
-            return name && name !== "width" && name !== "height";
-          })
-          .join("; ");
-        return kept ? `style="${kept}"` : "";
-      });
-      tag = tag.replace(/\bwidth="[^"]*"/, `width="${rect.width}"`);
-      tag = tag.replace(/\bheight="[^"]*"/, `height="${rect.height}"`);
+    // Fix the opening <svg> tag for standalone rendering:
+    // Recharts sets style="width:100%;height:100%" for responsive layout,
+    // but percentage dimensions break standalone SVG/PNG rendering (no parent
+    // container to resolve against → renders at tiny default size).
+    let tag = openTag[0];
+    tag = tag.replace(/style="([^"]*)"/, (_m, styles: string) => {
+      const kept = styles
+        .split(";")
+        .map((p) => p.trim())
+        .filter((p) => {
+          const name = p.split(":")[0]?.trim().toLowerCase();
+          return name && name !== "width" && name !== "height";
+        })
+        .join("; ");
+      return kept ? `style="${kept}"` : "";
+    });
+    tag = tag.replace(/\bwidth="[^"]*"/, `width="${rect.width}"`);
+    tag = tag.replace(/\bheight="[^"]*"/, `height="${rect.height}"`);
 
-      const bgRect = `<rect width="${rect.width}" height="${rect.height}" fill="${bgColor}"/>`;
-      svg = tag + bgRect + svg.slice(openTag[0].length);
+    const bgRect = `<rect width="${rect.width}" height="${rect.height}" fill="${bgColor}"/>`;
+    svg = tag + bgRect + svg.slice(openTag[0].length);
 
-      return { svg, width: rect.width, height: rect.height };
-    },
-    [],
-  );
+    return { svg, width: rect.width, height: rect.height };
+  }, []);
 
   const handleExportSVG = useCallback(() => {
     const result = getSvgString(theme.tooltipBackground);
     if (!result) return;
 
     const svgContent = `<?xml version="1.0" encoding="UTF-8"?>\n${result.svg}`;
-    const blob = new Blob([svgContent], { type: "image/svg+xml;charset=utf-8" });
+    const blob = new Blob([svgContent], {
+      type: "image/svg+xml;charset=utf-8",
+    });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -209,7 +203,9 @@ export function SingleChart({
     const result = getSvgString(theme.tooltipBackground);
     if (!result) return;
 
-    const svgBlob = new Blob([result.svg], { type: "image/svg+xml;charset=utf-8" });
+    const svgBlob = new Blob([result.svg], {
+      type: "image/svg+xml;charset=utf-8",
+    });
 
     try {
       // Modern approach — createImageBitmap handles SVGs well
@@ -245,7 +241,10 @@ export function SingleChart({
         canvas.width = result.width * scale;
         canvas.height = result.height * scale;
         const ctx = canvas.getContext("2d");
-        if (!ctx) { URL.revokeObjectURL(url); return; }
+        if (!ctx) {
+          URL.revokeObjectURL(url);
+          return;
+        }
         ctx.scale(scale, scale);
         ctx.drawImage(img, 0, 0, result.width, result.height);
         URL.revokeObjectURL(url);
