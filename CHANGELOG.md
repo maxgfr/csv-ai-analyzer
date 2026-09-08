@@ -1,3 +1,10 @@
+## [1.15.3](https://github.com/maxgfr/csv-ai-analyzer/compare/v1.15.2...v1.15.3) (2026-09-08)
+
+
+### Bug Fixes
+
+* explain browser network failures and Z.ai CORS limits ([e30eaf1](https://github.com/maxgfr/csv-ai-analyzer/commit/e30eaf15fb95d60f570ff08afabc94789fdd2ee5))
+
 ## [1.15.2](https://github.com/maxgfr/csv-ai-analyzer/compare/v1.15.1...v1.15.2) (2026-09-08)
 
 

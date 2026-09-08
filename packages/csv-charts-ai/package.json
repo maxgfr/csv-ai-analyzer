@@ -1,6 +1,6 @@
 {
   "name": "csv-charts-ai",
-  "version": "1.15.2",
+  "version": "1.15.3",
   "description": "AI-powered CSV analysis, chart generation, and interactive visualization. Parse CSV, detect anomalies, suggest charts, and ask questions about your data using any LLM provider.",
   "type": "module",
   "license": "MIT",
