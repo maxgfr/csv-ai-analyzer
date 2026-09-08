@@ -1,3 +1,10 @@
+# [1.15.0](https://github.com/maxgfr/csv-ai-analyzer/compare/v1.14.7...v1.15.0) (2026-09-08)
+
+
+### Features
+
+* improve data exploration and fix analysis regressions ([9430964](https://github.com/maxgfr/csv-ai-analyzer/commit/9430964c9a98e61fa068a965eb66c171216cdd73))
+
 ## [1.14.7](https://github.com/maxgfr/csv-ai-analyzer/compare/v1.14.6...v1.14.7) (2026-04-06)
 
 
