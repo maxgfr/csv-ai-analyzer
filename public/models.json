@@ -45832,6 +45832,53 @@
           "cache_write": 0.25
         }
       },
+      "alibaba/deepseek-v4.1-flash": {
+        "id": "alibaba/deepseek-v4.1-flash",
+        "name": "DeepSeek V4.1 Flash (Alibaba Cloud)",
+        "description": "DeepSeek V4.1 Flash model for reasoning and agentic coding",
+        "family": "deepseek-flash",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "none",
+              "minimal",
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": false,
+        "temperature": true,
+        "knowledge": "2025-05",
+        "release_date": "2026-09-10",
+        "last_updated": "2026-09-10",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 1000000,
+          "output": 393216
+        },
+        "cost": {
+          "input": 0.3,
+          "output": 1.2,
+          "cache_read": 0.03
+        }
+      },
       "alibaba/qwen-coder-plus": {
         "id": "alibaba/qwen-coder-plus",
         "name": "Qwen Coder Plus (Alibaba Cloud)",
@@ -53452,6 +53499,38 @@
           "input": 0.04,
           "output": 0.19,
           "cache_read": 0.01
+        }
+      },
+      "consensusprotocol/deepseek-v4.1-flash": {
+        "id": "consensusprotocol/deepseek-v4.1-flash",
+        "name": "DeepSeek V4.1 Flash (Consensus Protocol)",
+        "description": "DeepSeek V4.1 Flash model for reasoning and agentic coding",
+        "family": "deepseek-flash",
+        "attachment": false,
+        "reasoning": false,
+        "tool_call": false,
+        "structured_output": false,
+        "temperature": true,
+        "knowledge": "2025-05",
+        "release_date": "2026-09-10",
+        "last_updated": "2026-09-10",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 1048576,
+          "output": 384000
+        },
+        "cost": {
+          "input": 0.2,
+          "output": 1,
+          "cache_read": 0.005
         }
       },
       "consensusprotocol/glm-5.3-flash": {
@@ -85382,6 +85461,10 @@
           "context": 131072,
           "output": 32768
         },
+        "provider": {
+          "npm": "@ai-sdk/openai-compatible",
+          "api": "https://${GOOGLE_VERTEX_ENDPOINT}/v1/projects/${GOOGLE_VERTEX_PROJECT}/locations/${GOOGLE_VERTEX_LOCATION}/endpoints/openapi"
+        },
         "cost": {
           "input": 0.09,
           "output": 0.36
@@ -85422,6 +85505,10 @@
           "output": 32768
         },
         "status": "deprecated",
+        "provider": {
+          "npm": "@ai-sdk/openai-compatible",
+          "api": "https://${GOOGLE_VERTEX_ENDPOINT}/v1/projects/${GOOGLE_VERTEX_PROJECT}/locations/${GOOGLE_VERTEX_LOCATION}/endpoints/openapi"
+        },
         "cost": {
           "input": 0.07,
           "output": 0.25,
@@ -191023,6 +191110,38 @@
           "output": 0.55
         }
       },
+      "Qwen/Qwen3.8-Flash": {
+        "id": "Qwen/Qwen3.8-Flash",
+        "name": "Qwen3.8 Flash",
+        "description": "Qwen vision-language model for visual reasoning, documents, and agent tasks",
+        "family": "qwen",
+        "attachment": true,
+        "reasoning": false,
+        "tool_call": true,
+        "structured_output": true,
+        "release_date": "2026-08-26",
+        "last_updated": "2026-08-26",
+        "modalities": {
+          "input": [
+            "text",
+            "image",
+            "video"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1000000,
+          "output": 131072
+        },
+        "cost": {
+          "input": 0.113,
+          "output": 0.382,
+          "cache_read": 0.0141
+        }
+      },
       "Qwen/Qwen3-VL-235B-A22B-Instruct": {
         "id": "Qwen/Qwen3-VL-235B-A22B-Instruct",
         "name": "Qwen3 VL 235B A22B Instruct",
@@ -192421,8 +192540,8 @@
         },
         "open_weights": false,
         "limit": {
-          "context": 131072,
-          "output": 8192
+          "context": 40960,
+          "output": 16384
         },
         "cost": {
           "input": 0.2275,
@@ -196405,8 +196524,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 256000,
-          "output": 32768
+          "context": 202800,
+          "output": 182520
         },
         "cost": {
           "input": 0.5,
@@ -199857,7 +199976,8 @@
         },
         "cost": {
           "input": 2.1,
-          "output": 10.95
+          "output": 10.95,
+          "cache_read": 0.23
         }
       },
       "ibm-granite/granite-4.2-8b": {
@@ -200047,8 +200167,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 1048576,
-          "output": 393216
+          "context": 1024000,
+          "output": 384000
         },
         "cost": {
           "input": 1.32,
@@ -204789,13 +204909,13 @@
         },
         "open_weights": false,
         "limit": {
-          "context": 262144,
-          "output": 235929
+          "context": 1048576,
+          "output": 943718
         },
         "cost": {
-          "input": 0.936,
-          "output": 3.168,
-          "cache_read": 0.1872
+          "input": 0.92,
+          "output": 3.1372,
+          "cache_read": 0.184
         }
       },
       "moonshotai/kimi-k2-0905": {
@@ -205092,7 +205212,8 @@
         },
         "cost": {
           "input": 0.05,
-          "output": 0.23
+          "output": 0.23,
+          "cache_read": 0.05
         }
       },
       "inference-net/schematron-v2-turbo": {
@@ -205121,7 +205242,8 @@
         },
         "cost": {
           "input": 0.03,
-          "output": 0.15
+          "output": 0.15,
+          "cache_read": 0.03
         }
       },
       "cohere/north-mini-code:free": {
@@ -205894,8 +206016,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 202752,
-          "output": 182476
+          "context": 1048576,
+          "output": 131072
         },
         "cost": {
           "input": 1.4,
@@ -206181,8 +206303,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 1048576,
-          "output": 131072
+          "context": 1048575,
+          "output": 943717
         },
         "cost": {
           "input": 1.4,
@@ -235881,11 +236003,11 @@
         "open_weights": true,
         "limit": {
           "context": 131072,
-          "output": 8192
+          "output": 16384
         },
         "cost": {
-          "input": 0.2275,
-          "output": 0.91
+          "input": 0.12,
+          "output": 0.24
         }
       },
       "qwen/qwen3.6-plus": {
@@ -239842,12 +239964,12 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 32768
+          "output": 182520
         },
         "cost": {
-          "input": 0.625,
-          "output": 3.125,
-          "cache_read": 0.1875
+          "input": 0.6,
+          "output": 2.4,
+          "cache_read": 0.12
         }
       },
       "nvidia/nemotron-3-nano-30b-a3b": {
@@ -243657,7 +243779,8 @@
         },
         "cost": {
           "input": 2.1,
-          "output": 10.95
+          "output": 10.95,
+          "cache_read": 0.23
         }
       },
       "ibm-granite/granite-4.2-8b": {
@@ -243849,12 +243972,12 @@
         "open_weights": true,
         "limit": {
           "context": 1048576,
-          "output": 393216
+          "output": 384000
         },
         "cost": {
-          "input": 0.57816,
-          "output": 1.73448,
-          "cache_read": 0.018396
+          "input": 0.9834,
+          "output": 2.9502,
+          "cache_read": 0.03278
         }
       },
       "deepseek/deepseek-v4-flash-0731": {
@@ -243897,9 +244020,9 @@
           "output": 943718
         },
         "cost": {
-          "input": 0.04,
-          "output": 0.08,
-          "cache_read": 0.008
+          "input": 0.06,
+          "output": 0.12,
+          "cache_read": 0.012
         }
       },
       "deepseek/deepseek-v4-flash": {
@@ -243944,9 +244067,9 @@
           "output": 384000
         },
         "cost": {
-          "input": 0.04928,
-          "output": 0.09856,
-          "cache_read": 0.009856
+          "input": 0.088606,
+          "output": 0.177212,
+          "cache_read": 0.017721
         }
       },
       "deepseek/deepseek-v4.1-flash": {
@@ -248690,12 +248813,12 @@
         "open_weights": false,
         "limit": {
           "context": 1310720,
-          "output": 235929
+          "output": 943718
         },
         "cost": {
-          "input": 0.936,
-          "output": 3.168,
-          "cache_read": 0.1872
+          "input": 0.92,
+          "output": 3.1372,
+          "cache_read": 0.184
         }
       },
       "moonshotai/kimi-k2-0905": {
@@ -248984,7 +249107,8 @@
         },
         "cost": {
           "input": 0.05,
-          "output": 0.23
+          "output": 0.23,
+          "cache_read": 0.05
         }
       },
       "inference-net/schematron-v2-turbo": {
@@ -249013,7 +249137,8 @@
         },
         "cost": {
           "input": 0.03,
-          "output": 0.15
+          "output": 0.15,
+          "cache_read": 0.03
         }
       },
       "cohere/north-mini-code:free": {
@@ -249751,12 +249876,12 @@
         "open_weights": true,
         "limit": {
           "context": 1048576,
-          "output": 182476
+          "output": 131072
         },
         "cost": {
-          "input": 0.6,
-          "output": 2,
-          "cache_read": 0.15
+          "input": 0.6832,
+          "output": 2.1472,
+          "cache_read": 0.12688
         }
       },
       "z-ai/glm-5.3-flash": {
@@ -250027,12 +250152,12 @@
         "open_weights": true,
         "limit": {
           "context": 1310720,
-          "output": 131072
+          "output": 943717
         },
         "cost": {
-          "input": 1.092,
-          "output": 3.432,
-          "cache_read": 0.2028
+          "input": 1.4,
+          "output": 4.4,
+          "cache_read": 0.26
         }
       },
       "z-ai/glm-5v-turbo": {
@@ -298497,6 +298622,49 @@
           "output": 2.4
         }
       },
+      "qwen/deepseek-v4.1-flash": {
+        "id": "qwen/deepseek-v4.1-flash",
+        "name": "DeepSeek V4.1 Flash (Alibaba)",
+        "description": "DeepSeek V4.1 Flash model for reasoning and agentic coding",
+        "family": "deepseek-flash",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "none",
+              "low",
+              "high",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "knowledge": "2025-05",
+        "release_date": "2026-09-10",
+        "last_updated": "2026-09-10",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 1000000,
+          "output": 384000
+        },
+        "cost": {
+          "input": 0.3,
+          "output": 1.2
+        }
+      },
       "qwen/qwen3-coder-next": {
         "id": "qwen/qwen3-coder-next",
         "name": "Qwen3 Coder Next",
@@ -301578,6 +301746,50 @@
           "input": 0.25,
           "output": 0.3,
           "cache_read": 0.0625
+        }
+      },
+      "tensorx/deepseek/deepseek-v4.1-flash": {
+        "id": "tensorx/deepseek/deepseek-v4.1-flash",
+        "name": "DeepSeek V4.1 Flash (TensorX)",
+        "description": "DeepSeek V4.1 Flash model for reasoning and agentic coding",
+        "family": "deepseek-flash",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "none",
+              "low",
+              "high",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": false,
+        "temperature": true,
+        "knowledge": "2025-05",
+        "release_date": "2026-09-10",
+        "last_updated": "2026-09-10",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 1048576,
+          "output": 384000
+        },
+        "cost": {
+          "input": 0.5,
+          "output": 1.5,
+          "cache_read": 0.125
         }
       },
       "tensorx/moonshotai/kimi-k2.5": {
