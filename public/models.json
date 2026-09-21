@@ -9162,9 +9162,9 @@
           "output": 32768
         },
         "cost": {
-          "input": 0.5,
-          "output": 1.2,
-          "cache_read": 0.25
+          "input": 0.3,
+          "output": 1.9,
+          "cache_read": 0.15
         }
       },
       "gemini-2.5-flash-preview-05-20": {
@@ -10500,7 +10500,7 @@
         "family": "qwen",
         "attachment": false,
         "reasoning": false,
-        "tool_call": false,
+        "tool_call": true,
         "structured_output": false,
         "release_date": "2024-01-01",
         "last_updated": "2024-01-01",
@@ -11983,6 +11983,39 @@
           "cache_read": 0.52
         }
       },
+      "qwen/qwen3.8-27b-hemmingway": {
+        "id": "qwen/qwen3.8-27b-hemmingway",
+        "name": "Qwen 3.8 27B Hemingway",
+        "description": "Qwen 3.8 27B Hemingway is an open-weight NVFP4 multimodal creative finetune for long-form prose, character dialogue, storytelling, and roleplay.",
+        "family": "qwen",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [],
+        "tool_call": true,
+        "structured_output": false,
+        "release_date": "2026-09-21",
+        "last_updated": "2026-09-21",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 262144,
+          "input": 262144,
+          "output": 32768
+        },
+        "cost": {
+          "input": 0.25,
+          "output": 1.5,
+          "cache_read": 0.125
+        }
+      },
       "qwen/qwen3.8-max": {
         "id": "qwen/qwen3.8-max",
         "name": "Qwen3.8 Max",
@@ -12057,7 +12090,7 @@
         "family": "qwen",
         "attachment": false,
         "reasoning": false,
-        "tool_call": false,
+        "tool_call": true,
         "structured_output": false,
         "release_date": "2024-01-01",
         "last_updated": "2024-01-01",
@@ -12214,7 +12247,7 @@
         },
         "cost": {
           "input": 0.3,
-          "output": 1.2,
+          "output": 1.9,
           "cache_read": 0.15
         }
       },
@@ -13550,6 +13583,49 @@
           "input": 0.2,
           "output": 1.15,
           "cache_read": 0.04
+        }
+      },
+      "stepfun/step-5-preview": {
+        "id": "stepfun/step-5-preview",
+        "name": "Step 5 Preview",
+        "description": "Step 5 Preview is StepFun's 600B sparse MoE frontier model for production-scale agents, activating 27B parameters per token. It is built for software engineering, long-horizon tool use, research, professional knowledge work, and finance, with native text, image, and video understanding and a 1M-token context window. ⚠️ Note: This model routes through StepFun, so privacy and logging guarantees may be limited.",
+        "family": "step",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "medium",
+              "high"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "release_date": "2026-09-20",
+        "last_updated": "2026-09-20",
+        "modalities": {
+          "input": [
+            "text",
+            "image",
+            "video"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1000000,
+          "input": 1000000,
+          "output": 1000000
+        },
+        "cost": {
+          "input": 1,
+          "output": 2.7,
+          "cache_read": 0.05
         }
       },
       "mlabonne/NeuralDaredevil-8B-abliterated": {
@@ -20989,9 +21065,9 @@
           "output": 384000
         },
         "cost": {
-          "input": 0.1,
-          "output": 0.4,
-          "cache_read": 0.003
+          "input": 0.13,
+          "output": 0.52,
+          "cache_read": 0.006
         }
       },
       "deepseek/deepseek-v4-pro-0813:thinking": {
@@ -21077,9 +21153,9 @@
           "output": 384000
         },
         "cost": {
-          "input": 0.1,
-          "output": 0.4,
-          "cache_read": 0.003
+          "input": 0.13,
+          "output": 0.52,
+          "cache_read": 0.006
         }
       },
       "deepseek/deepseek-v4-pro:thinking": {
@@ -25690,37 +25766,6 @@
           "cache_read": 0.15
         }
       },
-      "typesafe/jev-latest": {
-        "id": "typesafe/jev-latest",
-        "name": "Jev Latest",
-        "description": "System One model for fast, typed probabilistic decisions over text or structured state",
-        "attachment": false,
-        "reasoning": false,
-        "tool_call": false,
-        "structured_output": false,
-        "temperature": false,
-        "release_date": "2026-09-15",
-        "last_updated": "2026-09-15",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": false,
-        "limit": {
-          "context": 32000,
-          "input": 32000,
-          "output": 0
-        },
-        "cost": {
-          "input": 0.042,
-          "output": 0,
-          "cache_read": 0.021
-        }
-      },
       "nanogpt/coding-router:low": {
         "id": "nanogpt/coding-router:low",
         "name": "Coding Router Low",
@@ -26466,38 +26511,6 @@
           "cache_read": 0.24
         }
       },
-      "z-ai/glm-4.7-flash-original": {
-        "id": "z-ai/glm-4.7-flash-original",
-        "name": "GLM 4.7 Flash Original",
-        "description": "GLM-4.7-Flash is a lightweight 30B model optimized for coding and agentic tasks. Balances high performance with efficiency, perfect for local deployment.",
-        "family": "glm-flash",
-        "attachment": false,
-        "reasoning": true,
-        "reasoning_options": [],
-        "tool_call": true,
-        "structured_output": true,
-        "release_date": "2026-01-19",
-        "last_updated": "2026-01-19",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 200000,
-          "input": 200000,
-          "output": 128000
-        },
-        "cost": {
-          "input": 0.07,
-          "output": 0.4,
-          "cache_read": 0.035
-        }
-      },
       "z-ai/GLM-4.5:thinking": {
         "id": "z-ai/GLM-4.5:thinking",
         "name": "GLM 4.5 (Thinking)",
@@ -26995,38 +27008,6 @@
           "input": 1.2,
           "output": 4,
           "cache_read": 0.24
-        }
-      },
-      "z-ai/glm-4.7-flash-original:thinking": {
-        "id": "z-ai/glm-4.7-flash-original:thinking",
-        "name": "GLM 4.7 Flash Original Thinking",
-        "description": "GLM-4.7-Flash with extended thinking capabilities for complex reasoning. Lightweight 30B model optimized for coding and agentic tasks.",
-        "family": "glm-flash",
-        "attachment": false,
-        "reasoning": true,
-        "reasoning_options": [],
-        "tool_call": true,
-        "structured_output": false,
-        "release_date": "2026-01-19",
-        "last_updated": "2026-01-19",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 200000,
-          "input": 200000,
-          "output": 128000
-        },
-        "cost": {
-          "input": 0.07,
-          "output": 0.4,
-          "cache_read": 0.035
         }
       },
       "z-ai/glm-5-original": {
@@ -32833,35 +32814,6 @@
           "output": 10,
           "cache_read": 0.2,
           "cache_write": 2.5
-        }
-      },
-      "jev": {
-        "id": "jev",
-        "name": "Jev",
-        "description": "System One model for fast, typed probabilistic decisions over text or structured state",
-        "attachment": false,
-        "reasoning": false,
-        "tool_call": false,
-        "structured_output": true,
-        "temperature": false,
-        "release_date": "2026-09-15",
-        "last_updated": "2026-09-15",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": false,
-        "limit": {
-          "context": 64000,
-          "output": 0
-        },
-        "cost": {
-          "input": 0.042,
-          "output": 0
         }
       },
       "gpt-5.5": {
@@ -42605,7 +42557,54 @@
         "cost": {
           "input": 0.44,
           "output": 1.32,
-          "cache_read": 0.044
+          "cache_read": 0.014
+        }
+      },
+      "baidu/deepseek-v4.1-flash": {
+        "id": "baidu/deepseek-v4.1-flash",
+        "name": "DeepSeek V4.1 Flash (Baidu)",
+        "description": "DeepSeek V4.1 Flash model for reasoning and agentic coding",
+        "family": "deepseek-flash",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "none",
+              "minimal",
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "knowledge": "2025-05",
+        "release_date": "2026-09-10",
+        "last_updated": "2026-09-10",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 1048576,
+          "output": 393216
+        },
+        "cost": {
+          "input": 0.3,
+          "output": 1.2,
+          "cache_read": 0.006
         }
       },
       "baidu/glm-5": {
@@ -42750,7 +42749,7 @@
         "cost": {
           "input": 1.32,
           "output": 3.96,
-          "cache_read": 0.132
+          "cache_read": 0.042
         }
       },
       "baidu/glm-5.3": {
@@ -46480,6 +46479,38 @@
           "input": 0.95,
           "output": 4,
           "cache_read": 0.19
+        }
+      },
+      "scx-ai-gp/deepseek-v4.1-flash": {
+        "id": "scx-ai-gp/deepseek-v4.1-flash",
+        "name": "DeepSeek V4.1 Flash (SCX.ai)",
+        "description": "DeepSeek V4.1 Flash model for reasoning and agentic coding",
+        "family": "deepseek-flash",
+        "attachment": false,
+        "reasoning": false,
+        "tool_call": false,
+        "structured_output": false,
+        "temperature": true,
+        "knowledge": "2025-05",
+        "release_date": "2026-09-10",
+        "last_updated": "2026-09-10",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 1000000,
+          "output": 384000
+        },
+        "cost": {
+          "input": 0.15,
+          "output": 0.6,
+          "cache_read": 0.01
         }
       },
       "scx-ai-gp/kimi-k3": {
@@ -140901,35 +140932,6 @@
           "output": 3.5
         }
       },
-      "typesafe-ai/jev": {
-        "id": "typesafe-ai/jev",
-        "name": "Jev",
-        "description": "System One model for fast, typed probabilistic decisions over text or structured state",
-        "attachment": false,
-        "reasoning": false,
-        "tool_call": false,
-        "structured_output": true,
-        "temperature": false,
-        "release_date": "2026-09-15",
-        "last_updated": "2026-09-15",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": false,
-        "limit": {
-          "context": 32000,
-          "output": 0
-        },
-        "cost": {
-          "input": 0.042,
-          "output": 0
-        }
-      },
       "xiaomi/mimo-v2.5": {
         "id": "xiaomi/mimo-v2.5",
         "name": "MiMo M2.5",
@@ -174359,36 +174361,6 @@
           "output": 6,
           "cache_read": 0.2
         }
-      },
-      "typesafe/jev": {
-        "id": "typesafe/jev",
-        "name": "Jev",
-        "description": "System One model for fast, typed probabilistic decisions over text or structured state",
-        "attachment": false,
-        "reasoning": false,
-        "tool_call": false,
-        "structured_output": true,
-        "temperature": false,
-        "release_date": "2026-09-15",
-        "last_updated": "2026-09-15",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": false,
-        "limit": {
-          "context": 32000,
-          "output": 0
-        },
-        "cost": {
-          "input": 0.042,
-          "output": 0,
-          "cache_read": 0
-        }
       }
     }
   },
@@ -194248,7 +194220,7 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 1000000,
+          "context": 262144,
           "output": 131072
         },
         "cost": {
@@ -194887,8 +194859,8 @@
           "output": 235929
         },
         "cost": {
-          "input": 0.1,
-          "output": 0.9,
+          "input": 0.15,
+          "output": 1,
           "cache_read": 0.05
         }
       },
@@ -196306,7 +196278,7 @@
         },
         "cost": {
           "input": 0.04,
-          "output": 0.08,
+          "output": 0.16,
           "cache_read": 0.016
         }
       },
@@ -196343,13 +196315,13 @@
         },
         "open_weights": false,
         "limit": {
-          "context": 1024000,
+          "context": 1048576,
           "output": 384000
         },
         "cost": {
-          "input": 0.56628,
-          "output": 1.69884,
-          "cache_read": 0.018876
+          "input": 0.66,
+          "output": 1.98,
+          "cache_read": 0.022
         }
       },
       "~deepseek/deepseek-flash-latest": {
@@ -196390,9 +196362,9 @@
           "output": 943718
         },
         "cost": {
-          "input": 0.13,
-          "output": 0.52,
-          "cache_read": 0.0026
+          "input": 0.12,
+          "output": 0.48,
+          "cache_read": 0.0036
         }
       },
       "dots-studio/dots-3-note-preview:free": {
@@ -198032,7 +198004,7 @@
           "output": 235929
         },
         "cost": {
-          "input": 0.04,
+          "input": 0.065,
           "output": 0.18
         }
       },
@@ -201827,7 +201799,7 @@
         "open_weights": true,
         "limit": {
           "context": 1048576,
-          "output": 262144
+          "output": 943718
         },
         "cost": {
           "input": 0.44,
@@ -203833,7 +203805,7 @@
         },
         "open_weights": false,
         "limit": {
-          "context": 128000,
+          "context": 1048576,
           "output": 16384
         },
         "cost": {
@@ -203896,7 +203868,7 @@
         "open_weights": true,
         "limit": {
           "context": 131072,
-          "output": 16384
+          "output": 8192
         },
         "cost": {
           "input": 0.4,
@@ -206532,12 +206504,12 @@
         "open_weights": false,
         "limit": {
           "context": 1048576,
-          "output": 131072
+          "output": 943718
         },
         "cost": {
-          "input": 0.8442,
-          "output": 2.6532,
-          "cache_read": 0.15678
+          "input": 0.7735,
+          "output": 2.431,
+          "cache_read": 0.127075
         }
       },
       "moonshotai/kimi-k2-0905": {
@@ -232139,35 +232111,6 @@
           "cache_read": 0.107
         }
       },
-      "jev-1.13": {
-        "id": "jev-1.13",
-        "name": "Jev 1.13",
-        "description": "System One model for fast, typed probabilistic decisions over text or structured state",
-        "attachment": false,
-        "reasoning": false,
-        "tool_call": false,
-        "structured_output": true,
-        "temperature": false,
-        "release_date": "2026-09-15",
-        "last_updated": "2026-09-15",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": false,
-        "limit": {
-          "context": 64000,
-          "output": 0
-        },
-        "cost": {
-          "input": 0.042,
-          "output": 0
-        }
-      },
       "muse-spark-1.2": {
         "id": "muse-spark-1.2",
         "name": "Muse Spark 1.2",
@@ -233617,35 +233560,6 @@
           "input": 0.3,
           "output": 1.2,
           "cache_read": 0.006
-        }
-      },
-      "jev-1.13-free": {
-        "id": "jev-1.13-free",
-        "name": "Jev 1.13 Free",
-        "description": "System One model for fast, typed probabilistic decisions over text or structured state",
-        "attachment": false,
-        "reasoning": false,
-        "tool_call": false,
-        "structured_output": true,
-        "temperature": false,
-        "release_date": "2026-09-15",
-        "last_updated": "2026-09-15",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": false,
-        "limit": {
-          "context": 64000,
-          "output": 0
-        },
-        "cost": {
-          "input": 0,
-          "output": 0
         }
       },
       "claude-fable-5-1": {
@@ -235356,35 +235270,6 @@
           "input": 1.4,
           "output": 4.4,
           "cache_read": 0.26
-        }
-      },
-      "jev-latest": {
-        "id": "jev-latest",
-        "name": "Jev",
-        "description": "System One model for fast, typed probabilistic decisions over text or structured state",
-        "attachment": false,
-        "reasoning": false,
-        "tool_call": false,
-        "structured_output": true,
-        "temperature": false,
-        "release_date": "2026-09-15",
-        "last_updated": "2026-09-15",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": false,
-        "limit": {
-          "context": 64000,
-          "output": 0
-        },
-        "cost": {
-          "input": 0.042,
-          "output": 0
         }
       },
       "ling-3.0-flash-free": {
@@ -238608,9 +238493,9 @@
           "output": 131072
         },
         "cost": {
-          "input": 0.42,
-          "output": 3,
-          "cache_read": 0.085
+          "input": 0.2,
+          "output": 2.5,
+          "cache_read": 0.05
         }
       },
       "qwen/qwen3.5-35b-a3b": {
@@ -239273,8 +239158,8 @@
           "output": 235929
         },
         "cost": {
-          "input": 0.1,
-          "output": 0.9,
+          "input": 0.15,
+          "output": 1,
           "cache_read": 0.05
         }
       },
@@ -239532,8 +239417,8 @@
           "output": 32768
         },
         "cost": {
-          "input": 0.2,
-          "output": 0.7
+          "input": 0.13,
+          "output": 0.52
         }
       },
       "qwen/qwen-plus": {
@@ -240737,7 +240622,7 @@
         },
         "cost": {
           "input": 0.04,
-          "output": 0.08,
+          "output": 0.16,
           "cache_read": 0.016
         }
       },
@@ -240780,9 +240665,9 @@
           "output": 384000
         },
         "cost": {
-          "input": 0.56628,
-          "output": 1.69884,
-          "cache_read": 0.018876
+          "input": 0.66,
+          "output": 1.98,
+          "cache_read": 0.022
         }
       },
       "~deepseek/deepseek-flash-latest": {
@@ -240825,9 +240710,9 @@
           "output": 943718
         },
         "cost": {
-          "input": 0.13,
-          "output": 0.52,
-          "cache_read": 0.0026
+          "input": 0.12,
+          "output": 0.48,
+          "cache_read": 0.0036
         }
       },
       "dots-studio/dots-3-note-preview:free": {
@@ -246395,9 +246280,9 @@
           "output": 117964
         },
         "cost": {
-          "input": 0.06,
-          "output": 0.25,
-          "cache_read": 0.015
+          "input": 0.1,
+          "output": 0.15,
+          "cache_read": 0.05
         }
       },
       "ibm-granite/granite-4.0-h-micro": {
@@ -246504,12 +246389,12 @@
         "open_weights": true,
         "limit": {
           "context": 1048576,
-          "output": 262144
+          "output": 943718
         },
         "cost": {
-          "input": 0.2156,
-          "output": 0.6468,
-          "cache_read": 0.00686
+          "input": 0.22,
+          "output": 0.66,
+          "cache_read": 0.007
         }
       },
       "deepseek/deepseek-v4-pro-0813": {
@@ -246597,7 +246482,7 @@
         },
         "cost": {
           "input": 0.04,
-          "output": 0.08,
+          "output": 0.16,
           "cache_read": 0.016
         }
       },
@@ -246643,9 +246528,9 @@
           "output": 384000
         },
         "cost": {
-          "input": 0.0364,
-          "output": 0.0728,
-          "cache_read": 0.00728
+          "input": 0.088606,
+          "output": 0.177212,
+          "cache_read": 0.017721
         }
       },
       "deepseek/deepseek-v4.1-flash": {
@@ -246978,9 +246863,9 @@
           "output": 384000
         },
         "cost": {
-          "input": 0.422298,
-          "output": 0.844596,
-          "cache_read": 0.035192
+          "input": 0.95526,
+          "output": 1.91052,
+          "cache_read": 0.079605
         }
       },
       "deepseek/deepseek-chat-v3-0324": {
@@ -248497,8 +248382,8 @@
           "output": 16384
         },
         "cost": {
-          "input": 0.1875,
-          "output": 0.6525
+          "input": 0.2,
+          "output": 0.8
         }
       },
       "meta-llama/llama-4-scout": {
@@ -248557,11 +248442,11 @@
         "open_weights": true,
         "limit": {
           "context": 131072,
-          "output": 16384
+          "output": 8192
         },
         "cost": {
-          "input": 0.4,
-          "output": 0.4
+          "input": 0.72,
+          "output": 0.72
         }
       },
       "meta-llama/llama-3.3-70b-instruct": {
@@ -251359,12 +251244,12 @@
         "open_weights": false,
         "limit": {
           "context": 1310720,
-          "output": 131072
+          "output": 943718
         },
         "cost": {
-          "input": 0.8442,
-          "output": 2.6532,
-          "cache_read": 0.15678
+          "input": 0.7735,
+          "output": 2.431,
+          "cache_read": 0.127075
         }
       },
       "moonshotai/kimi-k2-0905": {
@@ -252802,9 +252687,9 @@
           "output": 131072
         },
         "cost": {
-          "input": 0.896,
-          "output": 2.816,
-          "cache_read": 0.1664
+          "input": 0.91,
+          "output": 2.86,
+          "cache_read": 0.169
         }
       },
       "z-ai/glm-5v-turbo": {
@@ -292150,12 +292035,12 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 32000,
-          "output": 32000
+          "context": 16384,
+          "output": 16384
         },
         "cost": {
-          "input": 0.089,
-          "output": 0.312
+          "input": 0.179,
+          "output": 0.697
         }
       },
       "apertus-70b": {
@@ -299849,7 +299734,7 @@
     "npm": "@ai-sdk/openai-compatible",
     "api": "https://opencode.ai/zen/go/v1",
     "name": "OpenCode Go",
-    "doc": "https://opencode.ai/docs/zen",
+    "doc": "https://opencode.ai/docs/go",
     "models": {
       "qwen3.7-max": {
         "id": "qwen3.7-max",
@@ -300120,7 +300005,8 @@
         "cost": {
           "input": 0.3,
           "output": 1.2,
-          "cache_read": 0.06
+          "cache_read": 0.06,
+          "cache_write": 0.375
         }
       },
       "kimi-k2.6": {
@@ -300236,7 +300122,8 @@
         "cost": {
           "input": 0.3,
           "output": 1.2,
-          "cache_read": 0.03
+          "cache_read": 0.06,
+          "cache_write": 0.375
         }
       },
       "minimax-m3": {
@@ -304685,7 +304572,7 @@
         "attachment": false,
         "reasoning": false,
         "tool_call": false,
-        "structured_output": false,
+        "structured_output": true,
         "temperature": true,
         "release_date": "2024-11-12",
         "last_updated": "2024-11-12",
