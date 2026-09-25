@@ -8294,8 +8294,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 65536,
-          "output": 32768
+          "context": 131072,
+          "output": 40960
         },
         "cost": {
           "input": 0.99,
@@ -20140,10 +20140,10 @@
           "output": 128000
         },
         "cost": {
-          "input": 5,
-          "output": 25,
-          "cache_read": 0.5,
-          "cache_write": 6.25
+          "input": 4,
+          "output": 20,
+          "cache_read": 0.2,
+          "cache_write": 5
         }
       },
       "anthropic/claude-opus-4.1:thinking:1024": {
@@ -25205,9 +25205,9 @@
           "output": 450000
         },
         "cost": {
-          "input": 2,
-          "output": 6,
-          "cache_read": 0.5
+          "input": 1.6,
+          "output": 4.8,
+          "cache_read": 0.4
         }
       },
       "x-ai/grok-4.7": {
@@ -30938,6 +30938,46 @@
           "cache_write": 0
         }
       },
+      "xiaomi/mimo-v2.6-flash-uncensored": {
+        "id": "xiaomi/mimo-v2.6-flash-uncensored",
+        "name": "MiMo V2.6 Flash Uncensored",
+        "description": "A text-only, lower-refusal MiMo V2.6 Flash finetune served by Heabsy with a 1M-token context window, separate reasoning output, and tool calling.",
+        "family": "mimo",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "none",
+              "high"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": false,
+        "release_date": "2026-09-25",
+        "last_updated": "2026-09-25",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 1048576,
+          "input": 1048576,
+          "output": 65536
+        },
+        "cost": {
+          "input": 0.5,
+          "output": 1.5,
+          "cache_read": 0.275
+        }
+      },
       "undi95/remm-slerp-l2-13b": {
         "id": "undi95/remm-slerp-l2-13b",
         "name": "ReMM SLERP 13B",
@@ -35534,10 +35574,10 @@
           "output": 128000
         },
         "cost": {
-          "input": 0.2,
-          "output": 1.2,
-          "cache_read": 0.02,
-          "cache_write": 0.25
+          "input": 0.1,
+          "output": 0.5,
+          "cache_read": 0.01,
+          "cache_write": 0.125
         }
       },
       "openai/gpt-5.6-luna-pro": {
@@ -70510,9 +70550,9 @@
           "output": 943718
         },
         "cost": {
-          "input": 1.4,
-          "output": 10.75,
-          "cache_read": 0.3
+          "input": 0.8845,
+          "output": 10.5346,
+          "cache_read": 0.33
         }
       },
       "poolside/laguna-s-2.1:free": {
@@ -71797,7 +71837,7 @@
         "open_weights": true,
         "limit": {
           "context": 1048576,
-          "output": 131072
+          "output": 393216
         },
         "cost": {
           "input": 0.3,
@@ -73167,7 +73207,7 @@
         "open_weights": true,
         "limit": {
           "context": 1048576,
-          "output": 943718
+          "output": 128000
         },
         "cost": {
           "input": 0.15,
@@ -73417,9 +73457,9 @@
           "output": 131072
         },
         "cost": {
-          "input": 0.4,
-          "output": 1.75,
-          "cache_read": 0.08
+          "input": 0.6,
+          "output": 2.2,
+          "cache_read": 0.11
         }
       },
       "z-ai/glm-5.2": {
@@ -73494,8 +73534,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 200000,
-          "output": 128000
+          "context": 202752,
+          "output": 131072
         },
         "cost": {
           "input": 1.4,
@@ -73656,8 +73696,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 1048576,
-          "output": 131072
+          "context": 1048575,
+          "output": 943717
         },
         "cost": {
           "input": 1.4,
@@ -74664,9 +74704,9 @@
           "output": 131072
         },
         "cost": {
-          "input": 0.5625,
-          "output": 2.5,
-          "cache_read": 0.125
+          "input": 0.5614,
+          "output": 1.7644,
+          "cache_read": 0.10426
         }
       },
       "arcee-ai/trinity-large-thinking": {
@@ -75758,7 +75798,7 @@
         },
         "cost": {
           "input": 0.04,
-          "output": 1,
+          "output": 0.49,
           "cache_read": 0.01
         }
       },
@@ -75799,9 +75839,9 @@
           "output": 943718
         },
         "cost": {
-          "input": 0.39,
-          "output": 2.9,
-          "cache_read": 0.25
+          "input": 0.2528,
+          "output": 2.88,
+          "cache_read": 0.08832
         }
       },
       "~deepseek/deepseek-v4-flash-latest": {
@@ -77332,8 +77372,9 @@
           "output": 16384
         },
         "cost": {
-          "input": 0.019,
-          "output": 0.03
+          "input": 0.15,
+          "output": 0.15,
+          "cache_read": 0.015
         }
       },
       "mistralai/ministral-8b-2512": {
@@ -77396,6 +77437,39 @@
         "cost": {
           "input": 0.05,
           "output": 0.08
+        }
+      },
+      "mistralai/devstral-2512": {
+        "id": "mistralai/devstral-2512",
+        "name": "Devstral 2",
+        "description": "Devstral 2 is a state-of-the-art open-source model by Mistral AI specializing in agentic coding. It is a 123B-parameter dense transformer model supporting a 256K context window. Devstral 2 supports exploring...",
+        "family": "devstral",
+        "attachment": true,
+        "reasoning": false,
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "knowledge": "2025-12",
+        "release_date": "2025-12-09",
+        "last_updated": "2025-12-09",
+        "modalities": {
+          "input": [
+            "text",
+            "pdf"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 262144,
+          "output": 209715
+        },
+        "cost": {
+          "input": 0.4,
+          "output": 2,
+          "cache_read": 0.04
         }
       },
       "mistralai/mistral-saba": {
@@ -77531,8 +77605,9 @@
           "output": 16384
         },
         "cost": {
-          "input": 0.09375,
-          "output": 0.25
+          "input": 0.1,
+          "output": 0.3,
+          "cache_read": 0.01
         }
       },
       "mistralai/mistral-large": {
@@ -77673,6 +77748,40 @@
           "input": 0.1,
           "output": 0.3,
           "cache_read": 0.01
+        }
+      },
+      "mistralai/mistral-large-2512": {
+        "id": "mistralai/mistral-large-2512",
+        "name": "Mistral Large 3",
+        "description": "Mistral Large 3 2512 is Mistral’s most capable model to date, featuring a sparse mixture-of-experts architecture with 41B active parameters (675B total), and released under the Apache 2.0 license.",
+        "family": "mistral-large",
+        "attachment": true,
+        "reasoning": false,
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "knowledge": "2024-11",
+        "release_date": "2025-12-02",
+        "last_updated": "2025-12-02",
+        "modalities": {
+          "input": [
+            "text",
+            "image",
+            "pdf"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 262144,
+          "output": 209715
+        },
+        "cost": {
+          "input": 0.5,
+          "output": 1.5,
+          "cache_read": 0.05
         }
       },
       "mistralai/mistral-large-2407": {
@@ -81100,8 +81209,8 @@
         },
         "open_weights": false,
         "limit": {
-          "context": 131072,
-          "output": 32768
+          "context": 262144,
+          "output": 16384
         },
         "cost": {
           "input": 0.13,
@@ -99701,7 +99810,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 98304
         },
         "cost": {
           "input": 0.6,
@@ -99803,7 +99912,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 262144
+          "output": 98304
         },
         "cost": {
           "input": 0.6,
@@ -100322,7 +100431,7 @@
         "open_weights": false,
         "limit": {
           "context": 204800,
-          "output": 131100
+          "output": 131072
         },
         "cost": {
           "input": 0.3,
@@ -100425,7 +100534,7 @@
         "open_weights": false,
         "limit": {
           "context": 204800,
-          "output": 131100
+          "output": 131072
         },
         "cost": {
           "input": 0.6,
@@ -106715,9 +106824,9 @@
           "output": 943718
         },
         "cost": {
-          "input": 1.4,
-          "output": 10.75,
-          "cache_read": 0.3
+          "input": 0.8845,
+          "output": 10.5346,
+          "cache_read": 0.33
         }
       },
       "poolside/laguna-s-2.1:free": {
@@ -108068,12 +108177,12 @@
         "open_weights": true,
         "limit": {
           "context": 1048576,
-          "output": 131072
+          "output": 393216
         },
         "cost": {
-          "input": 0.14,
-          "output": 0.42,
-          "cache_read": 0.0042
+          "input": 0.15,
+          "output": 0.6,
+          "cache_read": 0.003
         }
       },
       "deepseek/deepseek-v4-flash-vision-exp": {
@@ -108410,9 +108519,9 @@
           "output": 384000
         },
         "cost": {
-          "input": 0.9396,
-          "output": 1.8792,
-          "cache_read": 0.0783
+          "input": 0.783,
+          "output": 1.566,
+          "cache_read": 0.06525
         }
       },
       "deepseek/deepseek-r1-0528": {
@@ -108527,9 +108636,9 @@
           "output": 384000
         },
         "cost": {
-          "input": 0.088606,
-          "output": 0.177212,
-          "cache_read": 0.017721
+          "input": 0.049,
+          "output": 0.098,
+          "cache_read": 0.0098
         }
       },
       "unbiased/pareto": {
@@ -109433,12 +109542,12 @@
         "open_weights": true,
         "limit": {
           "context": 1310720,
-          "output": 943718
+          "output": 128000
         },
         "cost": {
-          "input": 0.15,
-          "output": 0.5,
-          "cache_read": 0.05
+          "input": 0.045,
+          "output": 0.14,
+          "cache_read": 0.01
         }
       },
       "z-ai/glm-4.6": {
@@ -109672,9 +109781,9 @@
           "output": 131072
         },
         "cost": {
-          "input": 0.4,
-          "output": 1.75,
-          "cache_read": 0.08
+          "input": 0.6,
+          "output": 2.2,
+          "cache_read": 0.11
         }
       },
       "z-ai/glm-5.2": {
@@ -109754,12 +109863,12 @@
         "open_weights": true,
         "limit": {
           "context": 204800,
-          "output": 128000
+          "output": 131072
         },
         "cost": {
-          "input": 0.966,
-          "output": 3.036,
-          "cache_read": 0.1794
+          "input": 0.9646,
+          "output": 3.0316,
+          "cache_read": 0.17914
         }
       },
       "z-ai/glm-5-turbo": {
@@ -109913,12 +110022,12 @@
         "open_weights": true,
         "limit": {
           "context": 1310720,
-          "output": 131072
+          "output": 943717
         },
         "cost": {
-          "input": 0.84,
-          "output": 2.64,
-          "cache_read": 0.156
+          "input": 1.4,
+          "output": 4.4,
+          "cache_read": 0.26
         }
       },
       "inference-net/schematron-v2-small": {
@@ -110965,9 +111074,9 @@
           "output": 131072
         },
         "cost": {
-          "input": 0.5625,
-          "output": 2.5,
-          "cache_read": 0.125
+          "input": 0.5614,
+          "output": 1.7644,
+          "cache_read": 0.10426
         }
       },
       "arcee-ai/trinity-large-thinking": {
@@ -112232,7 +112341,7 @@
         },
         "cost": {
           "input": 0.04,
-          "output": 1,
+          "output": 0.49,
           "cache_read": 0.01
         }
       },
@@ -112275,9 +112384,9 @@
           "output": 943718
         },
         "cost": {
-          "input": 0.39,
-          "output": 2.9,
-          "cache_read": 0.25
+          "input": 0.2528,
+          "output": 2.88,
+          "cache_read": 0.08832
         }
       },
       "~deepseek/deepseek-v4-flash-latest": {
@@ -114014,6 +114123,39 @@
           "output": 0.08
         }
       },
+      "mistralai/devstral-2512": {
+        "id": "mistralai/devstral-2512",
+        "name": "Devstral 2",
+        "description": "Mistral coding agent model for repository tasks and software engineering workflows",
+        "family": "devstral",
+        "attachment": true,
+        "reasoning": false,
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "knowledge": "2025-12",
+        "release_date": "2025-12-09",
+        "last_updated": "2025-12-09",
+        "modalities": {
+          "input": [
+            "text",
+            "pdf"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 262144,
+          "output": 209715
+        },
+        "cost": {
+          "input": 0.4,
+          "output": 2,
+          "cache_read": 0.04
+        }
+      },
       "mistralai/mistral-saba": {
         "id": "mistralai/mistral-saba",
         "name": "Saba",
@@ -114294,6 +114436,40 @@
           "input": 0.1,
           "output": 0.3,
           "cache_read": 0.01
+        }
+      },
+      "mistralai/mistral-large-2512": {
+        "id": "mistralai/mistral-large-2512",
+        "name": "Mistral Large 3",
+        "description": "Flagship Mistral model for advanced reasoning, coding, and multilingual work",
+        "family": "mistral-large",
+        "attachment": true,
+        "reasoning": false,
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "knowledge": "2024-11",
+        "release_date": "2025-12-02",
+        "last_updated": "2025-12-02",
+        "modalities": {
+          "input": [
+            "text",
+            "image",
+            "pdf"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 262144,
+          "output": 209715
+        },
+        "cost": {
+          "input": 0.5,
+          "output": 1.5,
+          "cache_read": 0.05
         }
       },
       "mistralai/mistral-large-2407": {
@@ -115919,7 +116095,7 @@
         "open_weights": true,
         "limit": {
           "context": 1000192,
-          "output": 900172
+          "output": 40000
         },
         "cost": {
           "input": 0.2,
@@ -117444,11 +117620,11 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 32768
+          "output": 16384
         },
         "cost": {
-          "input": 0.13,
-          "output": 0.52
+          "input": 0.15,
+          "output": 0.6
         }
       },
       "qwen/qwen3-235b-a22b-thinking-2507": {
@@ -176930,7 +177106,7 @@
         "open_weights": false,
         "limit": {
           "context": 202800,
-          "output": 131100
+          "output": 131072
         },
         "cost": {
           "input": 1.2,
@@ -179436,7 +179612,7 @@
         "open_weights": true,
         "limit": {
           "context": 131072,
-          "output": 65536
+          "output": 32768
         },
         "cost": {
           "input": 0.27,
@@ -179772,7 +179948,7 @@
         "open_weights": false,
         "limit": {
           "context": 131072,
-          "output": 131072
+          "output": 65536
         },
         "cost": {
           "input": 4,
@@ -179814,7 +179990,7 @@
         "open_weights": false,
         "limit": {
           "context": 131072,
-          "output": 131072
+          "output": 65536
         },
         "cost": {
           "input": 6,
@@ -182552,7 +182728,7 @@
         "open_weights": true,
         "limit": {
           "context": 256000,
-          "output": 256000
+          "output": 65536
         },
         "cost": {
           "input": 0.6,
@@ -183157,7 +183333,7 @@
         "open_weights": false,
         "limit": {
           "context": 256000,
-          "output": 64000
+          "output": 32768
         },
         "cost": {
           "input": 0.25,
@@ -186191,7 +186367,7 @@
         "open_weights": true,
         "limit": {
           "context": 205000,
-          "output": 205000
+          "output": 196608
         },
         "cost": {
           "input": 0.3,
@@ -186415,7 +186591,7 @@
         "open_weights": false,
         "limit": {
           "context": 128000,
-          "output": 128000
+          "output": 50000
         },
         "cost": {
           "input": 0.25,
@@ -186486,7 +186662,7 @@
         "open_weights": false,
         "limit": {
           "context": 1000000,
-          "output": 1000000
+          "output": 65535
         },
         "cost": {
           "input": 0.3,
@@ -251390,9 +251566,9 @@
           "output": 384000
         },
         "cost": {
-          "input": 0.45644,
-          "output": 0.91288,
-          "cache_read": 0.091288
+          "input": 0.45468,
+          "output": 0.90936,
+          "cache_read": 0.090936
         }
       },
       "scaleway/llama-3.3-70b-instruct": {
@@ -251422,8 +251598,8 @@
           "output": 4096
         },
         "cost": {
-          "input": 1.02699,
-          "output": 1.02699
+          "input": 1.02303,
+          "output": 1.02303
         }
       },
       "scaleway/gpt-oss-120b": {
@@ -251462,8 +251638,8 @@
           "output": 32768
         },
         "cost": {
-          "input": 0.171165,
-          "output": 0.68466
+          "input": 0.170505,
+          "output": 0.68202
         }
       },
       "ionos/meta-llama/Llama-3.3-70B-Instruct": {
@@ -251493,8 +251669,8 @@
           "output": 4096
         },
         "cost": {
-          "input": 0.741715,
-          "output": 0.741715
+          "input": 0.738855,
+          "output": 0.738855
         }
       },
       "ionos/openai/gpt-oss-120b": {
@@ -251533,8 +251709,8 @@
           "output": 32768
         },
         "cost": {
-          "input": 0.171165,
-          "output": 0.741715
+          "input": 0.170505,
+          "output": 0.738855
         }
       },
       "vertex/gemini-flash-latest": {
@@ -257889,8 +258065,8 @@
           "output": 262144
         },
         "cost": {
-          "input": 0.34233,
-          "output": 0.45644
+          "input": 0.34101,
+          "output": 0.45468
         }
       },
       "moonshot/kimi-k3": {
@@ -261743,6 +261919,7 @@
           "context": 1048576,
           "output": 131072
         },
+        "status": "deprecated",
         "provider": {
           "npm": "@ai-sdk/openai"
         },
@@ -262369,6 +262546,43 @@
           "input": 0,
           "output": 0,
           "cache_read": 0
+        }
+      },
+      "qwen3.8-max": {
+        "id": "qwen3.8-max",
+        "name": "Qwen3.8 Max",
+        "description": "2.4-trillion-parameter MoE flagship for coding, professional work, multimodal understanding, and long-horizon agentic workflows",
+        "family": "qwen",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "toggle"
+          }
+        ],
+        "tool_call": true,
+        "temperature": true,
+        "release_date": "2026-08-03",
+        "last_updated": "2026-08-03",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 262144,
+          "output": 131072
+        },
+        "cost": {
+          "input": 2,
+          "output": 6,
+          "cache_read": 0.25,
+          "cache_write": 2.5
         }
       },
       "kimi-k3": {
@@ -302485,7 +302699,7 @@
         "open_weights": false,
         "limit": {
           "context": 1048576,
-          "output": 65536
+          "output": 65535
         },
         "cost": {
           "input": 0.1,
@@ -309595,7 +309809,7 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 262000,
+          "context": 262144,
           "output": 262000
         },
         "cost": {
@@ -309636,8 +309850,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 262144,
-          "output": 262144
+          "context": 1000000,
+          "output": 500000
         },
         "cost": {
           "input": 0.1,
@@ -310277,12 +310491,12 @@
         "open_weights": true,
         "limit": {
           "context": 1048576,
-          "output": 64000
+          "output": 393216
         },
         "cost": {
-          "input": 0.5,
-          "output": 1.499,
-          "cache_read": 0.13
+          "input": 0.3,
+          "output": 1.2,
+          "cache_read": 0.075
         }
       },
       "gpt-4.1-nano": {
@@ -311688,9 +311902,9 @@
           "output": 1048576
         },
         "cost": {
-          "input": 0.395,
-          "output": 1.977,
-          "cache_read": 0.099
+          "input": 0.3,
+          "output": 1.2,
+          "cache_read": 0.06
         }
       },
       "gpt-5.6-luna": {
@@ -312578,9 +312792,9 @@
           "output": 1048576
         },
         "cost": {
-          "input": 1.73,
-          "output": 3.46,
-          "cache_read": 0.432
+          "input": 1.7,
+          "output": 3.4,
+          "cache_read": 0.15
         }
       },
       "claude-opus-5.5": {
