@@ -23275,7 +23275,7 @@
         "cost": {
           "input": 0.2,
           "output": 0.8,
-          "cache_read": 0.1
+          "cache_read": 0.07
         }
       },
       "z-ai/glm-4.6": {
@@ -23879,6 +23879,47 @@
           "input": 0.2,
           "output": 0.8,
           "cache_read": 0.1
+        }
+      },
+      "z-ai/glm-5.3-uncensored": {
+        "id": "z-ai/glm-5.3-uncensored",
+        "name": "GLM 5.3 Uncensored",
+        "description": "An experimental uncensored version of the full GLM 5.3 reasoning model for chat, creative writing, coding, and tool use. It may show unusual behavior or inconsistent response quality.",
+        "family": "glm",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "high",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": false,
+        "release_date": "2026-09-26",
+        "last_updated": "2026-09-26",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 1048576,
+          "input": 1048576,
+          "output": 131072
+        },
+        "cost": {
+          "input": 1.25,
+          "output": 2.25,
+          "cache_read": 0.3
         }
       },
       "z-ai/glm-5:thinking": {
@@ -30843,6 +30884,45 @@
           "cache_write": 0
         }
       },
+      "xiaomi/mimo-v2.6-flash-uncensored:thinking": {
+        "id": "xiaomi/mimo-v2.6-flash-uncensored:thinking",
+        "name": "MiMo V2.6 Flash Uncensored Thinking",
+        "description": "MiMo V2.6 Flash Uncensored with maximum thinking enabled. Supports a 1M-token context window and tool calling.",
+        "family": "mimo",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": false,
+        "release_date": "2026-09-26",
+        "last_updated": "2026-09-26",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 1048576,
+          "input": 1048576,
+          "output": 65536
+        },
+        "cost": {
+          "input": 0.5,
+          "output": 1.5,
+          "cache_read": 0.1995
+        }
+      },
       "xiaomi/mimo-v2.6-pro-ultraspeed": {
         "id": "xiaomi/mimo-v2.6-pro-ultraspeed",
         "name": "MiMo V2.6 Pro UltraSpeed",
@@ -31034,6 +31114,8 @@
             "type": "effort",
             "values": [
               "none",
+              "low",
+              "medium",
               "high"
             ]
           }
@@ -31059,7 +31141,7 @@
         "cost": {
           "input": 0.5,
           "output": 1.5,
-          "cache_read": 0.275
+          "cache_read": 0.1995
         }
       },
       "undi95/remm-slerp-l2-13b": {
@@ -70685,9 +70767,9 @@
           "output": 943718
         },
         "cost": {
-          "input": 1.0301,
-          "output": 9.043,
-          "cache_read": 0.3
+          "input": 0.9875,
+          "output": 5.53,
+          "cache_read": 0.11455
         }
       },
       "poolside/laguna-s-2.1:free": {
@@ -71855,8 +71937,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 1048576,
-          "output": 943718
+          "context": 1040000,
+          "output": 384000
         },
         "cost": {
           "input": 0.3,
@@ -71899,7 +71981,7 @@
         "open_weights": true,
         "limit": {
           "context": 1048576,
-          "output": 943718
+          "output": 262144
         },
         "cost": {
           "input": 0.44,
@@ -72050,8 +72132,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 1024000,
-          "output": 384000
+          "context": 1048576,
+          "output": 943718
         },
         "cost": {
           "input": 1.32,
@@ -72322,8 +72404,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 1024000,
-          "output": 384000
+          "context": 1048576,
+          "output": 131072
         },
         "cost": {
           "input": 0.14,
@@ -73270,7 +73352,7 @@
         "open_weights": true,
         "limit": {
           "context": 1048576,
-          "output": 131072
+          "output": 128000
         },
         "cost": {
           "input": 0.15,
@@ -73719,8 +73801,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 1048576,
-          "output": 131072
+          "context": 1048575,
+          "output": 943717
         },
         "cost": {
           "input": 1.4,
@@ -74683,12 +74765,12 @@
         "open_weights": false,
         "limit": {
           "context": 1048576,
-          "output": 131072
+          "output": 128000
         },
         "cost": {
-          "input": 0.04,
-          "output": 0.5,
-          "cache_read": 0.015
+          "input": 0.045,
+          "output": 0.14,
+          "cache_read": 0.01
         }
       },
       "~z-ai/glm-latest": {
@@ -74723,13 +74805,13 @@
         },
         "open_weights": false,
         "limit": {
-          "context": 1048576,
-          "output": 131072
+          "context": 262144,
+          "output": 235929
         },
         "cost": {
-          "input": 0.3794,
-          "output": 1.1924,
-          "cache_read": 0.07046
+          "input": 0.2737,
+          "output": 2.574,
+          "cache_read": 0.044965
         }
       },
       "arcee-ai/trinity-large-thinking": {
@@ -75862,9 +75944,9 @@
           "output": 393216
         },
         "cost": {
-          "input": 0.24948,
-          "output": 0.74844,
-          "cache_read": 0.007938
+          "input": 0.2442,
+          "output": 0.7326,
+          "cache_read": 0.00777
         }
       },
       "~deepseek/deepseek-v4-flash-latest": {
@@ -76059,8 +76141,8 @@
           "output": 16384
         },
         "cost": {
-          "input": 0.09,
-          "output": 0.34,
+          "input": 0.08,
+          "output": 0.3,
           "cache_read": 0.05
         }
       },
@@ -78994,7 +79076,7 @@
           "output": 131072
         },
         "cost": {
-          "input": 0.065,
+          "input": 0.039,
           "output": 0.18
         }
       },
@@ -79721,8 +79803,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 204800,
-          "output": 131072
+          "context": 196608,
+          "output": 176947
         },
         "cost": {
           "input": 0.3,
@@ -79880,8 +79962,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 196608,
-          "output": 176947
+          "context": 204800,
+          "output": 131072
         },
         "cost": {
           "input": 0.3,
@@ -81352,7 +81434,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 65536
+          "output": 235929
         },
         "cost": {
           "input": 0.26,
@@ -106717,9 +106799,9 @@
           "output": 943718
         },
         "cost": {
-          "input": 1.0301,
-          "output": 9.043,
-          "cache_read": 0.3
+          "input": 0.9875,
+          "output": 5.53,
+          "cache_read": 0.11455
         }
       },
       "poolside/laguna-s-2.1:free": {
@@ -107954,12 +108036,12 @@
         "open_weights": true,
         "limit": {
           "context": 1048576,
-          "output": 943718
+          "output": 384000
         },
         "cost": {
-          "input": 0.3,
-          "output": 1.2,
-          "cache_read": 0.006
+          "input": 0.035,
+          "output": 0.29,
+          "cache_read": 0.001
         }
       },
       "deepseek/deepseek-v4-flash-vision-exp": {
@@ -107999,12 +108081,12 @@
         "open_weights": true,
         "limit": {
           "context": 1048576,
-          "output": 943718
+          "output": 262144
         },
         "cost": {
-          "input": 0.22,
-          "output": 0.66,
-          "cache_read": 0.007
+          "input": 0.2156,
+          "output": 0.6468,
+          "cache_read": 0.00686
         }
       },
       "deepseek/deepseek-r1-distill-llama-70b": {
@@ -108147,12 +108229,12 @@
         "open_weights": true,
         "limit": {
           "context": 1048576,
-          "output": 384000
+          "output": 943718
         },
         "cost": {
-          "input": 0.264,
-          "output": 0.792,
-          "cache_read": 0.0088
+          "input": 0.24502,
+          "output": 3.5,
+          "cache_read": 0.24452
         }
       },
       "deepseek/deepseek-v3.2-exp": {
@@ -108296,9 +108378,9 @@
           "output": 384000
         },
         "cost": {
-          "input": 0.368184,
-          "output": 0.736368,
-          "cache_read": 0.030682
+          "input": 0.348,
+          "output": 0.696,
+          "cache_read": 0.029
         }
       },
       "deepseek/deepseek-r1-0528": {
@@ -108410,12 +108492,12 @@
         "open_weights": true,
         "limit": {
           "context": 1048576,
-          "output": 384000
+          "output": 131072
         },
         "cost": {
-          "input": 0.04704,
-          "output": 0.09408,
-          "cache_read": 0.009408
+          "input": 0.0469,
+          "output": 0.0938,
+          "cache_read": 0.00938
         }
       },
       "unbiased/pareto": {
@@ -109363,12 +109445,12 @@
         "open_weights": true,
         "limit": {
           "context": 1310720,
-          "output": 131072
+          "output": 128000
         },
         "cost": {
-          "input": 0.04,
-          "output": 0.5,
-          "cache_read": 0.015
+          "input": 0.045,
+          "output": 0.14,
+          "cache_read": 0.01
         }
       },
       "z-ai/glm-4.6": {
@@ -109801,12 +109883,12 @@
         "open_weights": true,
         "limit": {
           "context": 1310720,
-          "output": 131072
+          "output": 943717
         },
         "cost": {
-          "input": 0.3794,
-          "output": 1.1924,
-          "cache_read": 0.07046
+          "input": 1.4,
+          "output": 4.4,
+          "cache_read": 0.26
         }
       },
       "inference-net/schematron-v2-small": {
@@ -110809,12 +110891,12 @@
         "open_weights": false,
         "limit": {
           "context": 1310720,
-          "output": 131072
+          "output": 128000
         },
         "cost": {
-          "input": 0.04,
-          "output": 0.5,
-          "cache_read": 0.015
+          "input": 0.045,
+          "output": 0.14,
+          "cache_read": 0.01
         }
       },
       "~z-ai/glm-latest": {
@@ -110850,12 +110932,12 @@
         "open_weights": false,
         "limit": {
           "context": 1310720,
-          "output": 131072
+          "output": 235929
         },
         "cost": {
-          "input": 0.3794,
-          "output": 1.1924,
-          "cache_read": 0.07046
+          "input": 0.2737,
+          "output": 2.574,
+          "cache_read": 0.044965
         }
       },
       "arcee-ai/trinity-large-thinking": {
@@ -112163,9 +112245,9 @@
           "output": 393216
         },
         "cost": {
-          "input": 0.24948,
-          "output": 0.74844,
-          "cache_read": 0.007938
+          "input": 0.2442,
+          "output": 0.7326,
+          "cache_read": 0.00777
         }
       },
       "~deepseek/deepseek-v4-flash-latest": {
@@ -115936,12 +116018,12 @@
         "open_weights": true,
         "limit": {
           "context": 204800,
-          "output": 131072
+          "output": 176947
         },
         "cost": {
-          "input": 0.3,
-          "output": 1.2,
-          "cache_read": 0.06
+          "input": 0.21,
+          "output": 0.84,
+          "cache_read": 0.042
         }
       },
       "minimax/minimax-m1": {
@@ -116080,11 +116162,11 @@
         "open_weights": true,
         "limit": {
           "context": 204800,
-          "output": 176947
+          "output": 131072
         },
         "cost": {
-          "input": 0.3,
-          "output": 1.2
+          "input": 0.255,
+          "output": 1.02
         }
       },
       "mancer/weaver": {
@@ -117504,7 +117586,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 65536
+          "output": 235929
         },
         "cost": {
           "input": 0.26,
@@ -195120,62 +195202,6 @@
     "name": "Fireworks AI",
     "doc": "https://fireworks.ai/docs/",
     "models": {
-      "accounts/fireworks/models/kimi-k2p6": {
-        "id": "accounts/fireworks/models/kimi-k2p6",
-        "name": "Kimi K2.6",
-        "description": "Kimi reasoning model for long-horizon research, planning, and tool use",
-        "family": "kimi-thinking",
-        "attachment": true,
-        "reasoning": true,
-        "reasoning_options": [
-          {
-            "type": "toggle"
-          }
-        ],
-        "tool_call": true,
-        "interleaved": {
-          "field": "reasoning_content"
-        },
-        "temperature": true,
-        "release_date": "2026-04-17",
-        "last_updated": "2026-04-17",
-        "modalities": {
-          "input": [
-            "text",
-            "image"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 262000,
-          "output": 262000
-        },
-        "status": "deprecated",
-        "experimental": {
-          "modes": {
-            "priority": {
-              "cost": {
-                "input": 1.5,
-                "output": 6,
-                "cache_read": 0.22
-              },
-              "provider": {
-                "body": {
-                  "service_tier": "priority"
-                }
-              }
-            }
-          }
-        },
-        "cost": {
-          "input": 0.95,
-          "output": 4,
-          "cache_read": 0.16
-        }
-      },
       "accounts/fireworks/models/nemotron-3-ultra-nvfp4": {
         "id": "accounts/fireworks/models/nemotron-3-ultra-nvfp4",
         "name": "Nemotron 3 Ultra 550B A55B",
@@ -195209,116 +195235,6 @@
           "input": 0.6,
           "output": 2.4,
           "cache_read": 0.12
-        }
-      },
-      "accounts/fireworks/models/deepseek-v4-flash-0731": {
-        "id": "accounts/fireworks/models/deepseek-v4-flash-0731",
-        "name": "DeepSeek V4 Flash 0731",
-        "description": "Official DeepSeek V4 Flash release with enhanced agentic capabilities and integrated DSpark speculative decoding",
-        "family": "deepseek-flash",
-        "attachment": false,
-        "reasoning": true,
-        "reasoning_options": [
-          {
-            "type": "toggle"
-          },
-          {
-            "type": "effort",
-            "values": [
-              "low",
-              "high",
-              "max"
-            ]
-          }
-        ],
-        "tool_call": true,
-        "interleaved": {
-          "field": "reasoning_content"
-        },
-        "structured_output": true,
-        "temperature": true,
-        "knowledge": "2025-05",
-        "release_date": "2026-07-31",
-        "last_updated": "2026-07-31",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 1000000,
-          "output": 384000
-        },
-        "status": "deprecated",
-        "experimental": {
-          "modes": {
-            "priority": {
-              "cost": {
-                "input": 0.275,
-                "output": 0.825,
-                "cache_read": 0.00875
-              },
-              "provider": {
-                "body": {
-                  "service_tier": "priority"
-                }
-              }
-            }
-          }
-        },
-        "cost": {
-          "input": 0.22,
-          "output": 0.66,
-          "cache_read": 0.007
-        }
-      },
-      "accounts/fireworks/models/muse-glimmer-30b": {
-        "id": "accounts/fireworks/models/muse-glimmer-30b",
-        "name": "Muse Glimmer 30B",
-        "description": "Muse Glimmer is a 30-billion-parameter open-weight multimodal model from Meta Superintelligence Labs, distilled from Muse Spark for always-on local agents, tool use, coding, and image understanding.",
-        "family": "muse",
-        "attachment": true,
-        "reasoning": true,
-        "reasoning_options": [
-          {
-            "type": "effort",
-            "values": [
-              "low",
-              "medium",
-              "high",
-              "xhigh"
-            ]
-          }
-        ],
-        "tool_call": true,
-        "structured_output": true,
-        "temperature": true,
-        "knowledge": "2026-01-04",
-        "release_date": "2026-08-10",
-        "last_updated": "2026-08-10",
-        "modalities": {
-          "input": [
-            "text",
-            "image"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 131072,
-          "output": 131072
-        },
-        "status": "deprecated",
-        "cost": {
-          "input": 0.35,
-          "output": 1.5,
-          "cache_read": 0.04
         }
       },
       "accounts/fireworks/models/kimi-k3": {
@@ -195484,55 +195400,6 @@
           "cache_read": 0.3
         }
       },
-      "accounts/fireworks/models/deepseek-v4-flash-vision-exp": {
-        "id": "accounts/fireworks/models/deepseek-v4-flash-vision-exp",
-        "name": "DeepSeek V4 Flash Vision Exp",
-        "description": "Experimental multimodal DeepSeek V4 Flash model for image understanding, coding, and agentic work",
-        "family": "deepseek-flash",
-        "attachment": true,
-        "reasoning": true,
-        "reasoning_options": [
-          {
-            "type": "toggle"
-          },
-          {
-            "type": "effort",
-            "values": [
-              "low",
-              "high",
-              "max"
-            ]
-          }
-        ],
-        "tool_call": true,
-        "interleaved": {
-          "field": "reasoning_content"
-        },
-        "structured_output": true,
-        "temperature": true,
-        "release_date": "2026-08-21",
-        "last_updated": "2026-09-01",
-        "modalities": {
-          "input": [
-            "text",
-            "image"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 1000000,
-          "output": 384000
-        },
-        "status": "deprecated",
-        "cost": {
-          "input": 0.22,
-          "output": 0.66,
-          "cache_read": 0.007
-        }
-      },
       "accounts/fireworks/models/deepseek-v4p1-flash": {
         "id": "accounts/fireworks/models/deepseek-v4p1-flash",
         "name": "DeepSeek V4.1 Flash",
@@ -195598,54 +195465,6 @@
           "cache_read": 0.007
         }
       },
-      "accounts/fireworks/models/qwen3p7-plus": {
-        "id": "accounts/fireworks/models/qwen3p7-plus",
-        "name": "Qwen 3.7 Plus",
-        "description": "Qwen vision-language model for visual reasoning, documents, and agent tasks",
-        "family": "qwen",
-        "attachment": true,
-        "reasoning": true,
-        "reasoning_options": [
-          {
-            "type": "toggle"
-          },
-          {
-            "type": "effort",
-            "values": [
-              "low",
-              "medium",
-              "high"
-            ]
-          },
-          {
-            "type": "budget_tokens",
-            "min": 1
-          }
-        ],
-        "tool_call": true,
-        "temperature": true,
-        "release_date": "2026-06-12",
-        "last_updated": "2026-06-12",
-        "modalities": {
-          "input": [
-            "text",
-            "image"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": false,
-        "limit": {
-          "context": 262144,
-          "output": 65536
-        },
-        "cost": {
-          "input": 0.4,
-          "output": 1.6,
-          "cache_read": 0.08
-        }
-      },
       "accounts/fireworks/models/glm-5p3": {
         "id": "accounts/fireworks/models/glm-5p3",
         "name": "GLM 5.3",
@@ -195706,55 +195525,6 @@
           "cache_read": 0.26
         }
       },
-      "accounts/fireworks/models/minimax-m2p7": {
-        "id": "accounts/fireworks/models/minimax-m2p7",
-        "name": "MiniMax-M2.7",
-        "description": "Open MiniMax flagship for coding agents, office automation, and complex environments",
-        "family": "minimax",
-        "attachment": false,
-        "reasoning": true,
-        "reasoning_options": [
-          {
-            "type": "effort",
-            "values": [
-              "low",
-              "medium",
-              "high"
-            ]
-          }
-        ],
-        "tool_call": true,
-        "interleaved": {
-          "field": "reasoning_content"
-        },
-        "temperature": true,
-        "release_date": "2026-03-18",
-        "last_updated": "2026-03-18",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 196608,
-          "output": 131072
-        },
-        "status": "deprecated",
-        "provider": {
-          "body": {
-            "service_tier": "priority"
-          }
-        },
-        "cost": {
-          "input": 1.2,
-          "output": 1.2,
-          "cache_read": 0.6
-        }
-      },
       "accounts/fireworks/models/nemotron-lightning-3p5-30b-a3b": {
         "id": "accounts/fireworks/models/nemotron-lightning-3p5-30b-a3b",
         "name": "Nemotron 3.5 Lightning 30B A3B",
@@ -195791,69 +195561,6 @@
           "cache_read": 0.01
         }
       },
-      "accounts/fireworks/models/deepseek-v4-pro-0813": {
-        "id": "accounts/fireworks/models/deepseek-v4-pro-0813",
-        "name": "DeepSeek V4 Pro 0813",
-        "description": "DeepSeek V4 Pro snapshot with million-token context and support for thinking and non-thinking modes",
-        "family": "deepseek-thinking",
-        "attachment": false,
-        "reasoning": true,
-        "reasoning_options": [
-          {
-            "type": "toggle"
-          },
-          {
-            "type": "effort",
-            "values": [
-              "high",
-              "max"
-            ]
-          }
-        ],
-        "tool_call": true,
-        "interleaved": {
-          "field": "reasoning_content"
-        },
-        "structured_output": true,
-        "temperature": true,
-        "release_date": "2026-08-12",
-        "last_updated": "2026-08-22",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 1000000,
-          "output": 384000
-        },
-        "status": "deprecated",
-        "experimental": {
-          "modes": {
-            "priority": {
-              "cost": {
-                "input": 1.65,
-                "output": 4.95,
-                "cache_read": 0.055
-              },
-              "provider": {
-                "body": {
-                  "service_tier": "priority"
-                }
-              }
-            }
-          }
-        },
-        "cost": {
-          "input": 1.32,
-          "output": 3.96,
-          "cache_read": 0.044
-        }
-      },
       "accounts/fireworks/models/inkling": {
         "id": "accounts/fireworks/models/inkling",
         "name": "Inkling",
@@ -195885,68 +195592,6 @@
           "input": 1,
           "output": 4.05,
           "cache_read": 0.17
-        }
-      },
-      "accounts/fireworks/models/glm-5p2": {
-        "id": "accounts/fireworks/models/glm-5p2",
-        "name": "GLM 5.2",
-        "description": "Flagship GLM model for hybrid reasoning, coding, and agentic engineering",
-        "family": "glm",
-        "attachment": false,
-        "reasoning": true,
-        "reasoning_options": [
-          {
-            "type": "toggle"
-          },
-          {
-            "type": "effort",
-            "values": [
-              "high",
-              "max"
-            ]
-          }
-        ],
-        "tool_call": true,
-        "interleaved": {
-          "field": "reasoning_content"
-        },
-        "temperature": true,
-        "release_date": "2026-06-16",
-        "last_updated": "2026-06-16",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 1048575,
-          "output": 131072
-        },
-        "status": "deprecated",
-        "experimental": {
-          "modes": {
-            "priority": {
-              "cost": {
-                "input": 1.75,
-                "output": 5.5,
-                "cache_read": 0.175
-              },
-              "provider": {
-                "body": {
-                  "service_tier": "priority"
-                }
-              }
-            }
-          }
-        },
-        "cost": {
-          "input": 1.4,
-          "output": 4.4,
-          "cache_read": 0.14
         }
       },
       "accounts/fireworks/models/minimax-m3": {
@@ -196008,62 +195653,6 @@
           "cache_read": 0.06
         }
       },
-      "accounts/fireworks/models/kimi-k2p7-code": {
-        "id": "accounts/fireworks/models/kimi-k2p7-code",
-        "name": "Kimi K2.7 Code",
-        "description": "Kimi coding model for software agents, refactors, and repository reasoning",
-        "family": "kimi-k2",
-        "attachment": true,
-        "reasoning": true,
-        "reasoning_options": [
-          {
-            "type": "toggle"
-          }
-        ],
-        "tool_call": true,
-        "interleaved": {
-          "field": "reasoning_content"
-        },
-        "temperature": true,
-        "release_date": "2026-06-12",
-        "last_updated": "2026-06-16",
-        "modalities": {
-          "input": [
-            "text",
-            "image"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 262000,
-          "output": 262000
-        },
-        "status": "deprecated",
-        "experimental": {
-          "modes": {
-            "priority": {
-              "cost": {
-                "input": 1.425,
-                "output": 6,
-                "cache_read": 0.285
-              },
-              "provider": {
-                "body": {
-                  "service_tier": "priority"
-                }
-              }
-            }
-          }
-        },
-        "cost": {
-          "input": 0.95,
-          "output": 4,
-          "cache_read": 0.19
-        }
-      },
       "accounts/fireworks/models/glm-5p3-flash": {
         "id": "accounts/fireworks/models/glm-5p3-flash",
         "name": "GLM 5.3 Flash",
@@ -196123,70 +195712,6 @@
           "input": 0.15,
           "output": 0.5,
           "cache_read": 0.03
-        }
-      },
-      "accounts/fireworks/models/deepseek-v4-pro": {
-        "id": "accounts/fireworks/models/deepseek-v4-pro",
-        "name": "DeepSeek V4 Pro",
-        "description": "Open MoE flagship with million-token context for coding and long agent runs",
-        "family": "deepseek-thinking",
-        "attachment": false,
-        "reasoning": true,
-        "reasoning_options": [
-          {
-            "type": "toggle"
-          },
-          {
-            "type": "effort",
-            "values": [
-              "high",
-              "max"
-            ]
-          }
-        ],
-        "tool_call": true,
-        "interleaved": {
-          "field": "reasoning_content"
-        },
-        "structured_output": true,
-        "temperature": true,
-        "knowledge": "2025-05",
-        "release_date": "2026-04-24",
-        "last_updated": "2026-04-24",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 1000000,
-          "output": 384000
-        },
-        "status": "deprecated",
-        "experimental": {
-          "modes": {
-            "priority": {
-              "cost": {
-                "input": 1.2,
-                "output": 1.2,
-                "cache_read": 0.6
-              },
-              "provider": {
-                "body": {
-                  "service_tier": "priority"
-                }
-              }
-            }
-          }
-        },
-        "cost": {
-          "input": 1.2,
-          "output": 1.2,
-          "cache_read": 0.6
         }
       },
       "accounts/fireworks/models/gpt-oss-120b": {
@@ -196795,51 +196320,6 @@
           "input": 0.22,
           "output": 0.66,
           "cache_read": 0.007
-        }
-      },
-      "accounts/fireworks/routers/glm-5p2-fast": {
-        "id": "accounts/fireworks/routers/glm-5p2-fast",
-        "name": "GLM 5.2 Fast",
-        "description": "Efficient GLM model for fast reasoning, coding, and agent workflows",
-        "family": "glm",
-        "attachment": false,
-        "reasoning": true,
-        "reasoning_options": [
-          {
-            "type": "toggle"
-          },
-          {
-            "type": "effort",
-            "values": [
-              "high",
-              "max"
-            ]
-          }
-        ],
-        "tool_call": true,
-        "interleaved": {
-          "field": "reasoning_content"
-        },
-        "temperature": true,
-        "release_date": "2026-06-26",
-        "last_updated": "2026-06-26",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 1048575,
-          "output": 131072
-        },
-        "cost": {
-          "input": 2.1,
-          "output": 6.6,
-          "cache_read": 0.21
         }
       },
       "accounts/fireworks/routers/glm-latest": {
@@ -242510,6 +241990,45 @@
           }
         }
       },
+      "longcat-2.5-preview-free": {
+        "id": "longcat-2.5-preview-free",
+        "name": "LongCat 2.5 Preview Free",
+        "description": "Meituan's multimodal reasoning model for coding and agent tasks, with image understanding and a 1M-token context window",
+        "family": "longcat",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "toggle"
+          }
+        ],
+        "tool_call": true,
+        "interleaved": {
+          "field": "reasoning_content"
+        },
+        "temperature": true,
+        "release_date": "2026-09-25",
+        "last_updated": "2026-09-25",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1000000,
+          "output": 131072
+        },
+        "cost": {
+          "input": 0,
+          "output": 0,
+          "cache_read": 0
+        }
+      },
       "mimo-v2-omni": {
         "id": "mimo-v2-omni",
         "name": "MiMo V2 Omni",
@@ -250463,72 +249982,6 @@
           "output": 1.5
         }
       },
-      "google/deep-research-preview-04-2026": {
-        "id": "google/deep-research-preview-04-2026",
-        "name": "Gemini Deep Research Preview",
-        "description": "Agentic model for autonomous multi-step research, synthesis, and cited reports",
-        "family": "gemini-pro",
-        "attachment": true,
-        "reasoning": true,
-        "reasoning_options": [],
-        "tool_call": false,
-        "structured_output": false,
-        "temperature": false,
-        "knowledge": "2025-01",
-        "release_date": "2026-04-21",
-        "last_updated": "2026-04-21",
-        "modalities": {
-          "input": [
-            "text",
-            "image"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": false,
-        "limit": {
-          "context": 131072,
-          "output": 65536
-        },
-        "cost": {
-          "input": 2,
-          "output": 12
-        }
-      },
-      "google/deep-research-max-preview-04-2026": {
-        "id": "google/deep-research-max-preview-04-2026",
-        "name": "Deep Research Max Preview",
-        "description": "Maximum-comprehensiveness agentic researcher for multi-step investigation, synthesis, and cited reports",
-        "family": "gemini-pro",
-        "attachment": true,
-        "reasoning": true,
-        "reasoning_options": [],
-        "tool_call": false,
-        "structured_output": false,
-        "temperature": false,
-        "knowledge": "2025-01",
-        "release_date": "2026-04-21",
-        "last_updated": "2026-04-21",
-        "modalities": {
-          "input": [
-            "text",
-            "image"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": false,
-        "limit": {
-          "context": 131072,
-          "output": 65536
-        },
-        "cost": {
-          "input": 2,
-          "output": 12
-        }
-      },
       "google/gemini-3.7-flash": {
         "id": "google/gemini-3.7-flash",
         "name": "Gemini 3.7 Flash",
@@ -254814,135 +254267,6 @@
           "input": 0.15,
           "output": 0.6,
           "cache_read": 0.014
-        }
-      },
-      "fireworks_ai/accounts/fireworks/models/deepseek-v4-flash-0731": {
-        "id": "fireworks_ai/accounts/fireworks/models/deepseek-v4-flash-0731",
-        "name": "DeepSeek V4 Flash 0731 (Fireworks AI)",
-        "description": "Official DeepSeek V4 Flash release with enhanced agentic capabilities and integrated DSpark speculative decoding",
-        "family": "deepseek-flash",
-        "attachment": false,
-        "reasoning": true,
-        "reasoning_options": [
-          {
-            "type": "effort",
-            "values": [
-              "none",
-              "low",
-              "high",
-              "max"
-            ]
-          }
-        ],
-        "tool_call": true,
-        "structured_output": true,
-        "temperature": true,
-        "knowledge": "2025-05",
-        "release_date": "2026-07-31",
-        "last_updated": "2026-07-31",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 1048576,
-          "output": 384000
-        },
-        "cost": {
-          "input": 0.22,
-          "output": 0.66,
-          "cache_read": 0.007
-        }
-      },
-      "fireworks_ai/accounts/fireworks/models/muse-glimmer-30b": {
-        "id": "fireworks_ai/accounts/fireworks/models/muse-glimmer-30b",
-        "name": "Muse Glimmer 30B (Fireworks AI)",
-        "description": "Muse Glimmer is a 30-billion-parameter open-weight multimodal model from Meta Superintelligence Labs, distilled from Muse Spark for always-on local agents, tool use, coding, and image understanding.",
-        "family": "muse",
-        "attachment": true,
-        "reasoning": true,
-        "reasoning_options": [
-          {
-            "type": "effort",
-            "values": [
-              "low",
-              "medium",
-              "high",
-              "xhigh"
-            ]
-          }
-        ],
-        "tool_call": true,
-        "structured_output": true,
-        "temperature": true,
-        "knowledge": "2026-01-04",
-        "release_date": "2026-08-10",
-        "last_updated": "2026-08-10",
-        "modalities": {
-          "input": [
-            "text",
-            "image"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 131072,
-          "output": 131072
-        },
-        "cost": {
-          "input": 0.35,
-          "output": 1.5,
-          "cache_read": 0.04
-        }
-      },
-      "fireworks_ai/accounts/fireworks/models/deepseek-v4-pro-0813": {
-        "id": "fireworks_ai/accounts/fireworks/models/deepseek-v4-pro-0813",
-        "name": "DeepSeek V4 Pro 0813 (Fireworks AI)",
-        "description": "DeepSeek V4 Pro snapshot with million-token context and support for thinking and non-thinking modes",
-        "family": "deepseek-thinking",
-        "attachment": false,
-        "reasoning": true,
-        "reasoning_options": [
-          {
-            "type": "effort",
-            "values": [
-              "none",
-              "low",
-              "high",
-              "max"
-            ]
-          }
-        ],
-        "tool_call": true,
-        "structured_output": true,
-        "temperature": true,
-        "release_date": "2026-08-12",
-        "last_updated": "2026-08-22",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 1048576,
-          "output": 384000
-        },
-        "cost": {
-          "input": 1.32,
-          "output": 3.96,
-          "cache_read": 0.044
         }
       },
       "fireworks_ai/accounts/fireworks/models/inkling": {
@@ -262304,6 +261628,45 @@
             "output": 8.4,
             "cache_read": 0.7
           }
+        }
+      },
+      "longcat-2.5-preview-free": {
+        "id": "longcat-2.5-preview-free",
+        "name": "LongCat 2.5 Preview Free",
+        "description": "Meituan's multimodal reasoning model for coding and agent tasks, with image understanding and a 1M-token context window",
+        "family": "longcat",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "toggle"
+          }
+        ],
+        "tool_call": true,
+        "interleaved": {
+          "field": "reasoning_content"
+        },
+        "temperature": true,
+        "release_date": "2026-09-25",
+        "last_updated": "2026-09-25",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1000000,
+          "output": 131072
+        },
+        "cost": {
+          "input": 0,
+          "output": 0,
+          "cache_read": 0
         }
       },
       "gpt-5.4-nano": {
