@@ -36,12 +36,12 @@
     "@t3-oss/env-nextjs": "^0.13.10",
     "csv-charts-ai": "workspace:*",
     "highlight.js": "^11.11.1",
-    "js-cookie": "^3.0.5",
+    "js-cookie": "^3.0.8",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.7",
     "katex": "^0.16.43",
     "lucide-react": "^0.577.0",
-    "next": "^16.2.1",
+    "next": "^16.3.6",
     "papaparse": "^5.5.3",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
@@ -80,14 +80,14 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
     "jsdom": "^30.0.1",
-    "postcss": "^8.5.8",
+    "postcss": "^8.5.23",
     "prettier": "^3.8.1",
     "prettier-plugin-tailwindcss": "^0.7.2",
     "semantic-release": "^25.0.3",
     "tailwindcss": "^4.2.2",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.57.1",
-    "vitest": "^4.1.0"
+    "vitest": "^5.0.3"
   },
   "ct3aMetadata": {
     "initVersion": "7.40.0"
