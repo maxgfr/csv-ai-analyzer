@@ -17482,9 +17482,9 @@
           "output": 131072
         },
         "cost": {
-          "input": 1,
-          "output": 3.2,
-          "cache_read": 0.2
+          "input": 0.7,
+          "output": 2.2,
+          "cache_read": 0.13
         }
       },
       "gemma-4-26b-a4b-it-shadowsiren": {
@@ -17588,9 +17588,9 @@
           "output": 131072
         },
         "cost": {
-          "input": 1,
-          "output": 3.2,
-          "cache_read": 0.2
+          "input": 0.7,
+          "output": 2.2,
+          "cache_read": 0.13
         }
       },
       "deepseek-chat": {
@@ -17696,9 +17696,9 @@
           "output": 131072
         },
         "cost": {
-          "input": 1,
-          "output": 3.2,
-          "cache_read": 0.2,
+          "input": 0.7,
+          "output": 2.2,
+          "cache_read": 0.13,
           "cache_write": 0.08333
         }
       },
@@ -17801,9 +17801,9 @@
           "output": 131072
         },
         "cost": {
-          "input": 1,
-          "output": 3.2,
-          "cache_read": 0.2,
+          "input": 0.7,
+          "output": 2.2,
+          "cache_read": 0.13,
           "cache_write": 0.08333
         }
       },
@@ -17919,38 +17919,6 @@
         },
         "canonical_model_id": "google/gemini-2.5-pro"
       },
-      "ernie-x1.1-preview": {
-        "id": "ernie-x1.1-preview",
-        "name": "ERNIE X1.1",
-        "description": "Compact GPT model for low-latency assistance and high-volume workloads",
-        "family": "ernie",
-        "attachment": true,
-        "reasoning": false,
-        "tool_call": false,
-        "structured_output": false,
-        "release_date": "2025-09-10",
-        "last_updated": "2025-09-10",
-        "modalities": {
-          "input": [
-            "text",
-            "pdf"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": false,
-        "limit": {
-          "context": 64000,
-          "input": 64000,
-          "output": 8192
-        },
-        "cost": {
-          "input": 0.15,
-          "output": 0.6,
-          "cache_read": 0.075
-        }
-      },
       "gemini-2.5-flash": {
         "id": "gemini-2.5-flash",
         "name": "Gemini 2.5 Flash",
@@ -18034,9 +18002,9 @@
           "output": 131072
         },
         "cost": {
-          "input": 1,
-          "output": 3.2,
-          "cache_read": 0.2
+          "input": 0.7,
+          "output": 2.2,
+          "cache_read": 0.13
         }
       },
       "gemini-2.5-flash-preview-05-20": {
@@ -18094,7 +18062,7 @@
         "limit": {
           "context": 1000000,
           "input": 1000000,
-          "output": 4096
+          "output": 4095
         },
         "cost": {
           "input": 0.2006,
@@ -18447,6 +18415,39 @@
           "input": 0.1,
           "output": 0.45,
           "cache_read": 0.05
+        }
+      },
+      "gemma-4-26b-a4b-it-chimeraxheretic": {
+        "id": "gemma-4-26b-a4b-it-chimeraxheretic",
+        "name": "Gemma 4 26B A4B Chimera X Heretic",
+        "description": "Chimera X Heretic is a Gemma 4 26B A4B multimodal mixture-of-experts fine-tune for creative writing, expressive dialogue, and roleplay.",
+        "family": "gemma",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [],
+        "tool_call": true,
+        "structured_output": false,
+        "release_date": "2026-10-08",
+        "last_updated": "2026-10-08",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 262144,
+          "input": 262144,
+          "output": 32768
+        },
+        "cost": {
+          "input": 0.12,
+          "output": 0.38,
+          "cache_read": 0.06
         }
       },
       "Gemma-4-26B-A4B-MeroMero": {
@@ -19223,6 +19224,39 @@
           "cache_read": 0.05
         }
       },
+      "gemma-4-31b-it-scarlet": {
+        "id": "gemma-4-31b-it-scarlet",
+        "name": "Gemma 4 31B Scarlet",
+        "description": "Scarlet is a multimodal Gemma 4 31B creative finetune for expressive dialogue, long-form storytelling, and roleplay.",
+        "family": "gemma",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [],
+        "tool_call": true,
+        "structured_output": false,
+        "release_date": "2026-10-08",
+        "last_updated": "2026-10-08",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 262144,
+          "input": 262144,
+          "output": 32768
+        },
+        "cost": {
+          "input": 0.1,
+          "output": 0.45,
+          "cache_read": 0.05
+        }
+      },
       "GLM-4.6-Derestricted-v5": {
         "id": "GLM-4.6-Derestricted-v5",
         "name": "GLM 4.6 Derestricted v5",
@@ -19705,40 +19739,9 @@
           "output": 131072
         },
         "cost": {
-          "input": 1,
-          "output": 3.2,
-          "cache_read": 0.2
-        }
-      },
-      "doubao-seed-1-6-250615": {
-        "id": "doubao-seed-1-6-250615",
-        "name": "Doubao Seed 1.6",
-        "description": "Compact GPT model for low-latency assistance and high-volume workloads",
-        "family": "seed",
-        "attachment": false,
-        "reasoning": false,
-        "tool_call": false,
-        "structured_output": false,
-        "release_date": "2024-01-01",
-        "last_updated": "2025-06-15",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": false,
-        "limit": {
-          "context": 256000,
-          "input": 256000,
-          "output": 16384
-        },
-        "cost": {
-          "input": 0.204,
-          "output": 0.51,
-          "cache_read": 0.102
+          "input": 0.7,
+          "output": 2.2,
+          "cache_read": 0.13
         }
       },
       "Gemma-4-31B-DarkIdol": {
@@ -19811,37 +19814,6 @@
           "input": 0.75,
           "output": 3,
           "cache_read": 0.75
-        }
-      },
-      "doubao-seed-1-6-flash-250615": {
-        "id": "doubao-seed-1-6-flash-250615",
-        "name": "Doubao Seed 1.6 Flash",
-        "description": "Compact GPT model for low-latency assistance and high-volume workloads",
-        "family": "seed",
-        "attachment": false,
-        "reasoning": false,
-        "tool_call": false,
-        "structured_output": false,
-        "release_date": "2024-01-01",
-        "last_updated": "2025-06-15",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": false,
-        "limit": {
-          "context": 256000,
-          "input": 256000,
-          "output": 16384
-        },
-        "cost": {
-          "input": 0.0374,
-          "output": 0.374,
-          "cache_read": 0.0187
         }
       },
       "mistral-code-agent-latest": {
@@ -20733,6 +20705,55 @@
           "cache_read": 0.3
         }
       },
+      "anthropic/claude-haiku-5.5": {
+        "id": "anthropic/claude-haiku-5.5",
+        "name": "Claude Haiku 5.5",
+        "description": "Fast Claude model for responsive assistance, classification, and lightweight agents",
+        "family": "claude-haiku",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": false,
+        "knowledge": "2026-06",
+        "release_date": "2026-10-07",
+        "last_updated": "2026-10-07",
+        "modalities": {
+          "input": [
+            "text",
+            "image",
+            "pdf"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1000000,
+          "input": 1000000,
+          "output": 128000
+        },
+        "cost": {
+          "input": 0.1,
+          "output": 0.5,
+          "cache_read": 0.01,
+          "cache_write": 0.125
+        },
+        "canonical_model_id": "anthropic/claude-haiku-5-5"
+      },
       "anthropic/claude-opus-latest": {
         "id": "anthropic/claude-opus-latest",
         "name": "Claude Opus Latest",
@@ -20825,12 +20846,14 @@
         "reasoning": true,
         "reasoning_options": [
           {
-            "type": "toggle"
-          },
-          {
-            "type": "budget_tokens",
-            "min": 1024,
-            "max": 63999
+            "type": "effort",
+            "values": [
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ]
           }
         ],
         "tool_call": true,
@@ -20849,14 +20872,15 @@
         },
         "open_weights": false,
         "limit": {
-          "context": 200000,
-          "input": 200000,
-          "output": 64000
+          "context": 1000000,
+          "input": 1000000,
+          "output": 128000
         },
         "cost": {
-          "input": 1,
-          "output": 5,
-          "cache_read": 0.1
+          "input": 0.1,
+          "output": 0.5,
+          "cache_read": 0.01,
+          "cache_write": 0.125
         }
       },
       "anthropic/claude-opus-4.8": {
@@ -20951,7 +20975,7 @@
         "cost": {
           "input": 2,
           "output": 10,
-          "cache_read": 0.2,
+          "cache_read": 0.1,
           "cache_write": 2.5
         },
         "canonical_model_id": "anthropic/claude-sonnet-5-5"
@@ -21114,7 +21138,7 @@
         "cost": {
           "input": 2,
           "output": 10,
-          "cache_read": 0.2,
+          "cache_read": 0.1,
           "cache_write": 2.5
         }
       },
@@ -21328,7 +21352,7 @@
         "cost": {
           "input": 2,
           "output": 10,
-          "cache_read": 0.2,
+          "cache_read": 0.1,
           "cache_write": 2.5
         },
         "canonical_model_id": "anthropic/claude-sonnet-5-5"
@@ -22204,8 +22228,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 1000000,
-          "input": 1000000,
+          "context": 1048576,
+          "input": 1048576,
           "output": 131072
         },
         "cost": {
@@ -22214,6 +22238,51 @@
           "cache_read": 0.013
         },
         "canonical_model_id": "deepseek/deepseek-v4-flash-0731"
+      },
+      "deepseek/deepseek-v4-flash-0423": {
+        "id": "deepseek/deepseek-v4-flash-0423",
+        "name": "DeepSeek V4 Flash 0423",
+        "description": "Initial DeepSeek V4 Flash snapshot for economical reasoning, coding, and million-token agent workloads",
+        "family": "deepseek-flash",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "none",
+              "low",
+              "high",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "knowledge": "2025-05",
+        "release_date": "2026-04-23",
+        "last_updated": "2026-04-23",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 1048576,
+          "input": 1048576,
+          "output": 384000
+        },
+        "cost": {
+          "input": 0.14,
+          "output": 0.28,
+          "cache_read": 0.03
+        },
+        "canonical_model_id": "deepseek/deepseek-v4-flash-0423"
       },
       "deepseek/deepseek-v4.1-flash": {
         "id": "deepseek/deepseek-v4.1-flash",
@@ -22430,6 +22499,51 @@
           "cache_read": 0.04
         }
       },
+      "deepseek/deepseek-v4-flash-0423:thinking": {
+        "id": "deepseek/deepseek-v4-flash-0423:thinking",
+        "name": "DeepSeek V4 Flash 0423 (Thinking)",
+        "description": "Initial DeepSeek V4 Flash snapshot for economical reasoning, coding, and million-token agent workloads",
+        "family": "deepseek-flash",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "none",
+              "low",
+              "high",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "knowledge": "2025-05",
+        "release_date": "2026-04-23",
+        "last_updated": "2026-04-23",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 1048576,
+          "input": 1048576,
+          "output": 384000
+        },
+        "cost": {
+          "input": 0.14,
+          "output": 0.28,
+          "cache_read": 0.03
+        },
+        "canonical_model_id": "deepseek/deepseek-v4-flash-0423"
+      },
       "deepseek/deepseek-v4-pro:thinking": {
         "id": "deepseek/deepseek-v4-pro:thinking",
         "name": "DeepSeek V4 Pro (Thinking)",
@@ -22596,8 +22710,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 1000000,
-          "input": 1000000,
+          "context": 1048576,
+          "input": 1048576,
           "output": 131072
         },
         "cost": {
@@ -24143,9 +24257,9 @@
           "output": 131072
         },
         "cost": {
-          "input": 1,
-          "output": 3.2,
-          "cache_read": 0.2
+          "input": 0.7,
+          "output": 2.2,
+          "cache_read": 0.13
         },
         "canonical_model_id": "zhipuai/glm-5.3"
       },
@@ -25052,9 +25166,9 @@
           "output": 131072
         },
         "cost": {
-          "input": 1,
-          "output": 3.2,
-          "cache_read": 0.2
+          "input": 0.7,
+          "output": 2.2,
+          "cache_read": 0.13
         },
         "canonical_model_id": "zhipuai/glm-5.3"
       },
@@ -25127,9 +25241,9 @@
           "output": 131072
         },
         "cost": {
-          "input": 1,
-          "output": 3.2,
-          "cache_read": 0.2
+          "input": 0.7,
+          "output": 2.2,
+          "cache_read": 0.13
         }
       },
       "inference-net/schematron-v2-small": {
@@ -30450,14 +30564,15 @@
       "mistralai/codestral-2508": {
         "id": "mistralai/codestral-2508",
         "name": "Codestral 2508",
-        "description": "Mistral coding model for code completion, generation, and developer workflows",
+        "description": "Mistral code model for low-latency completion, fill-in-the-middle, and code generation",
         "family": "codestral",
         "attachment": false,
         "reasoning": false,
         "tool_call": false,
         "structured_output": false,
-        "release_date": "2025-08-01",
-        "last_updated": "2025-08-01",
+        "temperature": true,
+        "release_date": "2025-07-30",
+        "last_updated": "2025-07-30",
         "modalities": {
           "input": [
             "text"
@@ -30476,7 +30591,8 @@
           "input": 0.3,
           "output": 0.9,
           "cache_read": 0.15
-        }
+        },
+        "canonical_model_id": "mistral/codestral-2508"
       },
       "sakana/fugu-max": {
         "id": "sakana/fugu-max",
@@ -30874,8 +30990,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 256000,
-          "input": 256000,
+          "context": 262144,
+          "input": 262144,
           "output": 65536
         },
         "cost": {
@@ -30910,8 +31026,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 256000,
-          "input": 256000,
+          "context": 262144,
+          "input": 262144,
           "output": 65536
         },
         "cost": {
@@ -30980,8 +31096,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 256000,
-          "input": 256000,
+          "context": 262144,
+          "input": 262144,
           "output": 65536
         },
         "cost": {
@@ -31047,8 +31163,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 256000,
-          "input": 256000,
+          "context": 262144,
+          "input": 262144,
           "output": 65536
         },
         "cost": {
@@ -31066,7 +31182,7 @@
         "attachment": false,
         "reasoning": false,
         "tool_call": true,
-        "structured_output": true,
+        "structured_output": false,
         "release_date": "2024-01-01",
         "last_updated": "2025-07-11",
         "modalities": {
@@ -33435,8 +33551,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 262144,
-          "input": 262144,
+          "context": 1001536,
+          "input": 1001536,
           "output": 32768
         },
         "cost": {
@@ -34305,8 +34421,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 262144,
-          "input": 262144,
+          "context": 1001536,
+          "input": 1001536,
           "output": 32768
         },
         "cost": {
@@ -34416,8 +34532,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 524288,
-          "input": 524288,
+          "context": 1010000,
+          "input": 1010000,
           "output": 32768
         },
         "cost": {
@@ -34526,8 +34642,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 131072,
-          "input": 131072,
+          "context": 262144,
+          "input": 262144,
           "output": 32768
         },
         "cost": {
@@ -34560,8 +34676,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 524288,
-          "input": 524288,
+          "context": 1010000,
+          "input": 1010000,
           "output": 32768
         },
         "cost": {
@@ -34973,8 +35089,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 256000,
-          "input": 256000,
+          "context": 262144,
+          "input": 262144,
           "output": 65536
         },
         "cost": {
@@ -35007,8 +35123,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 131072,
-          "input": 131072,
+          "context": 262144,
+          "input": 262144,
           "output": 32768
         },
         "cost": {
@@ -35043,8 +35159,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 258048,
-          "input": 258048,
+          "context": 262144,
+          "input": 262144,
           "output": 65536
         },
         "cost": {
@@ -35369,8 +35485,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 258048,
-          "input": 258048,
+          "context": 262144,
+          "input": 262144,
           "output": 65536
         },
         "cost": {
@@ -35712,8 +35828,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 260096,
-          "input": 260096,
+          "context": 262144,
+          "input": 262144,
           "output": 65536
         },
         "cost": {
@@ -35785,8 +35901,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 260096,
-          "input": 260096,
+          "context": 262144,
+          "input": 262144,
           "output": 65536
         },
         "cost": {
@@ -37216,8 +37332,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 128000,
-          "input": 128000,
+          "context": 131072,
+          "input": 131072,
           "output": 16384
         },
         "cost": {
@@ -40293,7 +40409,7 @@
         },
         "open_weights": false,
         "limit": {
-          "context": 1000000,
+          "context": 200000,
           "output": 64000
         },
         "cost": {
@@ -40681,7 +40797,7 @@
         },
         "open_weights": false,
         "limit": {
-          "context": 1000000,
+          "context": 200000,
           "output": 64000
         },
         "cost": {
@@ -40832,6 +40948,69 @@
           "cache_write": 1.25
         }
       },
+      "claude-haiku-5-5": {
+        "id": "claude-haiku-5-5",
+        "name": "Claude Haiku 5.5",
+        "description": "Fast Claude model for responsive assistance, classification, and lightweight agents",
+        "family": "claude-haiku",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "toggle"
+          },
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": false,
+        "knowledge": "2026-06",
+        "release_date": "2026-10-07",
+        "last_updated": "2026-10-07",
+        "modalities": {
+          "input": [
+            "text",
+            "image",
+            "pdf"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1000000,
+          "output": 128000
+        },
+        "cost": {
+          "input": 0.1,
+          "output": 0.5,
+          "cache_read": 0.01,
+          "cache_write": 0.125,
+          "tiers": [
+            {
+              "input": 0.5,
+              "output": 2.5,
+              "cache_read": 0.05,
+              "cache_write": 0.625,
+              "tier": {
+                "type": "context",
+                "size": 100000
+              }
+            }
+          ]
+        },
+        "canonical_model_id": "anthropic/claude-haiku-5-5"
+      },
       "claude-sonnet-4-6": {
         "id": "claude-sonnet-4-6",
         "name": "Claude Sonnet 4.6",
@@ -40925,7 +41104,7 @@
         "cost": {
           "input": 2,
           "output": 10,
-          "cache_read": 0.2,
+          "cache_read": 0.1,
           "cache_write": 2.5
         },
         "canonical_model_id": "anthropic/claude-sonnet-5-5"
@@ -51582,7 +51761,8 @@
         "cost": {
           "input": 3,
           "output": 15,
-          "cache_read": 0.3
+          "cache_read": 0.3,
+          "cache_write": 3
         },
         "canonical_model_id": "moonshotai/kimi-k3"
       }
@@ -52721,6 +52901,53 @@
     "name": "LLM Gateway",
     "doc": "https://llmgateway.io/docs",
     "models": {
+      "entrim/glm-5.3-flash": {
+        "id": "entrim/glm-5.3-flash",
+        "name": "GLM-5.3 Flash (entrim)",
+        "description": "Native multimodal GLM model for efficient coding and long-horizon agent tasks",
+        "family": "glm-flash",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2026-08-26",
+        "last_updated": "2026-08-26",
+        "modalities": {
+          "input": [
+            "text",
+            "image",
+            "video",
+            "pdf"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 1048576,
+          "output": 131072
+        },
+        "cost": {
+          "input": 0.1,
+          "output": 0.35,
+          "cache_read": 0.0175
+        },
+        "canonical_model_id": "zhipuai/glm-5.3-flash"
+      },
       "entrim/deepseek-v4.1-flash": {
         "id": "entrim/deepseek-v4.1-flash",
         "name": "DeepSeek V4.1 Flash (entrim)",
@@ -53644,49 +53871,6 @@
           "cache_read": 0.0028
         },
         "canonical_model_id": "xiaomi/mimo-v2.6-flash"
-      },
-      "deepinfra/hy3": {
-        "id": "deepinfra/hy3",
-        "name": "Hy3 (DeepInfra)",
-        "description": "Tencent Hy reasoning model for coding, instruction following, and agent tasks",
-        "family": "Hy",
-        "attachment": false,
-        "reasoning": true,
-        "reasoning_options": [
-          {
-            "type": "effort",
-            "values": [
-              "none",
-              "low",
-              "high"
-            ]
-          }
-        ],
-        "tool_call": true,
-        "structured_output": true,
-        "temperature": true,
-        "release_date": "2026-07-06",
-        "last_updated": "2026-07-06",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 262144,
-          "input": 192000,
-          "output": 131072
-        },
-        "cost": {
-          "input": 0.14,
-          "output": 0.58,
-          "cache_read": 0.035
-        },
-        "canonical_model_id": "tencent/hy3"
       },
       "deepinfra/deepseek-v4-pro": {
         "id": "deepinfra/deepseek-v4-pro",
@@ -56010,6 +56194,54 @@
         },
         "canonical_model_id": "xai/grok-4.6"
       },
+      "aws-bedrock/claude-haiku-5-5": {
+        "id": "aws-bedrock/claude-haiku-5-5",
+        "name": "Claude Haiku 5.5 (AWS Bedrock)",
+        "description": "Fast Claude model for responsive assistance, classification, and lightweight agents",
+        "family": "claude-haiku",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": false,
+        "temperature": false,
+        "knowledge": "2026-06",
+        "release_date": "2026-10-07",
+        "last_updated": "2026-10-07",
+        "modalities": {
+          "input": [
+            "text",
+            "image",
+            "pdf"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1000000,
+          "output": 128000
+        },
+        "cost": {
+          "input": 0.1,
+          "output": 0.5,
+          "cache_read": 0.01,
+          "cache_write": 0.125
+        },
+        "canonical_model_id": "anthropic/claude-haiku-5-5"
+      },
       "aws-bedrock/claude-sonnet-4-6": {
         "id": "aws-bedrock/claude-sonnet-4-6",
         "name": "Claude Sonnet 4.6 (AWS Bedrock)",
@@ -56574,7 +56806,6 @@
           {
             "type": "effort",
             "values": [
-              "minimal",
               "low",
               "medium",
               "high"
@@ -57426,6 +57657,54 @@
           "cache_write": 1.25
         },
         "canonical_model_id": "anthropic/claude-haiku-4-5-20251001"
+      },
+      "anthropic/claude-haiku-5-5": {
+        "id": "anthropic/claude-haiku-5-5",
+        "name": "Claude Haiku 5.5 (Anthropic)",
+        "description": "Fast Claude model for responsive assistance, classification, and lightweight agents",
+        "family": "claude-haiku",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": false,
+        "knowledge": "2026-06",
+        "release_date": "2026-10-07",
+        "last_updated": "2026-10-07",
+        "modalities": {
+          "input": [
+            "text",
+            "image",
+            "pdf"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1000000,
+          "output": 128000
+        },
+        "cost": {
+          "input": 0.1,
+          "output": 0.5,
+          "cache_read": 0.01,
+          "cache_write": 0.125
+        },
+        "canonical_model_id": "anthropic/claude-haiku-5-5"
       },
       "anthropic/claude-sonnet-4-6": {
         "id": "anthropic/claude-sonnet-4-6",
@@ -70139,7 +70418,6 @@
           {
             "type": "effort",
             "values": [
-              "minimal",
               "low",
               "medium",
               "high"
@@ -73017,6 +73295,48 @@
           "cache_write": 5
         }
       },
+      "stealth/glyph-cluster": {
+        "id": "stealth/glyph-cluster",
+        "name": "Stealth: Glyph Cluster (free)",
+        "description": "Your prompts and completions may be retained and used to train or improve the provider's services. Glyph Cluster is a reasoning model for coding and long-context analysis, served through Vercel AI Gateway during its stealth period at no cost. It supports function calling and streaming, takes text input only, and does not support structured outputs. Zero Data Retention is not available for this model.",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "medium",
+              "high",
+              "xhigh"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": false,
+        "temperature": true,
+        "release_date": "2025-08-26",
+        "last_updated": "2025-08-26",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 256000,
+          "output": 256000
+        },
+        "cost": {
+          "input": 0,
+          "output": 0,
+          "reasoning": 0,
+          "cache_read": 0
+        }
+      },
       "stealth/claude-sonnet-4.6": {
         "id": "stealth/claude-sonnet-4.6",
         "name": "Stealth: Claude Sonnet 4.6 (20% off)",
@@ -73407,7 +73727,7 @@
           "output": 943718
         },
         "cost": {
-          "input": 0.61,
+          "input": 0.45,
           "output": 13,
           "cache_read": 0.45
         }
@@ -73798,6 +74118,55 @@
         },
         "canonical_model_id": "anthropic/claude-opus-4-7"
       },
+      "anthropic/claude-haiku-5.5": {
+        "id": "anthropic/claude-haiku-5.5",
+        "name": "Claude Haiku 5.5",
+        "description": "Claude Haiku 5.5 is Anthropic's small, fast model for high-volume, cost-sensitive work such as summarization, subagents, and browser use. It succeeds Claude Haiku 4.5 with stronger coding, computer use, and...",
+        "family": "claude-haiku",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "none",
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": false,
+        "knowledge": "2026-06",
+        "release_date": "2026-10-07",
+        "last_updated": "2026-10-07",
+        "modalities": {
+          "input": [
+            "text",
+            "image",
+            "pdf"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1000000,
+          "output": 128000
+        },
+        "cost": {
+          "input": 0.1,
+          "output": 0.5,
+          "cache_read": 0.01,
+          "cache_write": 0.125
+        },
+        "canonical_model_id": "anthropic/claude-haiku-5-5"
+      },
       "anthropic/claude-opus-4.8": {
         "id": "anthropic/claude-opus-4.8",
         "name": "Claude Opus 4.8",
@@ -73820,7 +74189,7 @@
         ],
         "tool_call": true,
         "structured_output": true,
-        "temperature": true,
+        "temperature": false,
         "knowledge": "2026-01",
         "release_date": "2026-05-28",
         "last_updated": "2026-05-28",
@@ -73914,7 +74283,7 @@
         ],
         "tool_call": true,
         "structured_output": true,
-        "temperature": true,
+        "temperature": false,
         "knowledge": "2026-05",
         "release_date": "2026-07-24",
         "last_updated": "2026-07-24",
@@ -73962,7 +74331,7 @@
         ],
         "tool_call": true,
         "structured_output": true,
-        "temperature": true,
+        "temperature": false,
         "knowledge": "2026-06",
         "release_date": "2026-09-28",
         "last_updated": "2026-09-28",
@@ -73984,7 +74353,7 @@
         "cost": {
           "input": 2,
           "output": 10,
-          "cache_read": 0.2,
+          "cache_read": 0.1,
           "cache_write": 2.5
         },
         "canonical_model_id": "anthropic/claude-sonnet-5-5"
@@ -74291,7 +74660,7 @@
         ],
         "tool_call": true,
         "structured_output": true,
-        "temperature": true,
+        "temperature": false,
         "knowledge": "2026-06",
         "release_date": "2026-09-22",
         "last_updated": "2026-09-22",
@@ -75119,13 +75488,13 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 131072,
-          "output": 65536
+          "context": 163840,
+          "output": 147456
         },
         "cost": {
-          "input": 0.28,
+          "input": 0.259,
           "output": 0.42,
-          "cache_read": 0.028
+          "cache_read": 0.135
         },
         "canonical_model_id": "deepseek/deepseek-v3.2"
       },
@@ -75988,7 +76357,7 @@
         "cost": {
           "input": 0.3,
           "output": 0.9,
-          "cache_read": 0.05
+          "cache_read": 0.055
         },
         "canonical_model_id": "zhipuai/glm-4.6v"
       },
@@ -77579,12 +77948,12 @@
         "open_weights": false,
         "limit": {
           "context": 1048576,
-          "output": 131072
+          "output": 943718
         },
         "cost": {
-          "input": 0.0214,
-          "output": 0.5,
-          "cache_read": 0.0214
+          "input": 0.032,
+          "output": 3.33595,
+          "cache_read": 0.02
         }
       },
       "~z-ai/glm-latest": {
@@ -77623,9 +77992,9 @@
           "output": 131072
         },
         "cost": {
-          "input": 0.063,
-          "output": 6.3,
-          "cache_read": 0.0585
+          "input": 0.036,
+          "output": 12,
+          "cache_read": 0.0335
         }
       },
       "arcee-ai/trinity-large-thinking": {
@@ -78388,7 +78757,7 @@
         ],
         "tool_call": true,
         "structured_output": true,
-        "temperature": true,
+        "temperature": false,
         "release_date": "2026-04-21",
         "last_updated": "2026-04-21",
         "modalities": {
@@ -78425,13 +78794,17 @@
             "type": "effort",
             "values": [
               "none",
-              "high"
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
             ]
           }
         ],
         "tool_call": true,
         "structured_output": true,
-        "temperature": true,
+        "temperature": false,
         "release_date": "2026-04-27",
         "last_updated": "2026-04-27",
         "modalities": {
@@ -78446,14 +78819,14 @@
         },
         "open_weights": false,
         "limit": {
-          "context": 200000,
-          "output": 64000
+          "context": 1000000,
+          "output": 128000
         },
         "cost": {
-          "input": 1,
-          "output": 5,
-          "cache_read": 0.1,
-          "cache_write": 1.25
+          "input": 0.1,
+          "output": 0.5,
+          "cache_read": 0.01,
+          "cache_write": 0.125
         }
       },
       "~anthropic/claude-sonnet-latest": {
@@ -78477,7 +78850,7 @@
         ],
         "tool_call": true,
         "structured_output": true,
-        "temperature": true,
+        "temperature": false,
         "knowledge": "2025-08-31",
         "release_date": "2026-04-27",
         "last_updated": "2026-04-27",
@@ -78499,7 +78872,7 @@
         "cost": {
           "input": 2,
           "output": 10,
-          "cache_read": 0.2,
+          "cache_read": 0.1,
           "cache_write": 2.5
         }
       },
@@ -78720,9 +79093,9 @@
           "output": 943718
         },
         "cost": {
-          "input": 0.05,
-          "output": 1.2,
-          "cache_read": 0.02
+          "input": 0.0356,
+          "output": 1,
+          "cache_read": 0.01
         }
       },
       "~deepseek/deepseek-pro-latest": {
@@ -78759,12 +79132,12 @@
         "open_weights": false,
         "limit": {
           "context": 1048576,
-          "output": 384000
+          "output": 393216
         },
         "cost": {
-          "input": 0.4,
-          "output": 4.3,
-          "cache_read": 0.033
+          "input": 0.108,
+          "output": 8,
+          "cache_read": 0.081
         }
       },
       "~deepseek/deepseek-v4-flash-latest": {
@@ -78804,9 +79177,9 @@
           "output": 943718
         },
         "cost": {
-          "input": 0.018,
-          "output": 1.28,
-          "cache_read": 0.018
+          "input": 0.00632,
+          "output": 0.313086,
+          "cache_read": 0.00632
         }
       },
       "~x-ai/grok-latest": {
@@ -80984,7 +81357,7 @@
       },
       "mistralai/codestral-2508": {
         "id": "mistralai/codestral-2508",
-        "name": "Mistral: Codestral 2508",
+        "name": "Codestral 25.08",
         "description": "Mistral coding model for code completion, generation, and developer workflows",
         "family": "codestral",
         "attachment": true,
@@ -80992,8 +81365,8 @@
         "tool_call": true,
         "structured_output": true,
         "temperature": true,
-        "release_date": "2025-08-01",
-        "last_updated": "2025-08-01",
+        "release_date": "2025-07-30",
+        "last_updated": "2025-07-30",
         "modalities": {
           "input": [
             "text",
@@ -81012,7 +81385,8 @@
           "input": 0.3,
           "output": 0.9,
           "cache_read": 0.03
-        }
+        },
+        "canonical_model_id": "mistral/codestral-2508"
       },
       "sakana/fugu-max": {
         "id": "sakana/fugu-max",
@@ -81938,8 +82312,7 @@
         },
         "cost": {
           "input": 0.05,
-          "output": 0.2,
-          "cache_read": 0.03
+          "output": 0.2
         },
         "canonical_model_id": "nvidia/nemotron-3-nano-30b-a3b"
       },
@@ -82016,7 +82389,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 32768
+          "output": 131072
         },
         "cost": {
           "input": 0.039,
@@ -82101,7 +82474,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 235929
+          "output": 16384
         },
         "cost": {
           "input": 0.08,
@@ -83886,7 +84259,7 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 1000000,
+          "context": 1048576,
           "output": 131072
         },
         "cost": {
@@ -83931,7 +84304,7 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 65536
+          "output": 81920
         },
         "cost": {
           "input": 0.195,
@@ -84519,8 +84892,8 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 262144,
-          "output": 235929
+          "context": 131072,
+          "output": 32768
         },
         "cost": {
           "input": 0.0975,
@@ -89109,9 +89482,9 @@
           "output": 32768
         },
         "cost": {
-          "input": 0.175,
-          "output": 0.35,
-          "cache_read": 0.035
+          "input": 0.13,
+          "output": 0.26,
+          "cache_read": 0.028
         },
         "canonical_model_id": "deepseek/deepseek-v4-flash-0731"
       },
@@ -92668,6 +93041,66 @@
         },
         "canonical_model_id": "google/gemini-3.6-flash"
       },
+      "claude-haiku-5-5": {
+        "id": "claude-haiku-5-5",
+        "name": "Claude Haiku 5.5",
+        "description": "Fast Claude model for responsive assistance, classification, and lightweight agents",
+        "family": "claude-haiku",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "none",
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": false,
+        "knowledge": "2026-06",
+        "release_date": "2026-10-07",
+        "last_updated": "2026-10-07",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1000000,
+          "output": 128000
+        },
+        "cost": {
+          "input": 0.125,
+          "output": 0.625,
+          "cache_read": 0.0125,
+          "cache_write": 0.15625,
+          "tiers": [
+            {
+              "input": 0.625,
+              "output": 3.125,
+              "cache_read": 0.0625,
+              "cache_write": 0.78125,
+              "tier": {
+                "type": "context",
+                "size": 100000
+              }
+            }
+          ]
+        },
+        "canonical_model_id": "anthropic/claude-haiku-5-5"
+      },
       "gemini-3-1-pro-preview": {
         "id": "gemini-3-1-pro-preview",
         "name": "Gemini 3.1 Pro Preview",
@@ -93109,7 +93542,7 @@
         "cost": {
           "input": 2.5,
           "output": 12.5,
-          "cache_read": 0.25,
+          "cache_read": 0.125,
           "cache_write": 3.125
         },
         "canonical_model_id": "anthropic/claude-sonnet-5-5"
@@ -97078,7 +97511,7 @@
         "structured_output": true,
         "temperature": true,
         "release_date": "2026-08-26",
-        "last_updated": "2026-09-01",
+        "last_updated": "2026-09-30",
         "modalities": {
           "input": [
             "text",
@@ -97091,7 +97524,7 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 524288,
+          "context": 1048576,
           "output": 16384
         },
         "cost": {
@@ -110649,7 +111082,7 @@
           "output": 943718
         },
         "cost": {
-          "input": 0.61,
+          "input": 0.45,
           "output": 13,
           "cache_read": 0.45
         }
@@ -111063,6 +111496,69 @@
         },
         "canonical_model_id": "anthropic/claude-opus-4-7"
       },
+      "anthropic/claude-haiku-5.5": {
+        "id": "anthropic/claude-haiku-5.5",
+        "name": "Claude Haiku 5.5",
+        "description": "Fast Claude model for responsive assistance, classification, and lightweight agents",
+        "family": "claude-haiku",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "toggle"
+          },
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": false,
+        "knowledge": "2026-06",
+        "release_date": "2026-10-07",
+        "last_updated": "2026-10-07",
+        "modalities": {
+          "input": [
+            "text",
+            "image",
+            "pdf"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1000000,
+          "output": 128000
+        },
+        "cost": {
+          "input": 0.1,
+          "output": 0.5,
+          "cache_read": 0.01,
+          "cache_write": 0.125,
+          "tiers": [
+            {
+              "input": 0.5,
+              "output": 2.5,
+              "cache_read": 0.05,
+              "cache_write": 0.625,
+              "tier": {
+                "type": "context",
+                "size": 100000
+              }
+            }
+          ]
+        },
+        "canonical_model_id": "anthropic/claude-haiku-5-5"
+      },
       "anthropic/claude-opus-4.8": {
         "id": "anthropic/claude-opus-4.8",
         "name": "Claude Opus 4.8",
@@ -111087,7 +111583,7 @@
         ],
         "tool_call": true,
         "structured_output": true,
-        "temperature": true,
+        "temperature": false,
         "knowledge": "2026-01",
         "release_date": "2026-05-28",
         "last_updated": "2026-05-28",
@@ -111179,7 +111675,7 @@
         ],
         "tool_call": true,
         "structured_output": true,
-        "temperature": true,
+        "temperature": false,
         "knowledge": "2026-05",
         "release_date": "2026-07-24",
         "last_updated": "2026-07-24",
@@ -111227,7 +111723,7 @@
         ],
         "tool_call": true,
         "structured_output": true,
-        "temperature": true,
+        "temperature": false,
         "knowledge": "2026-06",
         "release_date": "2026-09-28",
         "last_updated": "2026-09-28",
@@ -111249,7 +111745,7 @@
         "cost": {
           "input": 2,
           "output": 10,
-          "cache_read": 0.2,
+          "cache_read": 0.1,
           "cache_write": 2.5
         },
         "canonical_model_id": "anthropic/claude-sonnet-5-5"
@@ -111607,7 +112103,7 @@
         ],
         "tool_call": true,
         "structured_output": true,
-        "temperature": true,
+        "temperature": false,
         "knowledge": "2026-06",
         "release_date": "2026-09-22",
         "last_updated": "2026-09-22",
@@ -112041,9 +112537,9 @@
           "output": 943718
         },
         "cost": {
-          "input": 0.05,
-          "output": 1.2,
-          "cache_read": 0.02
+          "input": 0.0351,
+          "output": 1,
+          "cache_read": 0.01
         },
         "canonical_model_id": "deepseek/deepseek-v4.1-flash"
       },
@@ -112349,9 +112845,9 @@
           "output": 384000
         },
         "cost": {
-          "input": 0.2088,
-          "output": 0.4176,
-          "cache_read": 0.0174
+          "input": 0.95526,
+          "output": 1.91052,
+          "cache_read": 0.079605
         },
         "canonical_model_id": "deepseek/deepseek-v4-pro"
       },
@@ -112417,12 +112913,12 @@
         "open_weights": true,
         "limit": {
           "context": 163840,
-          "output": 65536
+          "output": 147456
         },
         "cost": {
-          "input": 0.28,
+          "input": 0.259,
           "output": 0.42,
-          "cache_read": 0.028
+          "cache_read": 0.135
         },
         "canonical_model_id": "deepseek/deepseek-v3.2"
       },
@@ -112468,9 +112964,9 @@
           "output": 943718
         },
         "cost": {
-          "input": 0.03,
+          "input": 0.0228,
           "output": 1.28,
-          "cache_read": 0.03
+          "cache_read": 0.0228
         },
         "canonical_model_id": "deepseek/deepseek-v4-flash"
       },
@@ -112944,9 +113440,8 @@
           "output": 16384
         },
         "cost": {
-          "input": 0.22,
-          "output": 0.5,
-          "cache_read": 0.11
+          "input": 0.1,
+          "output": 0.32
         },
         "canonical_model_id": "meta/llama-3.3-70b-instruct"
       },
@@ -113305,7 +113800,7 @@
         "cost": {
           "input": 0.3,
           "output": 0.9,
-          "cache_read": 0.05
+          "cache_read": 0.055
         },
         "canonical_model_id": "zhipuai/glm-4.6v"
       },
@@ -113753,9 +114248,9 @@
           "output": 131072
         },
         "cost": {
-          "input": 0.171,
-          "output": 7.2,
-          "cache_read": 0.162
+          "input": 0.03,
+          "output": 10,
+          "cache_read": 0.03
         },
         "canonical_model_id": "zhipuai/glm-5.2"
       },
@@ -113913,9 +114408,9 @@
           "output": 943718
         },
         "cost": {
-          "input": 0.07,
-          "output": 7,
-          "cache_read": 0.065
+          "input": 0.049,
+          "output": 3.39,
+          "cache_read": 0.048
         },
         "canonical_model_id": "zhipuai/glm-5.3"
       },
@@ -114922,12 +115417,12 @@
         "open_weights": false,
         "limit": {
           "context": 1048576,
-          "output": 131072
+          "output": 943718
         },
         "cost": {
-          "input": 0.0214,
-          "output": 0.5,
-          "cache_read": 0.0214
+          "input": 0.032,
+          "output": 2.756983,
+          "cache_read": 0.02
         }
       },
       "~z-ai/glm-latest": {
@@ -114966,9 +115461,9 @@
           "output": 131072
         },
         "cost": {
-          "input": 0.063,
-          "output": 6.3,
-          "cache_read": 0.0585
+          "input": 0.036,
+          "output": 12,
+          "cache_read": 0.0335
         }
       },
       "arcee-ai/trinity-large-thinking": {
@@ -115904,7 +116399,7 @@
         ],
         "tool_call": true,
         "structured_output": true,
-        "temperature": true,
+        "temperature": false,
         "release_date": "2026-04-21",
         "last_updated": "2026-04-21",
         "modalities": {
@@ -115939,11 +116434,21 @@
         "reasoning_options": [
           {
             "type": "toggle"
+          },
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ]
           }
         ],
         "tool_call": true,
         "structured_output": true,
-        "temperature": true,
+        "temperature": false,
         "release_date": "2026-04-27",
         "last_updated": "2026-04-27",
         "modalities": {
@@ -115958,14 +116463,26 @@
         },
         "open_weights": false,
         "limit": {
-          "context": 200000,
-          "output": 64000
+          "context": 1000000,
+          "output": 128000
         },
         "cost": {
-          "input": 1,
-          "output": 5,
-          "cache_read": 0.1,
-          "cache_write": 1.25
+          "input": 0.1,
+          "output": 0.5,
+          "cache_read": 0.01,
+          "cache_write": 0.125,
+          "tiers": [
+            {
+              "input": 0.5,
+              "output": 2.5,
+              "cache_read": 0.05,
+              "cache_write": 0.625,
+              "tier": {
+                "type": "context",
+                "size": 100000
+              }
+            }
+          ]
         }
       },
       "~anthropic/claude-sonnet-latest": {
@@ -115989,7 +116506,7 @@
         ],
         "tool_call": true,
         "structured_output": true,
-        "temperature": true,
+        "temperature": false,
         "knowledge": "2026-01-31",
         "release_date": "2026-04-27",
         "last_updated": "2026-04-27",
@@ -116011,7 +116528,7 @@
         "cost": {
           "input": 2,
           "output": 10,
-          "cache_read": 0.2,
+          "cache_read": 0.1,
           "cache_write": 2.5
         }
       },
@@ -116234,9 +116751,9 @@
           "output": 943718
         },
         "cost": {
-          "input": 0.05,
-          "output": 1.2,
-          "cache_read": 0.02
+          "input": 0.0351,
+          "output": 1,
+          "cache_read": 0.01
         }
       },
       "~deepseek/deepseek-pro-latest": {
@@ -116275,12 +116792,12 @@
         "open_weights": false,
         "limit": {
           "context": 1048576,
-          "output": 384000
+          "output": 393216
         },
         "cost": {
-          "input": 0.4,
-          "output": 4.3,
-          "cache_read": 0.033
+          "input": 0.108,
+          "output": 8,
+          "cache_read": 0.081
         }
       },
       "~deepseek/deepseek-v4-flash-latest": {
@@ -116322,9 +116839,9 @@
           "output": 943718
         },
         "cost": {
-          "input": 0.018,
-          "output": 1.28,
-          "cache_read": 0.018
+          "input": 0.0144,
+          "output": 0.386526,
+          "cache_read": 0.0144
         }
       },
       "~x-ai/grok-latest": {
@@ -118648,7 +119165,7 @@
       },
       "mistralai/codestral-2508": {
         "id": "mistralai/codestral-2508",
-        "name": "Codestral 2508",
+        "name": "Codestral 25.08",
         "description": "Mistral coding model for code completion, generation, and developer workflows",
         "family": "codestral",
         "attachment": true,
@@ -118656,9 +119173,8 @@
         "tool_call": true,
         "structured_output": true,
         "temperature": true,
-        "knowledge": "2025-03-31",
-        "release_date": "2025-08-01",
-        "last_updated": "2025-08-01",
+        "release_date": "2025-07-30",
+        "last_updated": "2025-07-30",
         "modalities": {
           "input": [
             "text",
@@ -118677,7 +119193,8 @@
           "input": 0.3,
           "output": 0.9,
           "cache_read": 0.03
-        }
+        },
+        "canonical_model_id": "mistral/codestral-2508"
       },
       "sakana/fugu-max": {
         "id": "sakana/fugu-max",
@@ -119106,7 +119623,7 @@
         },
         "cost": {
           "input": 0.62,
-          "output": 15,
+          "output": 12.3,
           "cache_read": 0.43
         },
         "canonical_model_id": "moonshotai/kimi-k3"
@@ -119457,9 +119974,8 @@
           "output": 235929
         },
         "cost": {
-          "input": 0.05,
-          "output": 0.2,
-          "cache_read": 0.03
+          "input": 0.06,
+          "output": 0.24
         },
         "canonical_model_id": "nvidia/nemotron-3-nano-30b-a3b"
       },
@@ -119528,12 +120044,12 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 32768
+          "output": 131072
         },
         "cost": {
-          "input": 0.06,
-          "output": 0.16,
-          "cache_read": 0.03
+          "input": 0.049,
+          "output": 0.14,
+          "cache_read": 0.0245
         },
         "canonical_model_id": "nvidia/nemotron-3.5-lightning"
       },
@@ -119617,11 +120133,11 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 235929
+          "output": 16384
         },
         "cost": {
-          "input": 0.08,
-          "output": 0.45
+          "input": 0.085,
+          "output": 0.4
         },
         "canonical_model_id": "nvidia/nemotron-3-super-120b-a12b"
       },
@@ -121292,11 +121808,11 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 65536
+          "output": 81920
         },
         "cost": {
-          "input": 0.195,
-          "output": 1.56
+          "input": 0.26,
+          "output": 2.6
         },
         "canonical_model_id": "alibaba/qwen3.5-27b"
       },
@@ -121931,12 +122447,11 @@
         "open_weights": true,
         "limit": {
           "context": 262144,
-          "output": 235929
+          "output": 32768
         },
         "cost": {
-          "input": 0.1,
-          "output": 1.1,
-          "cache_read": 0.07
+          "input": 0.15,
+          "output": 1.5
         },
         "canonical_model_id": "alibaba/qwen3-next-80b-a3b-instruct"
       },
@@ -122946,9 +123461,8 @@
           "output": 65536
         },
         "cost": {
-          "input": 0.3,
-          "output": 2,
-          "cache_read": 0.03
+          "input": 0.45,
+          "output": 2.7
         },
         "canonical_model_id": "alibaba/qwen3.6-27b"
       },
@@ -128782,52 +129296,6 @@
         },
         "canonical_model_id": "zhipuai/glm-5.3"
       },
-      "glm-5.3-flash-fp4": {
-        "id": "glm-5.3-flash-fp4",
-        "name": "GLM 5.3 Flash FP4",
-        "description": "Native multimodal GLM model for efficient coding and long-horizon agent tasks",
-        "family": "glm-flash",
-        "attachment": true,
-        "reasoning": true,
-        "reasoning_options": [
-          {
-            "type": "effort",
-            "values": [
-              "low",
-              "high",
-              "max"
-            ]
-          }
-        ],
-        "tool_call": true,
-        "interleaved": true,
-        "structured_output": true,
-        "temperature": true,
-        "release_date": "2026-08-26",
-        "last_updated": "2026-08-26",
-        "modalities": {
-          "input": [
-            "text",
-            "image",
-            "video"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 1048576,
-          "output": 131072
-        },
-        "cost": {
-          "input": 0.15,
-          "output": 0.5,
-          "cache_read": 0,
-          "cache_write": 0.23
-        },
-        "canonical_model_id": "zhipuai/glm-5.3-flash"
-      },
       "deepseek-v4.1-flash-fast": {
         "id": "deepseek-v4.1-flash-fast",
         "name": "DeepSeek V4.1 Flash",
@@ -132567,6 +133035,48 @@
           "output": 0.5
         }
       },
+      "grok-4.7": {
+        "id": "grok-4.7",
+        "name": "Grok 4.7",
+        "description": "xAI's frontier model for long-running agents, coding, knowledge work, and visual projects",
+        "family": "grok",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "medium",
+              "high",
+              "xhigh"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "knowledge": "2026-05",
+        "release_date": "2026-09-21",
+        "last_updated": "2026-09-21",
+        "modalities": {
+          "input": [
+            "text",
+            "image",
+            "pdf"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 500000,
+          "output": 500000
+        },
+        "status": "beta",
+        "canonical_model_id": "xai/grok-4.7"
+      },
       "text-embedding-3-small": {
         "id": "text-embedding-3-small",
         "name": "text-embedding-3-small",
@@ -135280,6 +135790,73 @@
         },
         "canonical_model_id": "openai/gpt-4.1-mini"
       },
+      "claude-haiku-5-5": {
+        "id": "claude-haiku-5-5",
+        "name": "Claude Haiku 5.5",
+        "description": "Fast Claude model for responsive assistance, classification, and lightweight agents",
+        "family": "claude-haiku",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "toggle"
+          },
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": false,
+        "knowledge": "2026-06",
+        "release_date": "2026-10-07",
+        "last_updated": "2026-10-07",
+        "modalities": {
+          "input": [
+            "text",
+            "image",
+            "pdf"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1000000,
+          "output": 128000
+        },
+        "provider": {
+          "npm": "@ai-sdk/anthropic",
+          "api": "https://${AZURE_RESOURCE_NAME}.services.ai.azure.com/anthropic/v1"
+        },
+        "cost": {
+          "input": 0.1,
+          "output": 0.5,
+          "cache_read": 0.01,
+          "cache_write": 0.125,
+          "tiers": [
+            {
+              "input": 0.5,
+              "output": 2.5,
+              "cache_read": 0.05,
+              "cache_write": 0.625,
+              "tier": {
+                "type": "context",
+                "size": 100000
+              }
+            }
+          ]
+        },
+        "canonical_model_id": "anthropic/claude-haiku-5-5"
+      },
       "gpt-6-luna": {
         "id": "gpt-6-luna",
         "name": "GPT-6 Luna",
@@ -136018,7 +136595,7 @@
         },
         "status": "beta",
         "cost": {
-          "input": 1.25,
+          "input": 2,
           "output": 6,
           "cache_read": 0.5
         },
@@ -137873,6 +138450,73 @@
             "cache_write": 12.5
           }
         }
+      },
+      "claude-haiku-5-5": {
+        "id": "claude-haiku-5-5",
+        "name": "Claude Haiku 5.5",
+        "description": "Fast Claude model for responsive assistance, classification, and lightweight agents",
+        "family": "claude-haiku",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "toggle"
+          },
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": false,
+        "knowledge": "2026-06",
+        "release_date": "2026-10-07",
+        "last_updated": "2026-10-07",
+        "modalities": {
+          "input": [
+            "text",
+            "image",
+            "pdf"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1000000,
+          "output": 128000
+        },
+        "provider": {
+          "npm": "@ai-sdk/anthropic",
+          "api": "https://${AZURE_COGNITIVE_SERVICES_RESOURCE_NAME}.services.ai.azure.com/anthropic/v1"
+        },
+        "cost": {
+          "input": 0.1,
+          "output": 0.5,
+          "cache_read": 0.01,
+          "cache_write": 0.125,
+          "tiers": [
+            {
+              "input": 0.5,
+              "output": 2.5,
+              "cache_read": 0.05,
+              "cache_write": 0.625,
+              "tier": {
+                "type": "context",
+                "size": 100000
+              }
+            }
+          ]
+        },
+        "canonical_model_id": "anthropic/claude-haiku-5-5"
       },
       "claude-sonnet-4-6": {
         "id": "claude-sonnet-4-6",
@@ -144977,8 +145621,8 @@
           "output": 4096
         },
         "cost": {
-          "input": 0.72,
-          "output": 0.72
+          "input": 0.07,
+          "output": 0.16
         }
       }
     }
@@ -170080,6 +170724,56 @@
         },
         "canonical_model_id": "anthropic/claude-opus-5"
       },
+      "anthropic/claude-sonnet-5.5": {
+        "id": "anthropic/claude-sonnet-5.5",
+        "name": "Claude Sonnet 5.5",
+        "description": "Fast Claude model for everyday coding, agents, and knowledge work",
+        "family": "claude-sonnet",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "temperature": false,
+        "knowledge": "2026-06",
+        "release_date": "2026-09-28",
+        "last_updated": "2026-09-28",
+        "modalities": {
+          "input": [
+            "text",
+            "image",
+            "pdf"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1000000,
+          "output": 128000
+        },
+        "provider": {
+          "npm": "@ai-sdk/anthropic"
+        },
+        "cost": {
+          "input": 2,
+          "output": 10,
+          "cache_read": 0.2,
+          "cache_write": 2.5
+        },
+        "canonical_model_id": "anthropic/claude-sonnet-5-5"
+      },
       "anthropic/claude-fable-5.1": {
         "id": "anthropic/claude-fable-5.1",
         "name": "Claude Fable 5.1",
@@ -171470,6 +172164,77 @@
           "cache_read": 0.005
         },
         "canonical_model_id": "openai/gpt-5-nano"
+      },
+      "openai/gpt-6.1-sol": {
+        "id": "openai/gpt-6.1-sol",
+        "name": "GPT-6.1 Sol",
+        "description": "Near-Astra performance for complex coding, computer use, and professional work at a lower cost.",
+        "family": "gpt-sol",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "none",
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": false,
+        "knowledge": "2026-04-30",
+        "release_date": "2026-09-29",
+        "last_updated": "2026-09-29",
+        "modalities": {
+          "input": [
+            "text",
+            "image",
+            "pdf"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1050000,
+          "input": 922000,
+          "output": 128000
+        },
+        "provider": {
+          "npm": "@ai-sdk/openai"
+        },
+        "cost": {
+          "input": 2,
+          "output": 10,
+          "cache_read": 0.1,
+          "cache_write": 2.5,
+          "tiers": [
+            {
+              "input": 4,
+              "output": 15,
+              "cache_read": 0.2,
+              "cache_write": 5,
+              "tier": {
+                "type": "context",
+                "size": 272000
+              }
+            }
+          ],
+          "context_over_200k": {
+            "input": 4,
+            "output": 15,
+            "cache_read": 0.2,
+            "cache_write": 5
+          }
+        },
+        "canonical_model_id": "openai/gpt-6.1-sol"
       },
       "openai/gpt-6-astra": {
         "id": "openai/gpt-6-astra",
@@ -178688,6 +179453,48 @@
         },
         "canonical_model_id": "moonshotai/kimi-k3"
       },
+      "mistral-large-4": {
+        "id": "mistral-large-4",
+        "name": "Mistral Large 4",
+        "description": "Mistral's 1T-parameter multimodal MoE for reasoning, coding, and agentic work",
+        "family": "mistral-large",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "none",
+              "high"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2026-10-06",
+        "last_updated": "2026-10-06",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1048576,
+          "output": 262144
+        },
+        "cost": {
+          "input": 1.36,
+          "output": 4.18,
+          "cache_read": 0.14
+        },
+        "canonical_model_id": "mistral/mistral-large-4"
+      },
       "deepseek-v4.1-flash": {
         "id": "deepseek-v4.1-flash",
         "name": "DeepSeek V4.1 Flash",
@@ -183898,6 +184705,44 @@
           "output": 3.5
         }
       },
+      "stealth/glyph-cluster": {
+        "id": "stealth/glyph-cluster",
+        "name": "Glyph Cluster",
+        "description": "Reasoning model for deliberate analysis, multi-step problem solving, and tool use",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "medium",
+              "high",
+              "xhigh"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "release_date": "2026-10-07",
+        "last_updated": "2026-10-07",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 256000,
+          "output": 256000
+        },
+        "cost": {
+          "input": 0,
+          "output": 0
+        }
+      },
       "zai/glm-4.5": {
         "id": "zai/glm-4.5",
         "name": "GLM 4.5",
@@ -185967,6 +186812,67 @@
         },
         "canonical_model_id": "anthropic/claude-opus-4-7"
       },
+      "anthropic/claude-haiku-5.5": {
+        "id": "anthropic/claude-haiku-5.5",
+        "name": "Claude Haiku 5.5",
+        "description": "Fast Claude model for responsive assistance, classification, and lightweight agents",
+        "family": "claude-haiku",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "none",
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": false,
+        "knowledge": "2026-06",
+        "release_date": "2026-10-07",
+        "last_updated": "2026-10-07",
+        "modalities": {
+          "input": [
+            "text",
+            "image",
+            "pdf"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1000000,
+          "output": 128000
+        },
+        "cost": {
+          "input": 0.1,
+          "output": 0.5,
+          "cache_read": 0.01,
+          "cache_write": 0.125,
+          "tiers": [
+            {
+              "input": 0.5,
+              "output": 2.5,
+              "cache_read": 0.05,
+              "cache_write": 0.625,
+              "tier": {
+                "type": "context",
+                "size": 100001
+              }
+            }
+          ]
+        },
+        "canonical_model_id": "anthropic/claude-haiku-5-5"
+      },
       "anthropic/claude-3-haiku": {
         "id": "anthropic/claude-3-haiku",
         "name": "Claude Haiku 3",
@@ -186237,7 +187143,7 @@
         "cost": {
           "input": 2,
           "output": 10,
-          "cache_read": 0.2,
+          "cache_read": 0.1,
           "cache_write": 2.5
         },
         "canonical_model_id": "anthropic/claude-sonnet-5-5"
@@ -186750,7 +187656,7 @@
         },
         "open_weights": false,
         "limit": {
-          "context": 1000000,
+          "context": 200000,
           "output": 64000
         },
         "cost": {
@@ -187066,48 +187972,6 @@
         },
         "canonical_model_id": "deepseek/deepseek-v4-flash-vision-exp"
       },
-      "deepseek/deepseek-v3.1-terminus": {
-        "id": "deepseek/deepseek-v3.1-terminus",
-        "name": "DeepSeek V3.1 Terminus",
-        "description": "DeepSeek chat model for instruction following, coding, and analysis",
-        "family": "deepseek",
-        "attachment": false,
-        "reasoning": true,
-        "reasoning_options": [
-          {
-            "type": "effort",
-            "values": [
-              "none",
-              "low",
-              "medium",
-              "high"
-            ]
-          }
-        ],
-        "tool_call": true,
-        "temperature": true,
-        "knowledge": "2025-07",
-        "release_date": "2025-09-22",
-        "last_updated": "2025-09-22",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 131072,
-          "output": 32768
-        },
-        "cost": {
-          "input": 0.27,
-          "output": 1,
-          "cache_read": 0.135
-        }
-      },
       "deepseek/deepseek-v4-pro-0813": {
         "id": "deepseek/deepseek-v4-pro-0813",
         "name": "DeepSeek V4 Pro 0813",
@@ -187192,51 +188056,6 @@
           "input": 0.62,
           "output": 1.85
         }
-      },
-      "deepseek/deepseek-v4.1-flash-fast": {
-        "id": "deepseek/deepseek-v4.1-flash-fast",
-        "name": "DeepSeek V4.1 Flash Fast",
-        "description": "Fast DeepSeek model for efficient chat, coding help, and agent loops",
-        "family": "deepseek-flash",
-        "attachment": true,
-        "reasoning": true,
-        "reasoning_options": [
-          {
-            "type": "effort",
-            "values": [
-              "none",
-              "low",
-              "medium",
-              "high"
-            ]
-          }
-        ],
-        "tool_call": true,
-        "structured_output": true,
-        "temperature": true,
-        "knowledge": "2025-05",
-        "release_date": "2026-09-10",
-        "last_updated": "2026-09-10",
-        "modalities": {
-          "input": [
-            "text",
-            "image"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 1048576,
-          "output": 1000000
-        },
-        "cost": {
-          "input": 0.3,
-          "output": 1.2,
-          "cache_read": 0.006
-        },
-        "canonical_model_id": "deepseek/deepseek-v4.1-flash"
       },
       "deepseek/deepseek-v3.1": {
         "id": "deepseek/deepseek-v3.1",
@@ -191297,6 +192116,9 @@
               "medium",
               "high"
             ]
+          },
+          {
+            "type": "budget_tokens"
           }
         ],
         "tool_call": false,
@@ -193159,50 +193981,6 @@
         },
         "canonical_model_id": "moonshotai/kimi-k2.6"
       },
-      "moonshotai/kimi-k2-thinking": {
-        "id": "moonshotai/kimi-k2-thinking",
-        "name": "Kimi K2 Thinking",
-        "description": "Thinking Kimi model for slower research passes, planning, and hard technical questions",
-        "family": "kimi-thinking",
-        "attachment": false,
-        "reasoning": true,
-        "reasoning_options": [
-          {
-            "type": "effort",
-            "values": [
-              "none",
-              "low",
-              "medium",
-              "high"
-            ]
-          }
-        ],
-        "tool_call": true,
-        "interleaved": true,
-        "temperature": true,
-        "knowledge": "2024-08",
-        "release_date": "2025-11-06",
-        "last_updated": "2025-11-06",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 216144,
-          "output": 216144
-        },
-        "cost": {
-          "input": 0.47,
-          "output": 2,
-          "cache_read": 0.141
-        },
-        "canonical_model_id": "moonshotai/kimi-k2-thinking"
-      },
       "moonshotai/kimi-k2.5": {
         "id": "moonshotai/kimi-k2.5",
         "name": "Kimi K2.5",
@@ -194204,48 +194982,6 @@
           "cache_read": 0.05
         },
         "canonical_model_id": "stepfun/step-5-preview"
-      },
-      "stepfun/step-3.5-flash": {
-        "id": "stepfun/step-3.5-flash",
-        "name": "StepFun 3.5 Flash",
-        "description": "StepFun flash lane for quick multimodal reasoning and coding assistance",
-        "attachment": false,
-        "reasoning": true,
-        "reasoning_options": [
-          {
-            "type": "effort",
-            "values": [
-              "low",
-              "medium",
-              "high"
-            ]
-          }
-        ],
-        "tool_call": true,
-        "temperature": true,
-        "knowledge": "2025-01",
-        "release_date": "2026-01-29",
-        "last_updated": "2026-02-13",
-        "modalities": {
-          "input": [
-            "text",
-            "image"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 262114,
-          "output": 262114
-        },
-        "cost": {
-          "input": 0.09,
-          "output": 0.3,
-          "cache_read": 0.02
-        },
-        "canonical_model_id": "stepfun/step-3.5-flash"
       },
       "stepfun/step-3.7-flash": {
         "id": "stepfun/step-3.7-flash",
@@ -213963,6 +214699,69 @@
         },
         "canonical_model_id": "anthropic/claude-fable-5"
       },
+      "claude-haiku-5-5@default": {
+        "id": "claude-haiku-5-5@default",
+        "name": "Claude Haiku 5.5",
+        "description": "Fast Claude model for responsive assistance, classification, and lightweight agents",
+        "family": "claude-haiku",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "toggle"
+          },
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": false,
+        "knowledge": "2026-06",
+        "release_date": "2026-10-07",
+        "last_updated": "2026-10-07",
+        "modalities": {
+          "input": [
+            "text",
+            "image",
+            "pdf"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1000000,
+          "output": 128000
+        },
+        "cost": {
+          "input": 0.1,
+          "output": 0.5,
+          "cache_read": 0.01,
+          "cache_write": 0.125,
+          "tiers": [
+            {
+              "input": 0.5,
+              "output": 2.5,
+              "cache_read": 0.05,
+              "cache_write": 0.625,
+              "tier": {
+                "type": "context",
+                "size": 100000
+              }
+            }
+          ]
+        },
+        "canonical_model_id": "anthropic/claude-haiku-5-5"
+      },
       "claude-sonnet-4@20250514": {
         "id": "claude-sonnet-4@20250514",
         "name": "Claude Sonnet 4",
@@ -214110,7 +214909,8 @@
         "cost": {
           "input": 3,
           "output": 15,
-          "cache_read": 0.3
+          "cache_read": 0.3,
+          "cache_write": 3
         },
         "canonical_model_id": "moonshotai/kimi-k3"
       },
@@ -231264,9 +232064,9 @@
           "output": 131072
         },
         "cost": {
-          "input": 0.075,
-          "output": 0.25,
-          "cache_read": 0.015
+          "input": 0.15,
+          "output": 0.5,
+          "cache_read": 0.03
         },
         "canonical_model_id": "zhipuai/glm-5.3-flash"
       },
@@ -232339,6 +233139,41 @@
           "cache_write": 1.25
         },
         "canonical_model_id": "anthropic/claude-haiku-4-5-20251001"
+      },
+      "anthropic/claude-haiku-5-5": {
+        "id": "anthropic/claude-haiku-5-5",
+        "name": "Claude Haiku 5.5",
+        "description": "Fast Claude model for responsive assistance, classification, and lightweight agents",
+        "family": "claude-haiku",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [],
+        "tool_call": false,
+        "structured_output": false,
+        "temperature": false,
+        "knowledge": "2026-06",
+        "release_date": "2026-10-07",
+        "last_updated": "2026-10-07",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1000000,
+          "output": 128000
+        },
+        "cost": {
+          "input": 0.1,
+          "output": 0.5,
+          "cache_read": 0.01,
+          "cache_write": 0.125
+        },
+        "canonical_model_id": "anthropic/claude-haiku-5-5"
       },
       "anthropic/claude-sonnet-4-6": {
         "id": "anthropic/claude-sonnet-4-6",
@@ -235417,7 +236252,7 @@
         "cost": {
           "input": 0.6,
           "output": 2.4,
-          "cache_read": 0.06,
+          "cache_read": 0.03,
           "cache_write": 0.375
         },
         "canonical_model_id": "minimax/MiniMax-M2.5-highspeed"
@@ -235945,7 +236780,8 @@
         "cost": {
           "input": 0.022,
           "output": 0.216,
-          "cache_read": 0.0044
+          "cache_read": 0.0044,
+          "cache_write": 0.0275
         },
         "canonical_model_id": "alibaba/qwen-flash"
       },
@@ -235982,7 +236818,8 @@
         "cost": {
           "input": 0.029,
           "output": 0.287,
-          "cache_read": 0.0058
+          "cache_read": 0.0029,
+          "cache_write": 0.03625
         },
         "canonical_model_id": "alibaba/qwen3.5-flash"
       },
@@ -236053,7 +236890,8 @@
         "cost": {
           "input": 0.825,
           "output": 2.4755,
-          "cache_read": 0.165
+          "cache_read": 0.165,
+          "cache_write": 1.03125
         },
         "canonical_model_id": "alibaba/qwen3.7-max"
       },
@@ -236160,7 +236998,8 @@
         "cost": {
           "input": 0.143,
           "output": 1.434,
-          "cache_read": 0.0286
+          "cache_read": 0.0286,
+          "cache_write": 0.17875
         },
         "canonical_model_id": "alibaba/qwen3-vl-plus"
       },
@@ -236300,7 +237139,8 @@
         "cost": {
           "input": 2,
           "output": 6,
-          "cache_read": 0.25
+          "cache_read": 0.25,
+          "cache_write": 2.5
         },
         "canonical_model_id": "alibaba/qwen3.8-max"
       },
@@ -236371,7 +237211,8 @@
         "cost": {
           "input": 0.115,
           "output": 0.688,
-          "cache_read": 0.023
+          "cache_read": 0.0115,
+          "cache_write": 0.14375
         },
         "canonical_model_id": "alibaba/qwen3.5-plus"
       },
@@ -236442,7 +237283,8 @@
         "cost": {
           "input": 0.115,
           "output": 0.287,
-          "cache_read": 0.023
+          "cache_read": 0.023,
+          "cache_write": 0.14375
         },
         "canonical_model_id": "alibaba/qwen-plus"
       },
@@ -236475,7 +237317,8 @@
         "cost": {
           "input": 0.359,
           "output": 1.434,
-          "cache_read": 0.0718
+          "cache_read": 0.0718,
+          "cache_write": 0.44875
         },
         "canonical_model_id": "alibaba/qwen3-max"
       },
@@ -236689,7 +237532,8 @@
         "cost": {
           "input": 0.165,
           "output": 0.99,
-          "cache_read": 0.033
+          "cache_read": 0.0165,
+          "cache_write": 0.20625
         },
         "canonical_model_id": "alibaba/qwen3.6-flash"
       },
@@ -236722,7 +237566,8 @@
         "cost": {
           "input": 0.144,
           "output": 0.574,
-          "cache_read": 0.0288
+          "cache_read": 0.0288,
+          "cache_write": 0.18
         },
         "canonical_model_id": "alibaba/qwen3-coder-flash"
       },
@@ -236755,7 +237600,8 @@
         "cost": {
           "input": 0.574,
           "output": 2.294,
-          "cache_read": 0.1148
+          "cache_read": 0.1148,
+          "cache_write": 0.7175
         },
         "canonical_model_id": "alibaba/qwen3-coder-plus"
       },
@@ -237043,7 +237889,8 @@
         "cost": {
           "input": 0.276,
           "output": 1.651,
-          "cache_read": 0.0552
+          "cache_read": 0.0276,
+          "cache_write": 0.345
         },
         "canonical_model_id": "alibaba/qwen3.6-plus"
       },
@@ -238707,9 +239554,9 @@
           "output": 128000
         },
         "cost": {
-          "input": 5,
-          "output": 30,
-          "cache_read": 0.5,
+          "input": 4,
+          "output": 20,
+          "cache_read": 0.4,
           "cache_write": 5
         },
         "canonical_model_id": "openai/gpt-5.6-sol"
@@ -251189,7 +252036,7 @@
         "cost": {
           "input": 0.6,
           "output": 2.4,
-          "cache_read": 0.06,
+          "cache_read": 0.03,
           "cache_write": 0.375
         }
       }
@@ -251478,6 +252325,66 @@
           "cache_read": 0.3
         },
         "canonical_model_id": "moonshotai/kimi-k3"
+      },
+      "claude-haiku-5.5": {
+        "id": "claude-haiku-5.5",
+        "name": "Claude Haiku 5.5",
+        "description": "Fast Claude model for responsive assistance, classification, and lightweight agents",
+        "family": "claude-haiku",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": false,
+        "knowledge": "2026-06",
+        "release_date": "2026-10-07",
+        "last_updated": "2026-10-07",
+        "modalities": {
+          "input": [
+            "text",
+            "image",
+            "pdf"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1000000,
+          "output": 128000
+        },
+        "cost": {
+          "input": 0.1,
+          "output": 0.5,
+          "cache_read": 0.01,
+          "cache_write": 0.125,
+          "tiers": [
+            {
+              "input": 0.5,
+              "output": 2.5,
+              "cache_read": 0.05,
+              "cache_write": 0.625,
+              "tier": {
+                "type": "context",
+                "size": 100000
+              }
+            }
+          ]
+        },
+        "canonical_model_id": "anthropic/claude-haiku-5-5"
       },
       "gpt-5-mini": {
         "id": "gpt-5-mini",
@@ -252107,7 +253014,7 @@
         "cost": {
           "input": 2,
           "output": 10,
-          "cache_read": 0.2,
+          "cache_read": 0.1,
           "cache_write": 2.5
         },
         "canonical_model_id": "anthropic/claude-sonnet-5-5"
@@ -254597,6 +255504,72 @@
           "cache_read": 0.002
         },
         "canonical_model_id": "meta/muse-spark-1.2"
+      },
+      "claude-haiku-5-5": {
+        "id": "claude-haiku-5-5",
+        "name": "Claude Haiku 5.5",
+        "description": "Fast Claude model for responsive assistance, classification, and lightweight agents",
+        "family": "claude-haiku",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "toggle"
+          },
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": false,
+        "knowledge": "2026-06",
+        "release_date": "2026-10-07",
+        "last_updated": "2026-10-07",
+        "modalities": {
+          "input": [
+            "text",
+            "image",
+            "pdf"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1000000,
+          "output": 128000
+        },
+        "provider": {
+          "npm": "@ai-sdk/anthropic"
+        },
+        "cost": {
+          "input": 0.1,
+          "output": 0.5,
+          "cache_read": 0.01,
+          "cache_write": 0.125,
+          "tiers": [
+            {
+              "input": 0.5,
+              "output": 2.5,
+              "cache_read": 0.05,
+              "cache_write": 0.625,
+              "tier": {
+                "type": "context",
+                "size": 100000
+              }
+            }
+          ]
+        },
+        "canonical_model_id": "anthropic/claude-haiku-5-5"
       },
       "gpt-6-luna": {
         "id": "gpt-6-luna",
@@ -259298,7 +260271,7 @@
         "cost": {
           "input": 2,
           "output": 10,
-          "cache_read": 0.2,
+          "cache_read": 0.1,
           "cache_write": 2.5
         },
         "canonical_model_id": "anthropic/claude-sonnet-5-5"
@@ -259637,6 +260610,67 @@
         },
         "canonical_model_id": "anthropic/claude-opus-4-6"
       },
+      "anthropic/claude-haiku-5-5": {
+        "id": "anthropic/claude-haiku-5-5",
+        "name": "Claude Haiku 5.5",
+        "description": "Fast Claude model for responsive assistance, classification, and lightweight agents",
+        "family": "claude-haiku",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "none",
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": false,
+        "knowledge": "2026-06",
+        "release_date": "2026-10-07",
+        "last_updated": "2026-10-07",
+        "modalities": {
+          "input": [
+            "text",
+            "image",
+            "pdf"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1000000,
+          "output": 128000
+        },
+        "cost": {
+          "input": 0.1,
+          "output": 0.5,
+          "cache_read": 0.01,
+          "cache_write": 0.125,
+          "tiers": [
+            {
+              "input": 0.5,
+              "output": 2.5,
+              "cache_read": 0.05,
+              "cache_write": 0.625,
+              "tier": {
+                "type": "context",
+                "size": 100000
+              }
+            }
+          ]
+        },
+        "canonical_model_id": "anthropic/claude-haiku-5-5"
+      },
       "anthropic/claude-sonnet-4-6": {
         "id": "anthropic/claude-sonnet-4-6",
         "name": "Claude Sonnet 4.6",
@@ -259727,7 +260761,7 @@
         "cost": {
           "input": 2,
           "output": 10,
-          "cache_read": 0.2,
+          "cache_read": 0.1,
           "cache_write": 2.5
         },
         "canonical_model_id": "anthropic/claude-sonnet-5-5"
@@ -263041,9 +264075,9 @@
           "output": 384000
         },
         "cost": {
-          "input": 0.45076,
-          "output": 0.90152,
-          "cache_read": 0.090152
+          "input": 0.44708,
+          "output": 0.89416,
+          "cache_read": 0.089416
         },
         "canonical_model_id": "deepseek/deepseek-v4-flash-0731"
       },
@@ -263074,8 +264108,8 @@
           "output": 4096
         },
         "cost": {
-          "input": 1.01421,
-          "output": 1.01421
+          "input": 1.005931,
+          "output": 1.005931
         },
         "canonical_model_id": "meta/llama-3.3-70b-instruct"
       },
@@ -263115,8 +264149,8 @@
           "output": 32768
         },
         "cost": {
-          "input": 0.169035,
-          "output": 0.67614
+          "input": 0.167655,
+          "output": 0.67062
         },
         "canonical_model_id": "openai/gpt-oss-120b"
       },
@@ -263147,8 +264181,8 @@
           "output": 4096
         },
         "cost": {
-          "input": 0.732485,
-          "output": 0.732485
+          "input": 0.726505,
+          "output": 0.726505
         },
         "canonical_model_id": "meta/llama-3.3-70b-instruct"
       },
@@ -263188,8 +264222,8 @@
           "output": 32768
         },
         "cost": {
-          "input": 0.169035,
-          "output": 0.732485
+          "input": 0.167655,
+          "output": 0.726505
         },
         "canonical_model_id": "openai/gpt-oss-120b"
       },
@@ -266617,7 +267651,15 @@
         "family": "magistral-medium",
         "attachment": true,
         "reasoning": true,
-        "reasoning_options": [],
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "none",
+              "high"
+            ]
+          }
+        ],
         "tool_call": true,
         "structured_output": true,
         "temperature": true,
@@ -266797,6 +267839,39 @@
           "cache_read": 0.15
         },
         "canonical_model_id": "mistral/mistral-medium-2604"
+      },
+      "mistral/codestral-2508": {
+        "id": "mistral/codestral-2508",
+        "name": "Codestral 25.08",
+        "description": "Mistral code model for low-latency completion, fill-in-the-middle, and code generation",
+        "family": "codestral",
+        "attachment": true,
+        "reasoning": false,
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2025-07-30",
+        "last_updated": "2025-07-30",
+        "modalities": {
+          "input": [
+            "text",
+            "pdf"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 256000,
+          "output": 8192
+        },
+        "cost": {
+          "input": 0.3,
+          "output": 0.9,
+          "cache_read": 0.03
+        },
+        "canonical_model_id": "mistral/codestral-2508"
       },
       "mistral/mistral-medium-latest": {
         "id": "mistral/mistral-medium-latest",
@@ -269806,8 +270881,8 @@
           "output": 262144
         },
         "cost": {
-          "input": 0.33807,
-          "output": 0.45076
+          "input": 0.33531,
+          "output": 0.44708
         },
         "canonical_model_id": "mistral/ministral-3-14b-instruct-2512"
       },
@@ -279563,6 +280638,72 @@
           "cache_read": 0
         }
       },
+      "claude-haiku-5-5": {
+        "id": "claude-haiku-5-5",
+        "name": "Claude Haiku 5.5",
+        "description": "Fast Claude model for responsive assistance, classification, and lightweight agents",
+        "family": "claude-haiku",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "toggle"
+          },
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": false,
+        "knowledge": "2026-06",
+        "release_date": "2026-10-07",
+        "last_updated": "2026-10-07",
+        "modalities": {
+          "input": [
+            "text",
+            "image",
+            "pdf"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1000000,
+          "output": 128000
+        },
+        "provider": {
+          "npm": "@ai-sdk/anthropic"
+        },
+        "cost": {
+          "input": 0.1,
+          "output": 0.5,
+          "cache_read": 0.01,
+          "cache_write": 0.125,
+          "tiers": [
+            {
+              "input": 0.5,
+              "output": 2.5,
+              "cache_read": 0.05,
+              "cache_write": 0.625,
+              "tier": {
+                "type": "context",
+                "size": 100000
+              }
+            }
+          ]
+        },
+        "canonical_model_id": "anthropic/claude-haiku-5-5"
+      },
       "gemini-3.8-flash": {
         "id": "gemini-3.8-flash",
         "name": "Gemini 3.8 Flash",
@@ -285340,35 +286481,6 @@
           "output": 0.11
         }
       },
-      "qwen3-coder-30b-a3b-instruct": {
-        "id": "qwen3-coder-30b-a3b-instruct",
-        "name": "Qwen3-Coder-30B-A3B-Instruct",
-        "description": "Coding model for repository understanding, refactors, and agentic engineering tasks",
-        "attachment": false,
-        "reasoning": false,
-        "tool_call": true,
-        "structured_output": true,
-        "temperature": true,
-        "release_date": "2025-10-28",
-        "last_updated": "2025-10-28",
-        "modalities": {
-          "input": [
-            "text"
-          ],
-          "output": [
-            "text"
-          ]
-        },
-        "open_weights": true,
-        "limit": {
-          "context": 262144,
-          "output": 262144
-        },
-        "cost": {
-          "input": 0.07,
-          "output": 0.26
-        }
-      },
       "qwen3guard-gen-0.6b": {
         "id": "qwen3guard-gen-0.6b",
         "name": "Qwen3Guard-Gen-0.6B",
@@ -286187,6 +287299,66 @@
           "input": 0.3,
           "output": 2.5
         }
+      },
+      "claude-haiku-5-5@eu": {
+        "id": "claude-haiku-5-5@eu",
+        "name": "Claude Haiku 5.5 (EU)",
+        "description": "Fast Claude model for responsive assistance, classification, and lightweight agents",
+        "family": "claude-haiku",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "none",
+              "low",
+              "medium",
+              "high",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": false,
+        "knowledge": "2026-06",
+        "release_date": "2026-10-07",
+        "last_updated": "2026-10-07",
+        "modalities": {
+          "input": [
+            "text",
+            "image",
+            "pdf"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1000000,
+          "output": 128000
+        },
+        "cost": {
+          "input": 0.11,
+          "output": 0.55,
+          "cache_read": 0.02,
+          "cache_write": 0.14,
+          "tiers": [
+            {
+              "input": 0.55,
+              "output": 2.75,
+              "cache_read": 0.06,
+              "cache_write": 0.69,
+              "tier": {
+                "type": "context",
+                "size": 100000
+              }
+            }
+          ]
+        },
+        "canonical_model_id": "anthropic/claude-haiku-5-5"
       },
       "gpt-4o-mini@eu": {
         "id": "gpt-4o-mini@eu",
@@ -287477,7 +288649,19 @@
         "description": "Mistral's 1T-parameter multimodal MoE for reasoning, coding, and agentic work",
         "family": "mistral-large",
         "attachment": true,
-        "reasoning": false,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "none",
+              "low",
+              "medium",
+              "high",
+              "max"
+            ]
+          }
+        ],
         "tool_call": true,
         "structured_output": true,
         "temperature": true,
@@ -287494,8 +288678,8 @@
         },
         "open_weights": false,
         "limit": {
-          "context": 1000000,
-          "output": 1000000
+          "context": 524288,
+          "output": 524288
         },
         "cost": {
           "input": 0.68,
@@ -287947,6 +289131,7 @@
         "id": "leanstral-1-5@eu",
         "name": "leanstral-1-5@eu",
         "description": "Leanstral 1.5 is an updated Lean 4 formal proof engineering model from Mistral AI, optimized for automated theorem proving and autoformalization. It has 119B total parameters with 6.5B active and supports a 256K token context window. It supports native function calling and structured output.",
+        "family": "leanstral",
         "attachment": false,
         "reasoning": false,
         "tool_call": true,
@@ -289940,10 +291125,10 @@
           "output": 128000
         },
         "cost": {
-          "input": 10,
-          "output": 50,
-          "cache_read": 1,
-          "cache_write": 12.5
+          "input": 11,
+          "output": 55,
+          "cache_read": 1.1,
+          "cache_write": 13.75
         },
         "canonical_model_id": "anthropic/claude-fable-5"
       },
@@ -291981,6 +293166,66 @@
         },
         "canonical_model_id": "openai/o4-mini"
       },
+      "claude-haiku-5-5": {
+        "id": "claude-haiku-5-5",
+        "name": "Claude Haiku 5.5",
+        "description": "Fast Claude model for responsive assistance, classification, and lightweight agents",
+        "family": "claude-haiku",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "none",
+              "low",
+              "medium",
+              "high",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": false,
+        "knowledge": "2026-06",
+        "release_date": "2026-10-07",
+        "last_updated": "2026-10-07",
+        "modalities": {
+          "input": [
+            "text",
+            "image",
+            "pdf"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1000000,
+          "output": 128000
+        },
+        "cost": {
+          "input": 0.1,
+          "output": 0.5,
+          "cache_read": 0.01,
+          "cache_write": 0.13,
+          "tiers": [
+            {
+              "input": 0.5,
+              "output": 2.5,
+              "cache_read": 0.05,
+              "cache_write": 0.63,
+              "tier": {
+                "type": "context",
+                "size": 100000
+              }
+            }
+          ]
+        },
+        "canonical_model_id": "anthropic/claude-haiku-5-5"
+      },
       "mistral-small-2603@eu": {
         "id": "mistral-small-2603@eu",
         "name": "Mistral Small 4 (EU)",
@@ -292613,7 +293858,7 @@
         "open_weights": false,
         "limit": {
           "context": 1000000,
-          "output": 128000
+          "output": 64000
         },
         "cost": {
           "input": 3,
@@ -292627,6 +293872,7 @@
         "id": "leanstral-1-5",
         "name": "leanstral-1-5",
         "description": "Leanstral 1.5 is an updated Lean 4 formal proof engineering model from Mistral AI, optimized for automated theorem proving and autoformalization. It has 119B total parameters with 6.5B active and supports a 256K token context window. It supports native function calling and structured output.",
+        "family": "leanstral",
         "attachment": false,
         "reasoning": false,
         "tool_call": true,
@@ -293278,7 +294524,19 @@
         "description": "Mistral's 1T-parameter multimodal MoE for reasoning, coding, and agentic work",
         "family": "mistral-large",
         "attachment": true,
-        "reasoning": false,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "none",
+              "low",
+              "medium",
+              "high",
+              "max"
+            ]
+          }
+        ],
         "tool_call": true,
         "structured_output": true,
         "temperature": true,
@@ -293295,8 +294553,8 @@
         },
         "open_weights": false,
         "limit": {
-          "context": 1000000,
-          "output": 1000000
+          "context": 524288,
+          "output": 524288
         },
         "cost": {
           "input": 0.68,
@@ -293842,6 +295100,7 @@
           "context": 131072,
           "output": 16384
         },
+        "status": "deprecated",
         "cost": {
           "input": 2,
           "output": 6
@@ -293873,6 +295132,7 @@
           "context": 128000,
           "output": 128000
         },
+        "status": "deprecated",
         "cost": {
           "input": 0.15,
           "output": 0.15
@@ -293929,6 +295189,7 @@
           "context": 262144,
           "output": 262144
         },
+        "status": "deprecated",
         "cost": {
           "input": 0.4,
           "output": 2
@@ -294007,6 +295268,39 @@
           "cache_read": 0.015
         }
       },
+      "ministral-8b-2512": {
+        "id": "ministral-8b-2512",
+        "name": "Ministral 3 8B",
+        "description": "Compact open vision-language model for edge deployment, instruction following, and tool use",
+        "family": "ministral",
+        "attachment": true,
+        "reasoning": false,
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2025-12-02",
+        "last_updated": "2025-12-02",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 262144,
+          "output": 262144
+        },
+        "cost": {
+          "input": 0.15,
+          "output": 0.15,
+          "cache_read": 0.015
+        },
+        "canonical_model_id": "mistral/ministral-3-8b-instruct-2512"
+      },
       "zai-glm-5-2": {
         "id": "zai-glm-5-2",
         "name": "GLM-5.2",
@@ -294042,7 +295336,7 @@
           "context": 1048576,
           "output": 131072
         },
-        "status": "beta",
+        "status": "deprecated",
         "cost": {
           "input": 1.4,
           "output": 4.4,
@@ -294180,6 +295474,7 @@
           "context": 64000,
           "output": 64000
         },
+        "status": "deprecated",
         "cost": {
           "input": 2,
           "output": 6
@@ -294242,6 +295537,7 @@
           "context": 131072,
           "output": 131072
         },
+        "status": "deprecated",
         "cost": {
           "input": 0.4,
           "output": 2
@@ -294252,14 +295548,94 @@
         "name": "Magistral Medium (latest)",
         "description": "Mistral reasoning model for transparent analysis, math, and complex decisions",
         "family": "magistral-medium",
-        "attachment": false,
+        "attachment": true,
         "reasoning": true,
-        "reasoning_options": [],
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "none",
+              "high"
+            ]
+          }
+        ],
         "tool_call": true,
         "temperature": true,
         "knowledge": "2025-06",
         "release_date": "2025-03-17",
         "last_updated": "2025-03-20",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 262144,
+          "output": 16384
+        },
+        "status": "deprecated",
+        "cost": {
+          "input": 2,
+          "output": 5
+        }
+      },
+      "voxtral-small-2507": {
+        "id": "voxtral-small-2507",
+        "name": "Voxtral Small",
+        "description": "Instruct model with native audio input for speech understanding and tool use",
+        "family": "voxtral",
+        "attachment": true,
+        "reasoning": false,
+        "tool_call": true,
+        "temperature": true,
+        "release_date": "2025-07-15",
+        "last_updated": "2025-07-15",
+        "modalities": {
+          "input": [
+            "text",
+            "audio"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 32768,
+          "output": 32000
+        },
+        "cost": {
+          "input": 0.1,
+          "output": 0.4
+        }
+      },
+      "glm-5-2": {
+        "id": "glm-5-2",
+        "name": "GLM-5.2",
+        "description": "Open flagship GLM for long-horizon coding agents and million-token context work",
+        "family": "glm",
+        "attachment": false,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "none",
+              "high",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2026-06-13",
+        "last_updated": "2026-06-13",
         "modalities": {
           "input": [
             "text"
@@ -294270,12 +295646,56 @@
         },
         "open_weights": true,
         "limit": {
-          "context": 128000,
-          "output": 16384
+          "context": 1048576,
+          "output": 131072
         },
+        "status": "deprecated",
         "cost": {
-          "input": 2,
-          "output": 5
+          "input": 1.4,
+          "output": 4.4,
+          "cache_read": 0.14
+        },
+        "canonical_model_id": "zhipuai/glm-5.2"
+      },
+      "labs-leanstral-1-5-1": {
+        "id": "labs-leanstral-1-5-1",
+        "name": "Leanstral 1.5",
+        "description": "An updated Lean 4 formal proof engineering model optimised for automated theorem proving and autoformalization. 119B total parameters, 6.5B active.",
+        "family": "leanstral",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "none",
+              "high"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2026-06-30",
+        "last_updated": "2026-06-30",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 262144,
+          "output": 128000
+        },
+        "status": "deprecated",
+        "cost": {
+          "input": 0,
+          "output": 0
         }
       },
       "pixtral-12b": {
@@ -294304,6 +295724,7 @@
           "context": 128000,
           "output": 128000
         },
+        "status": "deprecated",
         "cost": {
           "input": 0.15,
           "output": 0.15
@@ -294561,6 +295982,39 @@
           "output": 2
         }
       },
+      "ministral-14b-2512": {
+        "id": "ministral-14b-2512",
+        "name": "Ministral 3 14B",
+        "description": "Open vision-language model for efficient local deployment, instruction following, and tool use",
+        "family": "ministral",
+        "attachment": true,
+        "reasoning": false,
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2025-12-02",
+        "last_updated": "2025-12-02",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 262144,
+          "output": 262144
+        },
+        "cost": {
+          "input": 0.2,
+          "output": 0.2,
+          "cache_read": 0.02
+        },
+        "canonical_model_id": "mistral/ministral-3-14b-instruct-2512"
+      },
       "devstral-small-2507": {
         "id": "devstral-small-2507",
         "name": "Devstral Small",
@@ -294618,6 +296072,7 @@
           "context": 128000,
           "output": 128000
         },
+        "status": "deprecated",
         "cost": {
           "input": 2,
           "output": 6
@@ -294678,6 +296133,7 @@
           "context": 32000,
           "output": 32000
         },
+        "status": "deprecated",
         "cost": {
           "input": 0.7,
           "output": 0.7
@@ -294709,6 +296165,7 @@
           "context": 128000,
           "output": 16384
         },
+        "status": "deprecated",
         "cost": {
           "input": 0.1,
           "output": 0.3
@@ -294755,6 +296212,39 @@
           "cache_read": 0.14
         },
         "canonical_model_id": "zhipuai/glm-5.3"
+      },
+      "ministral-3b-2512": {
+        "id": "ministral-3b-2512",
+        "name": "Ministral 3 3B",
+        "description": "Compact open vision-language model for edge deployment, instruction following, and tool use",
+        "family": "ministral",
+        "attachment": true,
+        "reasoning": false,
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2025-12-02",
+        "last_updated": "2025-12-02",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": true,
+        "limit": {
+          "context": 131072,
+          "output": 262144
+        },
+        "cost": {
+          "input": 0.1,
+          "output": 0.1,
+          "cache_read": 0.01
+        },
+        "canonical_model_id": "mistral/ministral-3-3b-instruct-2512"
       },
       "mistral-medium-2604": {
         "id": "mistral-medium-2604",
@@ -294822,10 +296312,43 @@
           "context": 8000,
           "output": 8000
         },
+        "status": "deprecated",
         "cost": {
           "input": 0.25,
           "output": 0.25
         }
+      },
+      "codestral-2508": {
+        "id": "codestral-2508",
+        "name": "Codestral 25.08",
+        "description": "Mistral code model for low-latency completion, fill-in-the-middle, and code generation",
+        "family": "codestral",
+        "attachment": false,
+        "reasoning": false,
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2025-07-30",
+        "last_updated": "2025-07-30",
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 256000,
+          "output": 8192
+        },
+        "cost": {
+          "input": 0.3,
+          "output": 0.9,
+          "cache_read": 0.03
+        },
+        "canonical_model_id": "mistral/codestral-2508"
       },
       "ministral-3b-latest": {
         "id": "ministral-3b-latest",
@@ -295807,7 +297330,7 @@
         "cost": {
           "input": 2,
           "output": 10,
-          "cache_read": 0.2,
+          "cache_read": 0.1,
           "cache_write": 2.5
         },
         "canonical_model_id": "anthropic/claude-sonnet-5-5"
@@ -295855,7 +297378,7 @@
         "cost": {
           "input": 2,
           "output": 10,
-          "cache_read": 0.2,
+          "cache_read": 0.1,
           "cache_write": 2.5
         },
         "canonical_model_id": "anthropic/claude-sonnet-5-5"
@@ -296162,6 +297685,69 @@
           }
         },
         "canonical_model_id": "openai/gpt-6-sol"
+      },
+      "eu.anthropic.claude-haiku-5-5": {
+        "id": "eu.anthropic.claude-haiku-5-5",
+        "name": "Claude Haiku 5.5 (EU)",
+        "description": "Fast Claude model for responsive assistance, classification, and lightweight agents",
+        "family": "claude-haiku",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "toggle"
+          },
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": false,
+        "temperature": false,
+        "knowledge": "2026-06",
+        "release_date": "2026-10-07",
+        "last_updated": "2026-10-07",
+        "modalities": {
+          "input": [
+            "text",
+            "image",
+            "pdf"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1000000,
+          "output": 128000
+        },
+        "cost": {
+          "input": 0.11,
+          "output": 0.55,
+          "cache_read": 0.011,
+          "cache_write": 0.1375,
+          "tiers": [
+            {
+              "input": 0.55,
+              "output": 2.75,
+              "cache_read": 0.055,
+              "cache_write": 0.6875,
+              "tier": {
+                "type": "context",
+                "size": 100000
+              }
+            }
+          ]
+        },
+        "canonical_model_id": "anthropic/claude-haiku-5-5"
       },
       "qwen.qwen3-coder-30b-a3b-v1:0": {
         "id": "qwen.qwen3-coder-30b-a3b-v1:0",
@@ -296850,6 +298436,69 @@
         },
         "canonical_model_id": "openai/gpt-5.5"
       },
+      "jp.anthropic.claude-haiku-5-5": {
+        "id": "jp.anthropic.claude-haiku-5-5",
+        "name": "Claude Haiku 5.5 (JP)",
+        "description": "Fast Claude model for responsive assistance, classification, and lightweight agents",
+        "family": "claude-haiku",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "toggle"
+          },
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": false,
+        "temperature": false,
+        "knowledge": "2026-06",
+        "release_date": "2026-10-07",
+        "last_updated": "2026-10-07",
+        "modalities": {
+          "input": [
+            "text",
+            "image",
+            "pdf"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1000000,
+          "output": 128000
+        },
+        "cost": {
+          "input": 0.11,
+          "output": 0.55,
+          "cache_read": 0.011,
+          "cache_write": 0.1375,
+          "tiers": [
+            {
+              "input": 0.55,
+              "output": 2.75,
+              "cache_read": 0.055,
+              "cache_write": 0.6875,
+              "tier": {
+                "type": "context",
+                "size": 100000
+              }
+            }
+          ]
+        },
+        "canonical_model_id": "anthropic/claude-haiku-5-5"
+      },
       "mistral.voxtral-small-24b-2507": {
         "id": "mistral.voxtral-small-24b-2507",
         "name": "Voxtral Small 24B 2507",
@@ -297166,6 +298815,69 @@
           "cache_write": 12.5
         },
         "canonical_model_id": "anthropic/claude-fable-5"
+      },
+      "global.anthropic.claude-haiku-5-5": {
+        "id": "global.anthropic.claude-haiku-5-5",
+        "name": "Claude Haiku 5.5 (Global)",
+        "description": "Fast Claude model for responsive assistance, classification, and lightweight agents",
+        "family": "claude-haiku",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "toggle"
+          },
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": false,
+        "temperature": false,
+        "knowledge": "2026-06",
+        "release_date": "2026-10-07",
+        "last_updated": "2026-10-07",
+        "modalities": {
+          "input": [
+            "text",
+            "image",
+            "pdf"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1000000,
+          "output": 128000
+        },
+        "cost": {
+          "input": 0.1,
+          "output": 0.5,
+          "cache_read": 0.01,
+          "cache_write": 0.125,
+          "tiers": [
+            {
+              "input": 0.5,
+              "output": 2.5,
+              "cache_read": 0.05,
+              "cache_write": 0.625,
+              "tier": {
+                "type": "context",
+                "size": 100000
+              }
+            }
+          ]
+        },
+        "canonical_model_id": "anthropic/claude-haiku-5-5"
       },
       "anthropic.claude-sonnet-4-5-20250929-v1:0": {
         "id": "anthropic.claude-sonnet-4-5-20250929-v1:0",
@@ -298364,6 +300076,69 @@
           "cache_write": 6.25
         },
         "canonical_model_id": "anthropic/claude-opus-5"
+      },
+      "anthropic.claude-haiku-5-5": {
+        "id": "anthropic.claude-haiku-5-5",
+        "name": "Claude Haiku 5.5",
+        "description": "Fast Claude model for responsive assistance, classification, and lightweight agents",
+        "family": "claude-haiku",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "toggle"
+          },
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": false,
+        "temperature": false,
+        "knowledge": "2026-06",
+        "release_date": "2026-10-07",
+        "last_updated": "2026-10-07",
+        "modalities": {
+          "input": [
+            "text",
+            "image",
+            "pdf"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1000000,
+          "output": 128000
+        },
+        "cost": {
+          "input": 0.1,
+          "output": 0.5,
+          "cache_read": 0.01,
+          "cache_write": 0.125,
+          "tiers": [
+            {
+              "input": 0.5,
+              "output": 2.5,
+              "cache_read": 0.05,
+              "cache_write": 0.625,
+              "tier": {
+                "type": "context",
+                "size": 100000
+              }
+            }
+          ]
+        },
+        "canonical_model_id": "anthropic/claude-haiku-5-5"
       },
       "meta.llama3-3-70b-instruct-v1:0": {
         "id": "meta.llama3-3-70b-instruct-v1:0",
@@ -300155,7 +301930,7 @@
         "cost": {
           "input": 2.2,
           "output": 11,
-          "cache_read": 0.22,
+          "cache_read": 0.11,
           "cache_write": 2.75
         },
         "canonical_model_id": "anthropic/claude-sonnet-5-5"
@@ -301862,6 +303637,69 @@
         },
         "canonical_model_id": "anthropic/claude-opus-4-7"
       },
+      "us.anthropic.claude-haiku-5-5": {
+        "id": "us.anthropic.claude-haiku-5-5",
+        "name": "Claude Haiku 5.5 (US)",
+        "description": "Fast Claude model for responsive assistance, classification, and lightweight agents",
+        "family": "claude-haiku",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "toggle"
+          },
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": false,
+        "temperature": false,
+        "knowledge": "2026-06",
+        "release_date": "2026-10-07",
+        "last_updated": "2026-10-07",
+        "modalities": {
+          "input": [
+            "text",
+            "image",
+            "pdf"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1000000,
+          "output": 128000
+        },
+        "cost": {
+          "input": 0.11,
+          "output": 0.55,
+          "cache_read": 0.011,
+          "cache_write": 0.1375,
+          "tiers": [
+            {
+              "input": 0.55,
+              "output": 2.75,
+              "cache_read": 0.055,
+              "cache_write": 0.6875,
+              "tier": {
+                "type": "context",
+                "size": 100000
+              }
+            }
+          ]
+        },
+        "canonical_model_id": "anthropic/claude-haiku-5-5"
+      },
       "au.anthropic.claude-opus-5-5": {
         "id": "au.anthropic.claude-opus-5-5",
         "name": "Claude Opus 5.5 (AU)",
@@ -302710,6 +304548,69 @@
           "cache_write": 6.875
         },
         "canonical_model_id": "anthropic/claude-opus-4-8"
+      },
+      "au.anthropic.claude-haiku-5-5": {
+        "id": "au.anthropic.claude-haiku-5-5",
+        "name": "Claude Haiku 5.5 (AU)",
+        "description": "Fast Claude model for responsive assistance, classification, and lightweight agents",
+        "family": "claude-haiku",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "toggle"
+          },
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": false,
+        "temperature": false,
+        "knowledge": "2026-06",
+        "release_date": "2026-10-07",
+        "last_updated": "2026-10-07",
+        "modalities": {
+          "input": [
+            "text",
+            "image",
+            "pdf"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1000000,
+          "output": 128000
+        },
+        "cost": {
+          "input": 0.11,
+          "output": 0.55,
+          "cache_read": 0.011,
+          "cache_write": 0.1375,
+          "tiers": [
+            {
+              "input": 0.55,
+              "output": 2.75,
+              "cache_read": 0.055,
+              "cache_write": 0.6875,
+              "tier": {
+                "type": "context",
+                "size": 100000
+              }
+            }
+          ]
+        },
+        "canonical_model_id": "anthropic/claude-haiku-5-5"
       },
       "us.anthropic.claude-fable-5-1": {
         "id": "us.anthropic.claude-fable-5-1",
@@ -303636,7 +305537,7 @@
         "cost": {
           "input": 2.2,
           "output": 11,
-          "cache_read": 0.22,
+          "cache_read": 0.11,
           "cache_write": 2.75
         },
         "canonical_model_id": "anthropic/claude-sonnet-5-5"
@@ -310640,7 +312541,6 @@
           {
             "type": "effort",
             "values": [
-              "minimal",
               "low",
               "medium",
               "high"
@@ -311616,6 +313516,54 @@
           "cache_write": 0.375
         },
         "canonical_model_id": "minimax/MiniMax-M2.5-highspeed"
+      },
+      "claude-haiku-5-5": {
+        "id": "claude-haiku-5-5",
+        "name": "Claude Haiku 5.5",
+        "description": "Fast Claude model for responsive assistance, classification, and lightweight agents",
+        "family": "claude-haiku",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": false,
+        "knowledge": "2026-06",
+        "release_date": "2026-10-07",
+        "last_updated": "2026-10-07",
+        "modalities": {
+          "input": [
+            "text",
+            "image",
+            "pdf"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1000000,
+          "output": 128000
+        },
+        "cost": {
+          "input": 0.1,
+          "output": 0.5,
+          "cache_read": 0.01,
+          "cache_write": 0.125
+        },
+        "canonical_model_id": "anthropic/claude-haiku-5-5"
       },
       "gemini-3.8-flash": {
         "id": "gemini-3.8-flash",
@@ -316735,6 +318683,72 @@
         },
         "canonical_model_id": "zhipuai/glm-5.2"
       },
+      "claude-haiku-5-5": {
+        "id": "claude-haiku-5-5",
+        "name": "Claude Haiku 5.5",
+        "description": "Fast Claude model for responsive assistance, classification, and lightweight agents",
+        "family": "claude-haiku",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "toggle"
+          },
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": false,
+        "knowledge": "2026-06",
+        "release_date": "2026-10-07",
+        "last_updated": "2026-10-07",
+        "modalities": {
+          "input": [
+            "text",
+            "image",
+            "pdf"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1000000,
+          "output": 128000
+        },
+        "provider": {
+          "npm": "@ai-sdk/anthropic"
+        },
+        "cost": {
+          "input": 0.1,
+          "output": 0.5,
+          "cache_read": 0.01,
+          "cache_write": 0.125,
+          "tiers": [
+            {
+              "input": 0.5,
+              "output": 2.5,
+              "cache_read": 0.05,
+              "cache_write": 0.625,
+              "tier": {
+                "type": "context",
+                "size": 100000
+              }
+            }
+          ]
+        },
+        "canonical_model_id": "anthropic/claude-haiku-5-5"
+      },
       "gemini-3.8-flash": {
         "id": "gemini-3.8-flash",
         "name": "Gemini 3.8 Flash",
@@ -318995,6 +321009,72 @@
           "input_audio": 0.3
         },
         "canonical_model_id": "google/gemini-2.5-flash-lite"
+      },
+      "claude-haiku-5-5@default": {
+        "id": "claude-haiku-5-5@default",
+        "name": "Claude Haiku 5.5",
+        "description": "Fast Claude model for responsive assistance, classification, and lightweight agents",
+        "family": "claude-haiku",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "toggle"
+          },
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": false,
+        "knowledge": "2026-06",
+        "release_date": "2026-10-07",
+        "last_updated": "2026-10-07",
+        "modalities": {
+          "input": [
+            "text",
+            "image",
+            "pdf"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1000000,
+          "output": 128000
+        },
+        "provider": {
+          "npm": "@ai-sdk/google-vertex/anthropic"
+        },
+        "cost": {
+          "input": 0.1,
+          "output": 0.5,
+          "cache_read": 0.01,
+          "cache_write": 0.125,
+          "tiers": [
+            {
+              "input": 0.5,
+              "output": 2.5,
+              "cache_read": 0.05,
+              "cache_write": 0.625,
+              "tier": {
+                "type": "context",
+                "size": 100000
+              }
+            }
+          ]
+        },
+        "canonical_model_id": "anthropic/claude-haiku-5-5"
       },
       "gemini-2.5-pro-tts": {
         "id": "gemini-2.5-pro-tts",
@@ -327347,6 +329427,52 @@
           "output": 0.223
         }
       },
+      "claude-sonnet-5.5": {
+        "id": "claude-sonnet-5.5",
+        "name": "Claude Sonnet 5.5",
+        "description": "Fast Claude model for everyday coding, agents, and knowledge work",
+        "family": "claude-sonnet",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "medium",
+              "high"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": false,
+        "knowledge": "2026-06",
+        "release_date": "2026-09-28",
+        "last_updated": "2026-09-28",
+        "modalities": {
+          "input": [
+            "text",
+            "image",
+            "pdf"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1000000,
+          "output": 128000
+        },
+        "cost": {
+          "input": 2.25,
+          "output": 11.249,
+          "cache_read": 0.225,
+          "cache_write": 2.813
+        },
+        "canonical_model_id": "anthropic/claude-sonnet-5-5"
+      },
       "gpt-oss-20b": {
         "id": "gpt-oss-20b",
         "name": "GPT OSS 20B",
@@ -328689,6 +330815,48 @@
         },
         "canonical_model_id": "deepseek/deepseek-v4-pro"
       },
+      "mistral-large-4-0": {
+        "id": "mistral-large-4-0",
+        "name": "Mistral Large 4",
+        "description": "Mistral's 1T-parameter multimodal MoE for reasoning, coding, and agentic work",
+        "family": "mistral-large",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "effort",
+            "values": [
+              "none",
+              "high"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": true,
+        "release_date": "2026-10-06",
+        "last_updated": "2026-10-06",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1000000,
+          "output": 262144
+        },
+        "cost": {
+          "input": 0.765,
+          "output": 2.351,
+          "cache_read": 0.079
+        },
+        "canonical_model_id": "mistral/mistral-large-4"
+      },
       "claude-opus-5.5": {
         "id": "claude-opus-5.5",
         "name": "Claude Opus 5.5",
@@ -329436,15 +331604,14 @@
       },
       "codestral-2508": {
         "id": "codestral-2508",
-        "name": "Codestral 2508",
+        "name": "Codestral 25.08",
         "description": "Mistral coding model for code completion, generation, and developer workflows",
-        "family": "mistral",
+        "family": "codestral",
         "attachment": false,
         "reasoning": false,
         "tool_call": true,
         "structured_output": true,
         "temperature": true,
-        "knowledge": "2025-03",
         "release_date": "2025-07-30",
         "last_updated": "2025-07-30",
         "modalities": {
@@ -329455,7 +331622,7 @@
             "text"
           ]
         },
-        "open_weights": true,
+        "open_weights": false,
         "limit": {
           "context": 256000,
           "output": 256000
@@ -329464,7 +331631,8 @@
           "input": 0.368,
           "output": 1.103,
           "cache_read": 0.037
-        }
+        },
+        "canonical_model_id": "mistral/codestral-2508"
       },
       "gpt-6-sol": {
         "id": "gpt-6-sol",
@@ -334927,6 +337095,68 @@
         },
         "canonical_model_id": "anthropic/claude-sonnet-5"
       },
+      "anthropic/claude-haiku-5-5": {
+        "id": "anthropic/claude-haiku-5-5",
+        "name": "Claude Haiku 5.5",
+        "description": "Fast Claude model for responsive assistance, classification, and lightweight agents",
+        "family": "claude-haiku",
+        "attachment": true,
+        "reasoning": true,
+        "reasoning_options": [
+          {
+            "type": "toggle"
+          },
+          {
+            "type": "effort",
+            "values": [
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ]
+          }
+        ],
+        "tool_call": true,
+        "structured_output": true,
+        "temperature": false,
+        "knowledge": "2026-06",
+        "release_date": "2026-10-07",
+        "last_updated": "2026-10-07",
+        "modalities": {
+          "input": [
+            "text",
+            "image"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "open_weights": false,
+        "limit": {
+          "context": 1000000,
+          "output": 128000
+        },
+        "cost": {
+          "input": 0.1,
+          "output": 0.5,
+          "cache_read": 0.01,
+          "cache_write": 0.125,
+          "tiers": [
+            {
+              "input": 0.5,
+              "output": 2.5,
+              "cache_read": 0.05,
+              "cache_write": 0.625,
+              "tier": {
+                "type": "context",
+                "size": 100000
+              }
+            }
+          ]
+        },
+        "canonical_model_id": "anthropic/claude-haiku-5-5"
+      },
       "anthropic/claude-sonnet-4-6": {
         "id": "anthropic/claude-sonnet-4-6",
         "name": "Claude Sonnet 4.6",
@@ -335021,7 +337251,7 @@
         "cost": {
           "input": 2,
           "output": 10,
-          "cache_read": 0.2,
+          "cache_read": 0.1,
           "cache_write": 2.5
         },
         "canonical_model_id": "anthropic/claude-sonnet-5-5"
