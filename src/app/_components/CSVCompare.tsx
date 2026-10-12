@@ -24,7 +24,7 @@ import {
   type CSVSettings,
   DEFAULT_CSV_SETTINGS,
 } from "~/lib/csv-parser";
-import type { MatchMode, DiffStatus } from "~/lib/csv-diff";
+import type { MatchMode, DiffStatus } from "csv-charts-ai";
 
 /* ── Types ── */
 
@@ -61,16 +61,19 @@ export function CSVCompare({
     setCurrentPage(0);
   };
 
+  // Computed locally so the key selector stays mounted while the diff recomputes
+  const commonHeaders = useMemo(() => {
+    if (!compareData) return [];
+    const inB = new Set(compareData.headers);
+    return primaryData.headers.filter((h) => inB.has(h));
+  }, [primaryData.headers, compareData]);
+
   // Auto-select a valid key column when compare data or primary headers change
   useEffect(() => {
-    if (!compareData) return;
-    const common = primaryData.headers.filter((h) =>
-      compareData.headers.includes(h),
-    );
-    if (!common.includes(keyColumn) && common.length > 0) {
-      setKeyColumn(common[0]!);
+    if (!commonHeaders.includes(keyColumn) && commonHeaders.length > 0) {
+      setKeyColumn(commonHeaders[0]!);
     }
-  }, [primaryData.headers, compareData, keyColumn]);
+  }, [commonHeaders, keyColumn]);
 
   const task = useMemo(
     () =>
@@ -278,8 +281,9 @@ export function CSVCompare({
                 Key column
               </button>
             </div>
-            {matchMode === "key" && diff && (
+            {matchMode === "key" && commonHeaders.length > 0 && (
               <select
+                aria-label="Key column"
                 value={keyColumn}
                 onChange={(e) => {
                   setKeyColumn(e.target.value);
@@ -287,7 +291,7 @@ export function CSVCompare({
                 }}
                 className="rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-gray-300 focus:border-cyan-500/50 focus:outline-none"
               >
-                {diff.commonHeaders.map((h) => (
+                {commonHeaders.map((h) => (
                   <option key={h} value={h}>
                     {h}
                   </option>
@@ -298,6 +302,17 @@ export function CSVCompare({
 
           {diff && (
             <>
+              {diff.noCommonColumns && (
+                <p
+                  role="status"
+                  className="rounded-xl border border-amber-500/20 bg-amber-500/[0.05] px-4 py-3 text-sm text-amber-400"
+                >
+                  These files share no column name, so no row can be matched:
+                  every row of File A is listed as removed and every row of File
+                  B as added. Rename the columns so they match to compare
+                  values.
+                </p>
+              )}
               {/* Diff summary */}
               <div className="grid grid-cols-4 gap-2">
                 {(
