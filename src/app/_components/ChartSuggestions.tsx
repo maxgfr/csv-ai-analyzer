@@ -202,7 +202,10 @@ export function ChartSuggestions({
         id: "chart-gen-toast",
       });
     } catch (err) {
-      if (config.signal?.aborted) return;
+      if (config.signal?.aborted) {
+        toast.dismiss("chart-gen-toast");
+        return;
+      }
       const errorMessage =
         err instanceof Error
           ? err.message
@@ -214,7 +217,8 @@ export function ChartSuggestions({
         id: "chart-gen-toast",
       });
     } finally {
-      if (!config.signal?.aborted) setIsLoading(false);
+      // Always clear the spinner unless a newer request owns it
+      if (requests.isLatest("charts", config.signal!)) setIsLoading(false);
     }
   };
 
@@ -278,7 +282,10 @@ export function ChartSuggestions({
         });
       }
     } catch (err) {
-      if (config.signal?.aborted) return;
+      if (config.signal?.aborted) {
+        toast.dismiss("custom-chart-toast");
+        return;
+      }
       const errorMessage =
         err instanceof Error
           ? err.message
@@ -290,7 +297,8 @@ export function ChartSuggestions({
         id: "custom-chart-toast",
       });
     } finally {
-      if (!config.signal?.aborted) setIsCustomLoading(false);
+      if (requests.isLatest("custom", config.signal!))
+        setIsCustomLoading(false);
     }
   };
 

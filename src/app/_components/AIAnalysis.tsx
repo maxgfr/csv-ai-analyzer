@@ -46,7 +46,7 @@ import {
   ANOMALY_SAMPLE_ROWS,
 } from "~/lib/ai-service";
 import type { StoredSettings } from "~/lib/storage";
-import { useChatStore, toModelHistory } from "~/lib/chat-store";
+import { getChatStore, useChatStore, toModelHistory } from "~/lib/chat-store";
 // Recharts is only downloaded when a chat answer has a chart
 const ChartDisplay = lazy(() =>
   import("./ChartDisplay").then((m) => ({ default: m.ChartDisplay })),
@@ -517,8 +517,17 @@ export function AIAnalysis({
         id: "custom-query-toast",
       });
     } finally {
-      // A cancelled answer must not leave the chat stuck in "Analyzing..."
+      // A cancelled answer must not leave the chat stuck in "Analyzing...".
+      // Keep the question (and what was streamed) unless the chat was cleared
+      // or Stop already recorded it.
       if (config.signal?.aborted && requests.isLatest("chat", config.signal)) {
+        const chat = getChatStore();
+        if (chat.isLoading && chat.pendingPrompt === currentPrompt)
+          addMessage({
+            prompt: currentPrompt,
+            response: chat.streamingResponse,
+            cancelled: true,
+          });
         setLoadingCustom(false);
         setStreaming("");
       }

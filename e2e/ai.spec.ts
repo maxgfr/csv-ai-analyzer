@@ -533,3 +533,54 @@ test("a chart in the chat opens fullscreen over the whole screen", async ({
   await expect(dialog).toHaveCount(0);
   await expect(chart).toBeVisible();
 });
+
+/** Sort the table by amount through Data Transform (a sort keeps AI results). */
+async function sortByAmount(page: Page) {
+  await page.getByRole("button", { name: "Sort", exact: true }).click();
+  await page
+    .getByRole("combobox")
+    .filter({ hasText: "No sort" })
+    .selectOption("amount");
+}
+
+test("requests cancelled by a sort release their spinners and keep the question", async ({
+  page,
+}) => {
+  let release!: () => void;
+  const held = new Promise<void>((resolve) => (release = resolve));
+  await page.route("**/mock-ai/v1/**", async (route) => {
+    const body = route.request().postDataJSON();
+    const schema = JSON.stringify(body.response_format ?? "");
+    if (schema.includes("questions"))
+      return objectResponse(route, { questions: [] });
+    // Chart suggestions and chat answers never arrive before the sort
+    await held;
+    await route.abort().catch(() => undefined);
+  });
+  await configure(page);
+
+  await page.getByRole("button", { name: "Generate Charts" }).first().click();
+  await expect(
+    page.getByRole("button", { name: "Generating..." }).first(),
+  ).toBeVisible();
+  await page.getByRole("tab", { name: "Custom Query", exact: true }).click();
+  await page
+    .getByPlaceholder("Ask a question about your data...")
+    .fill("Which name has the most?");
+  await page.getByRole("button", { name: "Send question" }).click();
+  await expect(page.getByText("Analyzing...", { exact: true })).toBeVisible();
+
+  await sortByAmount(page);
+
+  await expect(
+    page.getByRole("button", { name: "Generate Charts" }).first(),
+  ).toBeEnabled();
+  await expect(
+    page.getByText("Which name has the most?", { exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByText(/^Cancelled — this answer was stopped/),
+  ).toBeVisible();
+  await expect(page.getByText("Analyzing...", { exact: true })).toHaveCount(0);
+  release();
+});
