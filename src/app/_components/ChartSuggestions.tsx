@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import {
   Sparkles,
@@ -14,6 +14,7 @@ import {
   X,
 } from "lucide-react";
 import { useRequestScope } from "~/lib/use-request-scope";
+import { useAIConfig } from "~/lib/use-ai-config";
 import { validateChart } from "~/lib/chart-validation";
 import { type CSVData, generateDataSummary } from "~/lib/csv-parser";
 import {
@@ -32,6 +33,10 @@ interface ChartSuggestionsProps {
   onChartsGenerated: (charts: ChartSuggestion[]) => void;
   externalSuggestions?: ChartSuggestion[] | null;
   externalError?: string | null;
+  /** Called to clear the parent's error when a new generation starts. */
+  onErrorChange?: (error: string | null) => void;
+  /** Charts fixed by "Regenerate with AI", by id: they replace the broken ones. */
+  repairedCharts?: Record<string, ChartSuggestion>;
   disabled?: boolean;
 }
 
@@ -78,6 +83,8 @@ export function ChartSuggestions({
   onChartsGenerated,
   externalSuggestions,
   externalError,
+  onErrorChange,
+  repairedCharts,
   disabled = false,
 }: ChartSuggestionsProps) {
   const requests = useRequestScope(data, apiSettings);
@@ -113,18 +120,18 @@ export function ChartSuggestions({
     }
   }, [disabled, requests]);
 
-  const previousData = useRef(data);
-  // Reset only for a different dataset, including after Suspense reconnects.
+  // A new dataset remounts this component (keyed by the parent); a sorted
+  // view of the same data keeps the suggestions.
+
+  // A repaired chart replaces the broken one, so re-selecting does not bring it back
   useEffect(() => {
-    if (previousData.current === data) return;
-    previousData.current = data;
-    setSuggestions([]);
-    setSelectedCharts(new Set());
-    setError(null);
-    setShowCustomInput(false);
-    setShowManualCreate(false);
-    setCustomPrompt("");
-  }, [data]);
+    if (!repairedCharts) return;
+    setSuggestions((prev) =>
+      prev.some((c) => repairedCharts[c.id] && repairedCharts[c.id] !== c)
+        ? prev.map((c) => repairedCharts[c.id] ?? c)
+        : prev,
+    );
+  }, [repairedCharts]);
 
   // Sync with external suggestions
   useEffect(() => {
@@ -150,24 +157,9 @@ export function ChartSuggestions({
     onChartsGenerated(selected);
   }, [selectedCharts, suggestions, onChartsGenerated]);
 
-  const getConfig = (action: string): AIServiceConfig | null => {
-    // Allow custom endpoint without API key
-    const hasValidConfig = apiSettings?.customEndpoint
-      ? !!apiSettings.customModel
-      : !!apiSettings?.apiKey;
-    if (!hasValidConfig) return null;
-    return {
-      signal: requests.start(action),
-      apiKey: apiSettings!.apiKey,
-      model: apiSettings!.model,
-      providerId: apiSettings!.providerId,
-      providerNpm: apiSettings!.providerNpm,
-      providerApi: apiSettings!.providerApi,
-      language: apiSettings!.language,
-      customEndpoint: apiSettings!.customEndpoint,
-      customModel: apiSettings!.customModel,
-    };
-  };
+  const ai = useAIConfig(apiSettings);
+  const getConfig = (action: string): AIServiceConfig | null =>
+    ai.ready ? ai.configFor(requests.start(action)) : null;
 
   const handleGenerate = async () => {
     const config = getConfig("charts");
@@ -181,6 +173,7 @@ export function ChartSuggestions({
 
     setIsLoading(true);
     setError(null);
+    onErrorChange?.(null);
     toast.loading("Generating Charts", {
       description: "AI is creating chart suggestions...",
       id: "chart-gen-toast",
@@ -209,7 +202,10 @@ export function ChartSuggestions({
         id: "chart-gen-toast",
       });
     } catch (err) {
-      if (config.signal?.aborted) return;
+      if (config.signal?.aborted) {
+        toast.dismiss("chart-gen-toast");
+        return;
+      }
       const errorMessage =
         err instanceof Error
           ? err.message
@@ -221,7 +217,8 @@ export function ChartSuggestions({
         id: "chart-gen-toast",
       });
     } finally {
-      if (!config.signal?.aborted) setIsLoading(false);
+      // Always clear the spinner unless a newer request owns it
+      if (requests.isLatest("charts", config.signal!)) setIsLoading(false);
     }
   };
 
@@ -239,6 +236,7 @@ export function ChartSuggestions({
 
     setIsCustomLoading(true);
     setError(null);
+    onErrorChange?.(null);
     toast.loading("Creating Custom Chart", {
       description: "Generating chart from your description...",
       id: "custom-chart-toast",
@@ -284,7 +282,10 @@ export function ChartSuggestions({
         });
       }
     } catch (err) {
-      if (config.signal?.aborted) return;
+      if (config.signal?.aborted) {
+        toast.dismiss("custom-chart-toast");
+        return;
+      }
       const errorMessage =
         err instanceof Error
           ? err.message
@@ -296,7 +297,8 @@ export function ChartSuggestions({
         id: "custom-chart-toast",
       });
     } finally {
-      if (!config.signal?.aborted) setIsCustomLoading(false);
+      if (requests.isLatest("custom", config.signal!))
+        setIsCustomLoading(false);
     }
   };
 
@@ -430,11 +432,7 @@ export function ChartSuggestions({
           <button
             type="button"
             onClick={handleGenerate}
-            disabled={
-              disabled ||
-              isLoading ||
-              (!apiSettings?.apiKey && !apiSettings?.customEndpoint)
-            }
+            disabled={disabled || isLoading || !ai.ready}
             className="btn-primary inline-flex items-center gap-2 disabled:opacity-50"
           >
             {isLoading ? (
@@ -466,7 +464,7 @@ export function ChartSuggestions({
         </div>
       )}
 
-      {!apiSettings?.apiKey && !apiSettings?.customEndpoint && (
+      {!ai.ready && (
         <div className="py-6 text-center">
           <p className="text-gray-400">
             Configure your API key or custom endpoint to generate AI-powered
@@ -534,8 +532,9 @@ export function ChartSuggestions({
                   onClick={() => removeChart(suggestion.id)}
                   className="absolute top-2 right-2 rounded-lg p-1 text-gray-500 transition-colors hover:bg-white/10 hover:text-red-400"
                   title="Remove chart"
+                  aria-label={`Remove chart ${suggestion.title}`}
                 >
-                  ×
+                  <span aria-hidden="true">×</span>
                 </button>
               </div>
             ))}
@@ -552,6 +551,7 @@ export function ChartSuggestions({
             <div className="flex gap-3">
               <input
                 type="text"
+                aria-label="Describe your chart"
                 value={customPrompt}
                 onChange={(e) => setCustomPrompt(e.target.value)}
                 onKeyDown={(e) => {
@@ -568,6 +568,7 @@ export function ChartSuggestions({
                 type="button"
                 onClick={handleCustomChart}
                 disabled={isCustomLoading || !customPrompt.trim()}
+                aria-label="Create chart from description"
                 className="btn-primary px-4 disabled:opacity-50"
               >
                 {isCustomLoading ? (
@@ -603,9 +604,10 @@ export function ChartSuggestions({
               <button
                 type="button"
                 onClick={() => setShowManualCreate(false)}
+                aria-label="Close manual chart creation"
                 className="rounded-lg p-1 text-gray-400 transition-colors hover:bg-white/10 hover:text-white"
               >
-                <X className="h-4 w-4" />
+                <X className="h-4 w-4" aria-hidden="true" />
               </button>
             </div>
 
@@ -781,10 +783,7 @@ export function ChartSuggestions({
           <div className="flex gap-3">
             <button
               type="button"
-              disabled={
-                disabled ||
-                (!apiSettings?.apiKey && !apiSettings?.customEndpoint)
-              }
+              disabled={disabled || !ai.ready}
               onClick={() => setShowCustomInput(true)}
               className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-dashed border-white/20 p-4 text-gray-400 transition-all hover:border-violet-500/50 hover:bg-violet-500/5 hover:text-violet-400"
             >
@@ -807,11 +806,7 @@ export function ChartSuggestions({
           <button
             type="button"
             onClick={handleGenerate}
-            disabled={
-              disabled ||
-              isLoading ||
-              (!apiSettings?.apiKey && !apiSettings?.customEndpoint)
-            }
+            disabled={disabled || isLoading || !ai.ready}
             className="btn-secondary inline-flex items-center gap-2 text-sm"
           >
             {isLoading ? (

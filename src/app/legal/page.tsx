@@ -3,9 +3,11 @@ import Link from "next/link";
 import { ArrowLeft, Shield, Database, Lock, ExternalLink } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Legal & Privacy - CSV AI Analyzer",
+  // The root layout's template appends " | CSV AI Analyzer"
+  title: "Legal & Privacy",
   description:
     "Privacy policy and legal information for CSV AI Analyzer. Your data stays in your browser.",
+  alternates: { canonical: "/legal/" },
 };
 
 export default function LegalPage() {
@@ -21,7 +23,7 @@ export default function LegalPage() {
           Back to App
         </Link>
 
-        <h1 className="mb-8 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-4xl font-bold text-transparent">
+        <h1 className="mb-8 bg-gradient-to-r from-(--text-primary) to-(--text-secondary) bg-clip-text text-4xl font-bold text-transparent">
           Legal & Privacy
         </h1>
 
@@ -76,8 +78,8 @@ export default function LegalPage() {
                   AI provider
                 </li>
                 <li>
-                  Your API key is stored in a secure browser cookie → never sent
-                  to us
+                  Your API key stays in your browser (see below) → it is sent
+                  only to the AI provider you chose, never to us
                 </li>
                 <li>When you close the browser tab → all data is gone</li>
               </ol>
@@ -94,28 +96,33 @@ export default function LegalPage() {
             </div>
             <div className="space-y-4 text-gray-300">
               <p>
-                When you use AI features, your data is sent directly from your
-                browser to:
+                When you use AI features, your browser sends requests directly
+                to the AI provider you selected in the API settings (OpenAI,
+                Anthropic, Google, Mistral, another compatible provider, or your
+                own custom endpoint). Depending on the feature, a request
+                contains:
               </p>
-              <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-                <h4 className="mb-2 font-medium text-white">OpenAI</h4>
-                <p className="text-sm text-gray-400">
-                  AI analysis is powered by OpenAI&apos;s API. Your data
-                  summaries are processed according to
-                  <a
-                    href="https://openai.com/policies/privacy-policy"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="ml-1 text-violet-400 hover:text-violet-300"
-                  >
-                    OpenAI&apos;s Privacy Policy
-                  </a>
-                  .
-                </p>
-              </div>
-              <p className="text-sm text-gray-500">
-                We recommend reviewing OpenAI&apos;s data retention policies if
-                you&apos;re processing sensitive data.
+              <ul className="list-inside list-disc space-y-1 text-gray-400">
+                <li>
+                  Summary, charts and suggested questions: column names and
+                  types, per-column statistics, a few example values and the
+                  first 5 rows
+                </li>
+                <li>
+                  Anomaly detection: the same summary plus the first 50 rows
+                </li>
+                <li>
+                  Chat: the summary, your question and your recent questions and
+                  answers
+                </li>
+                <li>Your API key, in the request headers</li>
+              </ul>
+              <p className="text-sm text-gray-400">
+                Long cell values are cut to 200 characters. These requests are
+                processed under your provider&apos;s own terms and privacy
+                policy; review its data retention rules before analyzing
+                sensitive data. With a custom endpoint on your own machine,
+                nothing leaves it.
               </p>
             </div>
           </section>
@@ -129,25 +136,37 @@ export default function LegalPage() {
               <h2 className="text-xl font-semibold">API Key Security</h2>
             </div>
             <div className="space-y-4 text-gray-300">
-              <p>
-                Your OpenAI API key is stored in a browser cookie with the
-                following security measures:
-              </p>
+              <p>This site uses no cookies. What it stores in your browser:</p>
               <ul className="list-inside list-disc space-y-1 text-gray-400">
                 <li>
+                  Your API key: in{" "}
                   <code className="rounded bg-white/10 px-1 text-xs">
-                    Secure
+                    sessionStorage
+                  </code>
+                  , for the current tab only, erased when you close it. If you
+                  tick &quot;Remember on this device&quot;, it goes to{" "}
+                  <code className="rounded bg-white/10 px-1 text-xs">
+                    localStorage
                   </code>{" "}
-                  flag: Only transmitted over HTTPS
+                  instead and stays until you untick it or clear site data
                 </li>
                 <li>
+                  Preferences, in{" "}
                   <code className="rounded bg-white/10 px-1 text-xs">
-                    SameSite=Strict
+                    localStorage
                   </code>
-                  : Prevents cross-site request forgery
+                  : provider, model, response language, custom endpoint and
+                  theme
                 </li>
-                <li>Never sent to our servers</li>
-                <li>API calls are made directly from your browser to OpenAI</li>
+                <li>
+                  The key is never sent to this site: it only travels, over
+                  HTTPS, to the AI provider you selected
+                </li>
+                <li>
+                  Anyone with access to this browser profile, or a malicious
+                  browser extension, could read stored values: avoid
+                  &quot;Remember&quot; on shared computers
+                </li>
               </ul>
             </div>
           </section>
@@ -163,7 +182,7 @@ export default function LegalPage() {
 
           {/* Footer */}
           <p className="py-8 text-center text-sm text-gray-500">
-            Last updated: December 2025
+            Last updated: October 2026
           </p>
         </div>
       </div>

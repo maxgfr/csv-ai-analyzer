@@ -1,6 +1,13 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  lazy,
+  Suspense,
+} from "react";
 import { toast } from "sonner";
 import {
   Brain,
@@ -36,11 +43,17 @@ import {
   type AnomalyResult,
   type AIServiceConfig,
   type SuggestedQuestion,
+  ANOMALY_SAMPLE_ROWS,
 } from "~/lib/ai-service";
 import type { StoredSettings } from "~/lib/storage";
-import { useChatStore } from "~/lib/chat-store";
-import { ChartDisplay } from "./ChartDisplay";
+import { getChatStore, useChatStore, toModelHistory } from "~/lib/chat-store";
+// Recharts is only downloaded when a chat answer has a chart
+const ChartDisplay = lazy(() =>
+  import("./ChartDisplay").then((m) => ({ default: m.ChartDisplay })),
+);
 import { useRequestScope } from "~/lib/use-request-scope";
+import { useAIConfig } from "~/lib/use-ai-config";
+import { downloadBlob } from "~/lib/download";
 
 interface AIAnalysisProps {
   data: CSVData;
@@ -159,23 +172,16 @@ export function AIAnalysis({
     }
   }, [customHistory, streamingResponse, expandedSections.custom]);
 
-  // Reset suggested questions when data changes (new file loaded)
-  useEffect(() => {
-    suggestionsLoadedRef.current = false;
-    setSuggestedQuestions([]);
-  }, [data]);
+  // A new dataset remounts this component (keyed by the parent), which resets
+  // the suggested questions; a sorted view of the same data keeps them.
 
-  // Sync with external results
+  // Mirror the parent's results, including when they are cleared
   useEffect(() => {
-    if (externalSummary) {
-      setSummaryResult(externalSummary);
-    }
+    setSummaryResult(externalSummary ?? null);
   }, [externalSummary]);
 
   useEffect(() => {
-    if (externalAnomalies) {
-      setAnomaliesResult(externalAnomalies);
-    }
+    setAnomaliesResult(externalAnomalies ?? null);
   }, [externalAnomalies]);
 
   // Compute effective errors: use external error (from page.tsx "Run All") if available,
@@ -188,10 +194,24 @@ export function AIAnalysis({
   };
 
   const handleCopy = useCallback(async (text: string, index: number) => {
-    await navigator.clipboard.writeText(text);
-    setCopiedIndex(index);
-    toast.success("Copied to clipboard");
-    setTimeout(() => setCopiedIndex(null), 2000);
+    // navigator.clipboard is missing outside secure contexts (plain http)
+    if (!navigator.clipboard) {
+      toast.error("Copy unavailable", {
+        description:
+          "The clipboard needs a secure (https) page. Select the text to copy it.",
+      });
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedIndex(index);
+      toast.success("Copied to clipboard");
+      setTimeout(() => setCopiedIndex(null), 2000);
+    } catch {
+      toast.error("Copy failed", {
+        description: "The browser blocked clipboard access.",
+      });
+    }
   }, []);
 
   const handleExportReport = useCallback(() => {
@@ -237,20 +257,18 @@ export function AIAnalysis({
     }
 
     const markdown = sections.join("\n");
-    const blob = new Blob([markdown], { type: "text/markdown" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "ai-analysis-report.md";
-    a.click();
-    URL.revokeObjectURL(url);
+    downloadBlob(
+      new Blob([markdown], { type: "text/markdown" }),
+      "ai-analysis-report.md",
+    );
     toast.success("Report exported as Markdown");
   }, [summaryResult, anomaliesResult, customHistory]);
 
   const handleExportPDF = useCallback(async () => {
     try {
-      const { exportToPDF } = await import("~/lib/pdf-export");
-      exportToPDF({
+      const { exportToPDF, PDF_UNSUPPORTED_WARNING } =
+        await import("~/lib/pdf-export");
+      const report = await exportToPDF({
         fileName: fileName ?? "analysis",
         data,
         summary: summaryResult,
@@ -258,30 +276,17 @@ export function AIAnalysis({
         chatHistory: customHistory,
       });
       toast.success("PDF report exported");
+      if (report.unsupportedCharacters) toast.warning(PDF_UNSUPPORTED_WARNING);
     } catch (e) {
       console.error("PDF export failed:", e);
       toast.error("PDF export failed");
     }
   }, [fileName, data, summaryResult, anomaliesResult, customHistory]);
 
-  const getConfig = (action: string): AIServiceConfig | null => {
-    // Allow custom endpoint without API key
-    const hasValidConfig = apiSettings?.customEndpoint
-      ? !!apiSettings.customModel
-      : !!apiSettings?.apiKey;
-    if (!hasValidConfig) return null;
-    return {
-      signal: requests.start(action),
-      apiKey: apiSettings!.apiKey,
-      model: apiSettings!.model,
-      providerId: apiSettings!.providerId,
-      providerNpm: apiSettings!.providerNpm,
-      providerApi: apiSettings!.providerApi,
-      language: apiSettings!.language,
-      customEndpoint: apiSettings!.customEndpoint,
-      customModel: apiSettings!.customModel,
-    };
-  };
+  const ai = useAIConfig(apiSettings);
+  // Starting a request replaces the previous one of the same action
+  const getConfig = (action: string): AIServiceConfig | null =>
+    ai.ready ? ai.configFor(requests.start(action)) : null;
 
   // Auto-fetch suggested questions when custom tab is first shown
   useEffect(() => {
@@ -295,27 +300,26 @@ export function AIAnalysis({
 
     const config = getConfig("suggestions");
     if (!config) return;
+    const signal = config.signal!;
 
     suggestionsLoadedRef.current = true;
     setIsLoadingSuggestions(true);
 
-    // Guard against stale responses when data changes mid-flight
-    let cancelled = false;
+    // The request scope cancels this when the data or settings change
     const csvSummary = generateCSVSummary(data);
     void fetchSuggestedQuestions(config, csvSummary)
       .then((questions) => {
-        if (!cancelled) setSuggestedQuestions(questions);
+        if (!signal.aborted) setSuggestedQuestions(questions);
       })
       .catch(() => {
         // Non-critical — silently ignore
       })
       .finally(() => {
-        if (!cancelled) setIsLoadingSuggestions(false);
+        // A cancelled fetch may run again next time the tab is shown
+        if (signal.aborted) suggestionsLoadedRef.current = false;
+        if (requests.isLatest("suggestions", signal))
+          setIsLoadingSuggestions(false);
       });
-
-    return () => {
-      cancelled = true;
-    };
   }, [activeTab, data, apiSettings]);
 
   const handleGenerateSummary = async () => {
@@ -347,20 +351,26 @@ export function AIAnalysis({
         id: "summary-toast",
       });
     } catch (err) {
-      if (config.signal?.aborted) return;
+      if (config.signal?.aborted) {
+        toast.dismiss("summary-toast");
+        return;
+      }
       const errorMessage =
         err instanceof Error
           ? err.message
           : "Unable to analyze data. Please try again.";
       setSummaryError(errorMessage);
-      onSummaryChange?.(null, errorMessage);
+      // Keep the previous summary on screen next to the error
+      onSummaryChange?.(summaryResult, errorMessage);
       console.error("Data summary failed:", err);
       toast.error("Summary Failed", {
         description: errorMessage,
         id: "summary-toast",
       });
     } finally {
-      if (!config.signal?.aborted) setIsLoadingSummary(false);
+      // Always clear the spinner unless a newer summary request owns it
+      if (requests.isLatest("summary", config.signal!))
+        setIsLoadingSummary(false);
     }
   };
 
@@ -394,20 +404,24 @@ export function AIAnalysis({
         id: "anomalies-toast",
       });
     } catch (err) {
-      if (config.signal?.aborted) return;
+      if (config.signal?.aborted) {
+        toast.dismiss("anomalies-toast");
+        return;
+      }
       const errorMessage =
         err instanceof Error
           ? err.message
           : "Unable to detect anomalies. Please try again.";
       setAnomaliesError(errorMessage);
-      onAnomaliesChange?.(null, errorMessage);
+      onAnomaliesChange?.(anomaliesResult, errorMessage);
       console.error("Anomaly detection failed:", err);
       toast.error("Detection Failed", {
         description: errorMessage,
         id: "anomalies-toast",
       });
     } finally {
-      if (!config.signal?.aborted) setIsLoadingAnomalies(false);
+      if (requests.isLatest("anomalies", config.signal!))
+        setIsLoadingAnomalies(false);
     }
   };
 
@@ -476,10 +490,13 @@ export function AIAnalysis({
               });
           }
         },
-        customHistory, // Pass current history
+        toModelHistory(customHistory),
       );
     } catch (err) {
-      if (config.signal?.aborted) return;
+      if (config.signal?.aborted) {
+        toast.dismiss("custom-query-toast");
+        return;
+      }
       let errorMessage = "Unable to analyze. Please try again.";
       if (err instanceof Error && err.message && err.message.trim() !== "") {
         errorMessage = err.message;
@@ -499,7 +516,41 @@ export function AIAnalysis({
         description: errorMessage,
         id: "custom-query-toast",
       });
+    } finally {
+      // A cancelled answer must not leave the chat stuck in "Analyzing...".
+      // Keep the question (and what was streamed) unless the chat was cleared
+      // or Stop already recorded it.
+      if (config.signal?.aborted && requests.isLatest("chat", config.signal)) {
+        const chat = getChatStore();
+        if (chat.isLoading && chat.pendingPrompt === currentPrompt)
+          addMessage({
+            prompt: currentPrompt,
+            response: chat.streamingResponse,
+            cancelled: true,
+          });
+        setLoadingCustom(false);
+        setStreaming("");
+      }
     }
+  };
+
+  const stopAll = () => {
+    requests.cancelAll();
+    // Keep the interrupted question, with what was streamed so far
+    if (isLoadingCustom && pendingPrompt)
+      addMessage({
+        prompt: pendingPrompt,
+        response: streamingResponse,
+        cancelled: true,
+      });
+    setIsLoadingSummary(false);
+    setIsLoadingAnomalies(false);
+    setLoadingCustom(false);
+    setStreaming("");
+    setIsLoadingSuggestions(false);
+    ["summary-toast", "anomalies-toast", "custom-query-toast"].forEach((id) =>
+      toast.dismiss(id),
+    );
   };
 
   const tabs = [
@@ -513,17 +564,7 @@ export function AIAnalysis({
       {(isLoadingSummary || isLoadingAnomalies || isLoadingCustom) && (
         <button
           type="button"
-          onClick={() => {
-            requests.cancelAll();
-            setIsLoadingSummary(false);
-            setIsLoadingAnomalies(false);
-            setLoadingCustom(false);
-            setStreaming("");
-            setIsLoadingSuggestions(false);
-            ["summary-toast", "anomalies-toast", "custom-query-toast"].forEach(
-              (id) => toast.dismiss(id),
-            );
-          }}
+          onClick={stopAll}
           className="mb-4 self-start rounded-lg border border-white/20 px-3 py-2 text-sm"
         >
           Stop analysis
@@ -565,11 +606,19 @@ export function AIAnalysis({
       </div>
 
       {/* Tabs */}
-      <div className="mb-6 flex gap-2 border-b border-white/10 pb-4">
+      <div
+        role="tablist"
+        aria-label="AI analysis"
+        className="mb-6 flex flex-wrap gap-2 border-b border-white/10 pb-4"
+      >
         {tabs.map((tab) => (
           <button
             key={tab.id}
             type="button"
+            role="tab"
+            id={`ai-tab-${tab.id}`}
+            aria-selected={activeTab === tab.id}
+            aria-controls="ai-tab-panel"
             onClick={() => setActiveTab(tab.id)}
             className={`flex items-center gap-2 rounded-lg px-4 py-2 transition-all ${
               activeTab === tab.id
@@ -604,7 +653,7 @@ export function AIAnalysis({
       )}
 
       {/* No API Key Warning */}
-      {!apiSettings?.apiKey && !apiSettings?.customEndpoint && (
+      {!ai.ready && (
         <div className="mb-4 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4">
           <p className="text-sm text-amber-400">
             Configure your API key or custom endpoint to use AI analysis
@@ -613,7 +662,13 @@ export function AIAnalysis({
       )}
 
       {/* Tab Content */}
-      <div className="min-h-[200px] flex-1 overflow-y-auto" aria-live="polite">
+      <div
+        id="ai-tab-panel"
+        role="tabpanel"
+        aria-labelledby={`ai-tab-${activeTab}`}
+        className="min-h-[200px] flex-1 overflow-y-auto"
+        aria-live="polite"
+      >
         {/* Summary Tab */}
         {activeTab === "summary" && (
           <div className="space-y-4">
@@ -640,11 +695,7 @@ export function AIAnalysis({
                 <button
                   type="button"
                   onClick={handleGenerateSummary}
-                  disabled={
-                    disabled ||
-                    isLoadingSummary ||
-                    (!apiSettings?.apiKey && !apiSettings?.customEndpoint)
-                  }
+                  disabled={disabled || isLoadingSummary || !ai.ready}
                   className="btn-primary inline-flex items-center gap-2 disabled:opacity-50"
                 >
                   {isLoadingSummary ? (
@@ -775,16 +826,14 @@ export function AIAnalysis({
             {!anomaliesResult ? (
               <div className="py-8 text-center">
                 <p className="mb-4 text-gray-400">
-                  AI will scan your data to detect anomalies
+                  AI checks the first {ANOMALY_SAMPLE_ROWS} rows for anomalies,
+                  using column statistics of the whole file as context. Rows
+                  beyond them are not inspected one by one.
                 </p>
                 <button
                   type="button"
                   onClick={handleDetectAnomalies}
-                  disabled={
-                    disabled ||
-                    isLoadingAnomalies ||
-                    (!apiSettings?.apiKey && !apiSettings?.customEndpoint)
-                  }
+                  disabled={disabled || isLoadingAnomalies || !ai.ready}
                   className="btn-primary inline-flex items-center gap-2 disabled:opacity-50"
                 >
                   {isLoadingAnomalies ? (
@@ -807,7 +856,9 @@ export function AIAnalysis({
                 </div>
                 <p className="mb-2 text-gray-300">No anomalies detected</p>
                 <p className="text-sm text-gray-500">
-                  Your data appears to be valid and consistent
+                  {data.rowCount > ANOMALY_SAMPLE_ROWS
+                    ? `In the first ${ANOMALY_SAMPLE_ROWS} of ${data.rowCount} rows`
+                    : "Your data appears to be valid and consistent"}
                 </p>
                 <button
                   type="button"
@@ -831,6 +882,8 @@ export function AIAnalysis({
                       {anomaliesResult.length}
                     </span>{" "}
                     anomal{anomaliesResult.length > 1 ? "ies" : "y"} detected
+                    {data.rowCount > ANOMALY_SAMPLE_ROWS &&
+                      ` in the first ${ANOMALY_SAMPLE_ROWS} of ${data.rowCount} rows`}
                   </p>
                   <button
                     type="button"
@@ -903,11 +956,12 @@ export function AIAnalysis({
                 <button
                   type="button"
                   onClick={() => {
-                    requests.cancelAll();
+                    requests.cancel("chat");
                     clearChat();
                   }}
                   className="flex items-center gap-1.5 rounded-lg bg-white/5 px-3 py-1.5 text-sm text-gray-400 transition-colors hover:bg-red-500/10 hover:text-red-400"
                   title="Clear chat history"
+                  aria-label="Clear chat history"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                   Clear
@@ -954,8 +1008,9 @@ export function AIAnalysis({
                             <button
                               type="button"
                               onClick={() => void handleCopy(item.response, i)}
-                              className="absolute top-2 right-2 rounded-md bg-white/5 p-1.5 text-gray-500 opacity-0 transition-opacity group-hover/msg:opacity-100 hover:bg-white/10 hover:text-white"
+                              className="absolute top-2 right-2 rounded-md bg-white/5 p-1.5 text-gray-500 opacity-0 transition-opacity group-hover/msg:opacity-100 hover:bg-white/10 hover:text-white focus-visible:opacity-100"
                               title="Copy to clipboard"
+                              aria-label="Copy answer to clipboard"
                             >
                               {copiedIndex === i ? (
                                 <Check className="h-3.5 w-3.5 text-emerald-400" />
@@ -968,11 +1023,17 @@ export function AIAnalysis({
                             <p className="text-sm whitespace-pre-wrap text-red-300">
                               {item.response}
                             </p>
-                          ) : (
+                          ) : item.response ? (
                             <MarkdownRenderer
                               content={item.response}
                               className="text-sm"
                             />
+                          ) : null}
+                          {item.cancelled && (
+                            <p className="mt-1 text-xs text-gray-500 italic">
+                              Cancelled — this answer was stopped before it
+                              finished.
+                            </p>
                           )}
                           {item.chart && (
                             <div className="mt-3 border-t border-white/10 pt-3">
@@ -980,7 +1041,18 @@ export function AIAnalysis({
                                 <BarChart3 className="h-3.5 w-3.5" />
                                 Generated chart
                               </div>
-                              <ChartDisplay data={data} charts={[item.chart]} />
+                              <Suspense
+                                fallback={
+                                  <p className="text-xs text-gray-500">
+                                    Loading chart…
+                                  </p>
+                                }
+                              >
+                                <ChartDisplay
+                                  data={data}
+                                  charts={[item.chart]}
+                                />
+                              </Suspense>
                             </div>
                           )}
                         </div>
@@ -1061,11 +1133,7 @@ export function AIAnalysis({
                 }}
                 placeholder="Ask a question about your data..."
                 className="input-field flex-1"
-                disabled={
-                  disabled ||
-                  isLoadingCustom ||
-                  (!apiSettings?.apiKey && !apiSettings?.customEndpoint)
-                }
+                disabled={disabled || isLoadingCustom || !ai.ready}
               />
               <button
                 type="button"
@@ -1074,7 +1142,7 @@ export function AIAnalysis({
                   disabled ||
                   isLoadingCustom ||
                   !customPrompt.trim() ||
-                  (!apiSettings?.apiKey && !apiSettings?.customEndpoint)
+                  !ai.ready
                 }
                 className="btn-primary px-4 disabled:opacity-50"
                 aria-label="Send question"

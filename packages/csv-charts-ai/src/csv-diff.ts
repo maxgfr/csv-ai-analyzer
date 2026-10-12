@@ -29,6 +29,8 @@ export interface DiffResult {
   counts: DiffCounts;
   /** Number of repeated key occurrences in each input. */
   duplicateKeys?: { a: number; b: number };
+  /** True when the files share no column: nothing can match, every row is added or removed. */
+  noCommonColumns?: boolean;
 }
 
 export interface DiffOptions {
@@ -85,13 +87,34 @@ export function computeDiff(
 
   // Determine effective match mode
   const effectiveMode =
-    matchMode === "content"
-      ? "content"
-      : matchMode === "key" && keyColumn && commonHeaders.includes(keyColumn)
-        ? "key"
-        : "index";
+    commonHeaders.length === 0
+      ? "none"
+      : matchMode === "content"
+        ? "content"
+        : matchMode === "key" && keyColumn && commonHeaders.includes(keyColumn)
+          ? "key"
+          : "index";
 
-  if (effectiveMode === "content") {
+  if (effectiveMode === "none") {
+    for (let i = 0; i < primaryData.rows.length; i++)
+      rows.push({
+        indexA: i,
+        indexB: null,
+        status: "removed",
+        rowA: primaryData.rows[i]!,
+        rowB: null,
+        changedCols: new Set(),
+      });
+    for (let i = 0; i < compareData.rows.length; i++)
+      rows.push({
+        indexA: null,
+        indexB: i,
+        status: "added",
+        rowA: null,
+        rowB: compareData.rows[i]!,
+        changedCols: new Set(),
+      });
+  } else if (effectiveMode === "content") {
     const makeKey = (row: (string | number)[], indices: number[]) => {
       let key = "";
       for (const index of indices) {
@@ -276,5 +299,6 @@ export function computeDiff(
     rows,
     counts,
     ...(duplicateKeys && { duplicateKeys }),
+    ...(effectiveMode === "none" && { noCommonColumns: true }),
   };
 }

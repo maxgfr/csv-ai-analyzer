@@ -109,6 +109,21 @@ describe("parseCSV", () => {
       const data = parseCSV('name,value\nAlice,""\nBob,test');
       expect(data.rows[0]).toEqual(["Alice", ""]);
     });
+
+    it("treats a quote in the middle of an unquoted field as literal", () => {
+      const data = parseCSV('id,product\n1,55" TV\n2,32" TV');
+      expect(data.rowCount).toBe(2);
+      expect(data.rows).toEqual([
+        ["1", '55" TV'],
+        ["2", '32" TV'],
+      ]);
+    });
+
+    it("detects the delimiter despite mid-field quotes", () => {
+      const data = parseCSV('id;size\n1;55" TV\n2;32" TV\n3;40" TV');
+      expect(data.headers).toEqual(["id", "size"]);
+      expect(data.rows[2]).toEqual(["3", '40" TV']);
+    });
   });
 
   describe("line endings", () => {

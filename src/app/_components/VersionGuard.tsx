@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { toast } from "sonner";
 
-const POLL_INTERVAL = 5 * 60 * 1000; // 5 minutes
+const CHECK_INTERVAL = 5 * 60 * 1000; // 5 minutes
 
 export function VersionGuard() {
   const currentVersion = process.env.NEXT_PUBLIC_APP_VERSION;
@@ -14,8 +14,10 @@ export function VersionGuard() {
 
     const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
+    let lastCheck = 0;
     const check = async () => {
       if (dismissed.current) return;
+      lastCheck = Date.now();
       try {
         const res = await fetch(`${basePath}/version.json`, {
           cache: "no-store",
@@ -38,14 +40,24 @@ export function VersionGuard() {
       }
     };
 
-    const run = () => void check();
-    const id = setInterval(run, POLL_INTERVAL);
+    // Only visible tabs check: background tabs make no requests
+    const run = () => {
+      if (document.visibilityState !== "visible") return;
+      if (Date.now() - lastCheck < CHECK_INTERVAL) return;
+      void check();
+    };
+    const id = setInterval(run, 60_000);
+    // Coming back to the tab checks right away when the last check is old
+    document.addEventListener("visibilitychange", run);
     // First check after a short delay so the app loads first
-    const timeout = setTimeout(run, 10_000);
+    const timeout = setTimeout(() => {
+      if (document.visibilityState === "visible") void check();
+    }, 10_000);
 
     return () => {
       clearInterval(id);
       clearTimeout(timeout);
+      document.removeEventListener("visibilitychange", run);
     };
   }, [currentVersion]);
 

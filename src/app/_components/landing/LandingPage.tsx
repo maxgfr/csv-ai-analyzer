@@ -16,7 +16,6 @@ interface LandingPageProps {
   currentFileName: string | undefined;
   onSettingsChange: (settings: CSVSettings) => void;
   onApiSettingsChange: (settings: StoredSettings | null) => void;
-  onFileLoaded: (content: string, fileName: string) => void;
   onClearFile: () => void;
   onDataLoaded: (
     data: CSVData,
@@ -31,7 +30,6 @@ export function LandingPage({
   currentFileName,
   onSettingsChange,
   onApiSettingsChange,
-  onFileLoaded,
   onClearFile,
   onDataLoaded,
 }: LandingPageProps) {
@@ -73,7 +71,6 @@ export function LandingPage({
           showSampleDropdown={showSampleDropdown}
           onSettingsChange={onSettingsChange}
           onApiSettingsChange={onApiSettingsChange}
-          onFileLoaded={onFileLoaded}
           onDataLoaded={onDataLoaded}
           onClearFile={onClearFile}
           onLoadSample={handleLoadSample}

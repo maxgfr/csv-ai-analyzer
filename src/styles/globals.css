@@ -500,6 +500,20 @@ html.light .bg-emerald-400 { background-color: #059669; }
 /* --- Violet text — darker in light mode for contrast (WCAG AA) --- */
 html.light .text-violet-400 { color: #6d28d9; }
 html.light .text-violet-300 { color: #7c3aed; }
+/* Status colors: the 300/400 shades are made for dark backgrounds; use 700 shades
+   on light ones so text keeps at least 4.5:1 contrast (WCAG AA) */
+html.light .text-amber-300,
+html.light .text-amber-400,
+html.light .text-amber-400\/80 { color: #b45309; }
+html.light .text-red-300,
+html.light .text-red-300\/80,
+html.light .text-red-400,
+html.light .text-red-400\/70 { color: #b91c1c; }
+html.light .text-yellow-400 { color: #a16207; }
+html.light .text-fuchsia-300,
+html.light .text-fuchsia-400 { color: #a21caf; }
+html.light .text-cyan-400,
+html.light .text-cyan-400\/60 { color: #0e7490; }
 html.light .hover\:text-violet-300:hover { color: #6d28d9; }
 html.light .hover\:text-violet-400:hover { color: #5b21b6; }
 

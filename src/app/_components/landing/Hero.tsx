@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { Sparkles, Database, ChevronDown, Github } from "lucide-react";
 import { FileUpload } from "../FileUpload";
 import { APIKeyButton } from "../APIKeySettings";
@@ -17,7 +18,6 @@ interface HeroProps {
   showSampleDropdown: boolean;
   onSettingsChange: (settings: CSVSettings) => void;
   onApiSettingsChange: (settings: StoredSettings | null) => void;
-  onFileLoaded: (content: string, fileName: string) => void;
   onDataLoaded: (
     data: CSVData,
     fileName: string,
@@ -35,12 +35,30 @@ export function Hero({
   showSampleDropdown,
   onSettingsChange,
   onApiSettingsChange,
-  onFileLoaded,
   onDataLoaded,
   onClearFile,
   onLoadSample,
   onToggleSampleDropdown,
 }: HeroProps) {
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  // Escape or a click outside closes the sample menu
+  useEffect(() => {
+    if (!showSampleDropdown) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onToggleSampleDropdown();
+    };
+    const onPointerDown = (e: PointerEvent) => {
+      if (!dropdownRef.current?.contains(e.target as Node))
+        onToggleSampleDropdown();
+    };
+    document.addEventListener("keydown", onKeyDown);
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.removeEventListener("pointerdown", onPointerDown);
+    };
+  }, [showSampleDropdown, onToggleSampleDropdown]);
+
   return (
     <div>
       <div className="relative mx-auto max-w-7xl px-4 pt-12 pb-16 md:px-8">
@@ -126,7 +144,6 @@ export function Hero({
         {/* Upload Section */}
         <div id="upload-section" className="mx-auto mb-12 max-w-4xl">
           <FileUpload
-            onFileLoaded={onFileLoaded}
             onDataLoaded={onDataLoaded}
             csvSettings={csvSettings}
             currentFileName={currentFileName}
@@ -138,9 +155,11 @@ export function Hero({
             <span className="text-sm" style={{ color: "var(--text-tertiary)" }}>
               Or try a sample:
             </span>
-            <div className="relative">
+            <div className="relative" ref={dropdownRef}>
               <button
                 onClick={onToggleSampleDropdown}
+                aria-expanded={showSampleDropdown}
+                aria-controls="sample-data-menu"
                 className="flex items-center gap-2 rounded-xl px-4 py-2 text-sm transition-all"
                 style={{
                   border: "1px solid var(--border-glass)",
@@ -158,6 +177,7 @@ export function Hero({
               {/* Dropdown */}
               {showSampleDropdown && (
                 <div
+                  id="sample-data-menu"
                   className="absolute bottom-full left-0 z-50 mb-2 w-56 overflow-hidden rounded-xl shadow-xl"
                   style={{
                     border: "1px solid var(--border-glass)",

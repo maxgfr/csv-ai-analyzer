@@ -1,4 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
+import { readFileSync } from "node:fs";
 const csv = "name,amount,group\nAlice,20,A\nBob,2,B\nAlice,20,A\nEmpty,,B";
 async function importCSV(page: Page, content = csv) {
   await page.goto("/");
@@ -185,4 +186,153 @@ test("sample data works and settings persist across reloads", async ({
   await page.getByRole("button", { name: "Switch to Light theme" }).click();
   await page.reload();
   await expect(page.locator("html")).toHaveClass(/light/);
+});
+
+test("Escape closes the parser and API settings", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Parser settings" }).click();
+  await expect(
+    page.getByRole("dialog", { name: "Parser Settings" }),
+  ).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(
+    page.getByRole("dialog", { name: "Parser Settings" }),
+  ).toHaveCount(0);
+  await page.getByRole("button", { name: "API settings", exact: true }).click();
+  await expect(
+    page.getByRole("dialog", { name: "API Configuration" }),
+  ).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(
+    page.getByRole("dialog", { name: "API Configuration" }),
+  ).toHaveCount(0);
+});
+
+test("the model list loads only in the settings and can be retried", async ({
+  page,
+}) => {
+  let catalogRequests = 0;
+  let fail = true;
+  await page.route("**/models.json", async (route) => {
+    catalogRequests++;
+    if (fail) await route.fulfill({ status: 503, body: "unavailable" });
+    else await route.continue();
+  });
+  await page.goto("/");
+  await page.waitForLoadState("networkidle");
+  expect(catalogRequests).toBe(0);
+
+  await page.getByRole("button", { name: "API settings", exact: true }).click();
+  const retry = page.getByRole("button", { name: "Retry", exact: true });
+  await expect(retry).toBeVisible();
+  // A failure must not loop
+  await page.waitForTimeout(500);
+  expect(catalogRequests).toBe(1);
+
+  fail = false;
+  await retry.click();
+  await expect(retry).toHaveCount(0);
+  await expect(
+    page.getByLabel("Provider", { exact: true }).locator("option", {
+      hasText: "Anthropic",
+    }),
+  ).toHaveCount(1);
+});
+
+test("changing provider saves a model of that provider", async ({ page }) => {
+  const catalog = JSON.parse(
+    readFileSync("public/models.json", "utf8"),
+  ) as Record<string, { models: Record<string, unknown> }>;
+  await page.goto("/");
+  await page.getByRole("button", { name: "API settings", exact: true }).click();
+  await page.getByLabel("Provider", { exact: true }).selectOption("openai");
+  await page.getByLabel("Provider", { exact: true }).selectOption("anthropic");
+  await page.getByLabel("Provider API Key", { exact: true }).fill("sk-test");
+  await page
+    .getByRole("button", { name: "Save Configuration", exact: true })
+    .click();
+  const saved = await page.evaluate(() =>
+    JSON.parse(localStorage.getItem("csv-ai-settings") ?? "{}"),
+  );
+  expect(saved.providerId).toBe("anthropic");
+  expect(Object.keys(catalog.anthropic!.models)).toContain(saved.model);
+});
+
+test("an API key is forgotten in a new tab unless remembered", async ({
+  page,
+  context,
+}) => {
+  const saveKey = async (remember: boolean) => {
+    await page
+      .getByRole("button", { name: "API settings", exact: true })
+      .click();
+    await page.getByLabel("Provider API Key", { exact: true }).fill("sk-tab");
+    const box = page.getByLabel("Remember on this device");
+    if (remember) await box.check();
+    else await box.uncheck();
+    await page
+      .getByRole("button", { name: /GPT|gpt/ })
+      .first()
+      .click();
+    await page
+      .getByRole("button", { name: "Save Configuration", exact: true })
+      .click();
+  };
+  const keyInNewTab = async () => {
+    const tab = await context.newPage();
+    await tab.goto("/");
+    const key = await tab.evaluate(
+      () =>
+        sessionStorage.getItem("csv-ai-api-key") ??
+        localStorage.getItem("csv-ai-api-key"),
+    );
+    await tab.close();
+    return key;
+  };
+  await page.goto("/");
+  await saveKey(false);
+  expect(
+    await page.evaluate(() => sessionStorage.getItem("csv-ai-api-key")),
+  ).toBe("sk-tab");
+  expect(await keyInNewTab()).toBeNull();
+  // Reloading the same tab keeps it
+  await page.reload();
+  expect(
+    await page.evaluate(() => sessionStorage.getItem("csv-ai-api-key")),
+  ).toBe("sk-tab");
+
+  await saveKey(true);
+  expect(await keyInNewTab()).toBe("sk-tab");
+  expect(await context.cookies()).toEqual([]);
+});
+
+test("settings saved in cookies by older versions are migrated", async ({
+  page,
+  context,
+}) => {
+  const url = "http://127.0.0.1:3100";
+  await context.addCookies([
+    { name: "csv-ai-api-key", value: "sk-legacy", url },
+    { name: "csv-ai-provider", value: "anthropic", url },
+    { name: "csv-ai-model", value: "claude-legacy", url },
+    { name: "csv-ai-theme", value: "light", url },
+  ]);
+  await page.goto("/");
+  await expect(page.locator("html")).toHaveClass(/light/);
+  await expect
+    .poll(() => page.evaluate(() => localStorage.getItem("csv-ai-api-key")))
+    .toBe("sk-legacy");
+  const saved = await page.evaluate(() =>
+    JSON.parse(localStorage.getItem("csv-ai-settings") ?? "{}"),
+  );
+  expect(saved).toMatchObject({
+    providerId: "anthropic",
+    model: "claude-legacy",
+    rememberKey: true,
+  });
+  await expect
+    .poll(async () =>
+      (await context.cookies()).filter((c) => c.name.startsWith("csv-ai")),
+    )
+    .toEqual([]);
 });

@@ -232,7 +232,7 @@ test("streamed chat completes and is cleared on data change", async ({
     });
   });
   await configure(page);
-  await page.getByRole("button", { name: "Custom Query", exact: true }).click();
+  await page.getByRole("tab", { name: "Custom Query", exact: true }).click();
   await page
     .getByPlaceholder("Ask a question about your data...")
     .fill("Describe these rows");
@@ -283,7 +283,7 @@ test("anomalies remain readable in light and dark themes", async ({
     }),
   );
   await configure(page);
-  await page.getByRole("button", { name: "Anomalies", exact: true }).click();
+  await page.getByRole("tab", { name: "Anomalies", exact: true }).click();
   await page
     .getByRole("button", { name: "Detect Anomalies", exact: true })
     .click();
@@ -326,4 +326,261 @@ test("anomalies remain readable in light and dark themes", async ({
       path: testInfo.outputPath(`anomalies-${theme.toLowerCase()}.png`),
     });
   }
+});
+
+/** Answer every mocked AI request from its JSON schema (or stream `chat`). */
+async function mockAI(
+  page: Page,
+  answers: {
+    charts?: unknown[];
+    chart?: unknown;
+    repair?: unknown;
+    chat?: string;
+  } = {},
+) {
+  const calls: string[] = [];
+  await page.route("**/mock-ai/v1/**", async (route) => {
+    const body = route.request().postDataJSON();
+    if (body.stream) {
+      calls.push("chat");
+      const chunk = {
+        id: "chat",
+        object: "chat.completion.chunk",
+        created: 1,
+        model: "test-model",
+        choices: [
+          {
+            index: 0,
+            delta: { role: "assistant", content: answers.chat ?? "OK" },
+            finish_reason: null,
+          },
+        ],
+      };
+      const done = {
+        ...chunk,
+        choices: [{ index: 0, delta: {}, finish_reason: "stop" }],
+      };
+      await route.fulfill({
+        contentType: "text/event-stream",
+        body:
+          [chunk, done].map((c) => `data: ${JSON.stringify(c)}\n\n`).join("") +
+          "data: [DONE]\n\n",
+      });
+      return;
+    }
+    const schema = JSON.stringify(body.response_format);
+    const prompt = JSON.stringify(body.messages);
+    if (schema.includes("keyInsights")) {
+      calls.push("summary");
+      await objectResponse(route, {
+        summary: "Verified summary",
+        keyInsights: ["One insight"],
+        dataQuality: "Good",
+      });
+    } else if (schema.includes("anomalies")) {
+      calls.push("anomalies");
+      await objectResponse(route, { anomalies: [] });
+    } else if (schema.includes("questions")) {
+      calls.push("questions");
+      await objectResponse(route, { questions: [] });
+    } else if (schema.includes('"charts"')) {
+      calls.push("charts");
+      await objectResponse(route, { charts: answers.charts ?? [] });
+    } else if (prompt.includes("failed to render")) {
+      calls.push("repair");
+      await objectResponse(route, { chart: answers.repair });
+    } else {
+      calls.push("chart");
+      await objectResponse(route, { chart: answers.chart });
+    }
+  });
+  return calls;
+}
+
+test("sorting the data keeps AI results; filtering clears them", async ({
+  page,
+}) => {
+  await mockAI(page);
+  await configure(page);
+  await page.getByRole("button", { name: "Run Complete Analysis" }).click();
+  await expect(
+    page.getByText("Verified summary", { exact: true }),
+  ).toBeVisible();
+
+  await page.getByRole("button", { name: "Sort", exact: true }).click();
+  await page
+    .getByRole("combobox")
+    .filter({ hasText: "No sort" })
+    .selectOption("amount");
+  await expect(page.getByText("Active", { exact: true })).toBeVisible();
+  await page.waitForTimeout(500);
+  await expect(
+    page.getByText("Verified summary", { exact: true }),
+  ).toBeVisible();
+
+  await page.getByRole("button", { name: "Filters", exact: true }).click();
+  await page.getByRole("button", { name: "Add filter" }).click();
+  await page.getByPlaceholder("Value...").fill("Bob");
+  await expect(page.getByText("Verified summary", { exact: true })).toHaveCount(
+    0,
+  );
+});
+
+test("dollar amounts in answers are shown as text", async ({ page }) => {
+  await mockAI(page, { chat: "Prices go from $1,200 to $5,000." });
+  await configure(page);
+  await page.getByRole("tab", { name: "Custom Query", exact: true }).click();
+  await page
+    .getByPlaceholder("Ask a question about your data...")
+    .fill("What are the prices?");
+  await page.getByRole("button", { name: "Send question" }).click();
+  await expect(
+    page.getByText("Prices go from $1,200 to $5,000.", { exact: true }),
+  ).toBeVisible();
+  await expect(page.locator(".katex")).toHaveCount(0);
+});
+
+test("a regenerated chart stays fixed after reselecting it", async ({
+  page,
+}) => {
+  const broken = {
+    type: "bar",
+    title: "Broken chart",
+    description: "",
+    xColumn: "name",
+    yColumn: "name",
+    aggregation: "sum",
+    reasoning: "",
+  };
+  await mockAI(page, {
+    charts: [broken],
+    repair: { ...broken, title: "Fixed chart", yColumn: "amount" },
+  });
+  await configure(page);
+  await page.getByRole("button", { name: "Run Complete Analysis" }).click();
+  await expect(page.getByText("Unable to generate this chart")).toBeVisible();
+  await page.getByRole("button", { name: "Regenerate with AI" }).click();
+  await expect(
+    page.getByRole("heading", { level: 3, name: "Fixed chart", exact: true }),
+  ).toBeVisible();
+  await expect(page.getByText("Unable to generate this chart")).toHaveCount(0);
+
+  // Deselect then reselect the suggestion: the fixed version must come back
+  const suggestion = page.getByRole("button", { name: /Fixed chart/ }).first();
+  await suggestion.click();
+  await expect(
+    page.getByRole("heading", { level: 3, name: "Fixed chart", exact: true }),
+  ).toHaveCount(0);
+  await suggestion.click();
+  await expect(
+    page.getByRole("heading", { level: 3, name: "Fixed chart", exact: true }),
+  ).toBeVisible();
+  await expect(page.getByText("Unable to generate this chart")).toHaveCount(0);
+});
+
+test("AI tabs stay on screen on small viewports", async ({ page }) => {
+  await mockAI(page);
+  await configure(page);
+  const width = page.viewportSize()!.width;
+  for (const name of ["Summary", "Anomalies", "Custom Query"]) {
+    const tab = page.getByRole("tab", { name, exact: true });
+    await tab.scrollIntoViewIfNeeded();
+    const box = (await tab.boundingBox())!;
+    expect(box.x).toBeGreaterThanOrEqual(0);
+    expect(box.x + box.width).toBeLessThanOrEqual(width);
+  }
+});
+
+test("a chart in the chat opens fullscreen over the whole screen", async ({
+  page,
+}) => {
+  await mockAI(page, {
+    chat: "Here is the breakdown.",
+    chart: {
+      type: "bar",
+      title: "Amount by name",
+      description: "",
+      xColumn: "name",
+      yColumn: "amount",
+      aggregation: "sum",
+      reasoning: "",
+    },
+  });
+  await configure(page);
+  await page.getByRole("tab", { name: "Custom Query", exact: true }).click();
+  await page
+    .getByPlaceholder("Ask a question about your data...")
+    .fill("Show a chart of amount by name");
+  await page.getByRole("button", { name: "Send question" }).click();
+  const chart = page.locator("[data-chart-id]").filter({
+    hasText: "Amount by name",
+  });
+  await expect(chart).toBeVisible();
+  const card = chart.locator(
+    "xpath=ancestor::div[contains(@class,'group')][1]",
+  );
+  await card.hover();
+  await card.getByRole("button", { name: "Enter Fullscreen" }).click();
+  const dialog = page.getByRole("dialog", { name: "Fullscreen view" });
+  await expect(dialog).toBeVisible();
+  const box = (await dialog.boundingBox())!;
+  const viewport = page.viewportSize()!;
+  expect(Math.round(box.x)).toBe(0);
+  expect(Math.round(box.y)).toBe(0);
+  expect(Math.round(box.width)).toBe(viewport.width);
+  expect(Math.round(box.height)).toBe(viewport.height);
+  await page.keyboard.press("Escape");
+  await expect(dialog).toHaveCount(0);
+  await expect(chart).toBeVisible();
+});
+
+/** Sort the table by amount through Data Transform (a sort keeps AI results). */
+async function sortByAmount(page: Page) {
+  await page.getByRole("button", { name: "Sort", exact: true }).click();
+  await page
+    .getByRole("combobox")
+    .filter({ hasText: "No sort" })
+    .selectOption("amount");
+}
+
+test("requests cancelled by a sort release their spinners and keep the question", async ({
+  page,
+}) => {
+  let release!: () => void;
+  const held = new Promise<void>((resolve) => (release = resolve));
+  await page.route("**/mock-ai/v1/**", async (route) => {
+    const body = route.request().postDataJSON();
+    const schema = JSON.stringify(body.response_format ?? "");
+    if (schema.includes("questions"))
+      return objectResponse(route, { questions: [] });
+    // Chart suggestions and chat answers never arrive before the sort
+    await held;
+    await route.abort().catch(() => undefined);
+  });
+  await configure(page);
+
+  await page.getByRole("button", { name: "Generate Charts" }).first().click();
+  await expect(
+    page.getByRole("button", { name: "Generating..." }).first(),
+  ).toBeVisible();
+  await page.getByRole("tab", { name: "Custom Query", exact: true }).click();
+  await page
+    .getByPlaceholder("Ask a question about your data...")
+    .fill("Which name has the most?");
+  await page.getByRole("button", { name: "Send question" }).click();
+  await expect(page.getByText("Analyzing...", { exact: true })).toBeVisible();
+
+  await sortByAmount(page);
+
+  await expect(
+    page.getByRole("button", { name: "Generate Charts" }).first(),
+  ).toBeEnabled();
+  await expect(
+    page.getByText("Which name has the most?", { exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByText(/^Cancelled — this answer was stopped/),
+  ).toBeVisible();
+  await expect(page.getByText("Analyzing...", { exact: true })).toHaveCount(0);
+  release();
 });

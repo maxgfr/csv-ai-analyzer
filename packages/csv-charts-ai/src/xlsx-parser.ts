@@ -1,4 +1,4 @@
-import { inferValuesType, uniqueHeaders } from "./values";
+import { inferColumnValuesType, uniqueHeaders } from "./values";
 import type { TabularData } from "./types";
 
 export interface ParseXLSXOptions {
@@ -87,9 +87,7 @@ export function convertXLSXRows(
 
   const columns = headers.map((name, index) => ({
     name,
-    type: inferValuesType(
-      normalizedRows.slice(0, 100).map((row) => row[index] ?? ""),
-    ),
+    type: inferColumnValuesType(normalizedRows, index),
     index,
   }));
 

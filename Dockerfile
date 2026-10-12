@@ -25,7 +25,8 @@ ENV SKIP_ENV_VALIDATION=1
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NEXT_OUTPUT_MODE=standalone
 
-RUN pnpm --filter csv-charts-ai build && pnpm build
+# "prebuild" builds the csv-charts-ai package first
+RUN pnpm build
 
 # ---- Runner ----
 FROM base AS runner

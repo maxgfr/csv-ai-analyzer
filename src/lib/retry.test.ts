@@ -55,3 +55,49 @@ it("replaces only the requested action", () => {
   scope.cancelAll();
   expect(summary.aborted).toBe(true);
 });
+it("does not retry network or CORS failures", async () => {
+  for (const message of ["Failed to fetch", "network error", "timeout"]) {
+    const fn = vi.fn().mockRejectedValue(new TypeError(message));
+    await expect(withRetry(fn, 2, 1)).rejects.toThrow(message);
+    expect(fn).toHaveBeenCalledTimes(1);
+  }
+});
+it("classifies on the status code kept in the cause", async () => {
+  const retryable = new Error("Rate limit exceeded", {
+    cause: { statusCode: 429 },
+  });
+  const fn = vi.fn().mockRejectedValueOnce(retryable).mockResolvedValue("ok");
+  expect(await withRetry(fn, 2, 1)).toBe("ok");
+  expect(fn).toHaveBeenCalledTimes(2);
+
+  const final = Object.assign(new Error("Server error 503"), {
+    statusCode: 503,
+    isRetryable: false,
+  });
+  const once = vi.fn().mockRejectedValue(final);
+  await expect(withRetry(once, 2, 1)).rejects.toBe(final);
+  expect(once).toHaveBeenCalledTimes(1);
+});
+it("does not read status codes inside identifiers", async () => {
+  const fn = vi.fn().mockRejectedValue(new Error("request id_5030 failed"));
+  await expect(withRetry(fn, 2, 1)).rejects.toThrow("id_5030");
+  expect(fn).toHaveBeenCalledTimes(1);
+});
+it("cancels one action without touching the others", () => {
+  const scope = new RequestScope();
+  const chat = scope.start("chat"),
+    summary = scope.start("summary");
+  scope.cancel("chat");
+  expect(chat.aborted).toBe(true);
+  expect(summary.aborted).toBe(false);
+  expect(scope.isLatest("chat", chat)).toBe(true);
+});
+it("tells a replaced request from a cancelled one", () => {
+  const scope = new RequestScope();
+  const first = scope.start("summary");
+  const second = scope.start("summary");
+  expect(scope.isLatest("summary", first)).toBe(false);
+  expect(scope.isLatest("summary", second)).toBe(true);
+  scope.cancelAll();
+  expect(scope.isLatest("summary", second)).toBe(true);
+});

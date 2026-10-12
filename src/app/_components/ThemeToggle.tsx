@@ -13,7 +13,11 @@ export function ThemeToggle() {
   const { mode, setMode } = useTheme();
 
   return (
-    <div className="flex items-center rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-glass)] p-1">
+    <div
+      role="group"
+      aria-label="Theme"
+      className="flex items-center rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-glass)] p-1"
+    >
       {modes.map(({ value, icon: Icon, label }) => (
         <button
           key={value}
@@ -25,6 +29,7 @@ export function ThemeToggle() {
           }`}
           title={label}
           aria-label={`Switch to ${label} theme`}
+          aria-pressed={mode === value}
         >
           <Icon className="h-4 w-4" />
         </button>

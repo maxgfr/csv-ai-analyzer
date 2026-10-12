@@ -29,7 +29,8 @@ export interface ChartConfig {
 }
 
 export type SortOrder = "none" | "asc" | "desc";
-export type ChartDataPoint = Record<string, string | number>;
+/** One chart point. A series value is `null` when that group has no data at this x. */
+export type ChartDataPoint = Record<string, string | number | null>;
 
 // Theme types
 export interface ChartTheme {

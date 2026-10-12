@@ -1,5 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { parseCSV, inferColumnType } from "./csv-parser";
+import {
+  decodeText,
+  inferColumnType,
+  parseCSV,
+  parseCSVWithDiagnostics,
+} from "./csv-parser";
 
 describe("parseCSV", () => {
   it("parses basic CSV with headers", () => {
@@ -92,5 +97,65 @@ describe("inferColumnType", () => {
 
   it("returns string for mixed types", () => {
     expect(inferColumnType(["1", "hello", "3"])).toBe("string");
+  });
+});
+
+describe("import diagnostics", () => {
+  const keepEmpty = {
+    delimiter: "",
+    hasHeader: true,
+    encoding: "UTF-8",
+    skipEmptyLines: false,
+  };
+
+  it("does not turn the final newline into a row or a width warning", () => {
+    const { data, warnings } = parseCSVWithDiagnostics(
+      "a,b\n1,2\n3,4\n",
+      keepEmpty,
+    );
+    expect(data.rowCount).toBe(2);
+    expect(warnings).toEqual([]);
+    const crlf = parseCSVWithDiagnostics("a,b\r\n1,2\r\n", keepEmpty);
+    expect(crlf.data.rowCount).toBe(1);
+  });
+
+  it("keeps empty rows in the middle when asked", () => {
+    const { data } = parseCSVWithDiagnostics("a\n1\n\n2\n", keepEmpty);
+    expect(data.rows).toEqual([["1"], [""], ["2"]]);
+  });
+
+  it("reports recovered stray quotes as a warning", () => {
+    const { data, warnings } = parseCSVWithDiagnostics(
+      'a,b\n"x"y",2\n3,4',
+      keepEmpty,
+    );
+    expect(data.rowCount).toBe(2);
+    expect(warnings.join(" ")).toMatch(/Misplaced quotes/);
+  });
+
+  it("still rejects an unclosed quote", () => {
+    expect(() =>
+      parseCSVWithDiagnostics('a,b\n"open,2\n3,4', keepEmpty),
+    ).toThrow();
+  });
+
+  it("decodes UTF-16 files from their byte order mark", () => {
+    const text = "name\nÉlodie";
+    const le = new Uint8Array(2 + text.length * 2);
+    le.set([0xff, 0xfe]);
+    for (let i = 0; i < text.length; i++) {
+      const code = text.charCodeAt(i);
+      le[2 + i * 2] = code & 0xff;
+      le[3 + i * 2] = code >> 8;
+    }
+    expect(decodeText(le.buffer, "windows-1252")).toBe(text);
+    const be = new Uint8Array(le.length);
+    be.set([0xfe, 0xff]);
+    for (let i = 2; i < le.length; i += 2) {
+      be[i] = le[i + 1]!;
+      be[i + 1] = le[i]!;
+    }
+    expect(decodeText(be.buffer, "UTF-8")).toBe(text);
+    expect(decodeText(new TextEncoder().encode("é").buffer, "UTF-8")).toBe("é");
   });
 });

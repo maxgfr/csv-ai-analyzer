@@ -1,4 +1,4 @@
-import { parseNumericValue } from "./values";
+import { parseNumericValue, roundSignificant } from "./values";
 import { generateObject, type LanguageModel } from "ai";
 import { z } from "zod";
 import type { ChartConfig, TabularData } from "./types";
@@ -16,6 +16,8 @@ export const AIConfigSchema = z.object({
   baseURL: z.string().optional(),
   /** Provider name — must match a registered provider. Defaults to "openai". */
   provider: z.string().optional().default("openai"),
+  /** Extra HTTP headers sent with every request */
+  headers: z.record(z.string(), z.string()).optional(),
 });
 
 export type AIConfig = z.infer<typeof AIConfigSchema>;
@@ -99,6 +101,77 @@ const SingleChartResponseSchema = z.object({
 // ============ Error Handling ============
 
 /**
+ * Error thrown by the AI functions. `message` is user-facing; the provider error
+ * stays in `cause`, and its HTTP status and retry hint are copied when known.
+ */
+export class AIRequestError extends Error {
+  readonly statusCode?: number;
+  readonly isRetryable?: boolean;
+
+  constructor(
+    message: string,
+    options: { cause: unknown; statusCode?: number; isRetryable?: boolean },
+  ) {
+    super(message, { cause: options.cause });
+    this.name = "AIRequestError";
+    this.statusCode = options.statusCode;
+    this.isRetryable = options.isRetryable;
+  }
+}
+
+/** True for cancellations (AbortController, AbortSignal.timeout). */
+export function isAbortError(error: unknown): boolean {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "name" in error &&
+    (error.name === "AbortError" || error.name === "TimeoutError")
+  );
+}
+
+/**
+ * Find the HTTP status and retry hint of a provider error, looking through
+ * `cause` and the AI SDK's RetryError (`lastError`).
+ */
+export function getErrorDetails(error: unknown): {
+  statusCode?: number;
+  isRetryable?: boolean;
+} {
+  let current: unknown = error;
+  for (let depth = 0; depth < 5 && current; depth++) {
+    if (typeof current !== "object") break;
+    const record = current as Record<string, unknown>;
+    if (typeof record.statusCode === "number")
+      return {
+        statusCode: record.statusCode,
+        ...(typeof record.isRetryable === "boolean" && {
+          isRetryable: record.isRetryable,
+        }),
+      };
+    current = record.lastError ?? record.cause;
+  }
+  return {};
+}
+
+/** Rethrow cancellations untouched; wrap everything else in an {@link AIRequestError}. */
+export function toAIError(error: unknown): Error {
+  if (isAbortError(error)) return error as Error;
+  if (error instanceof AIRequestError) return error;
+  return new AIRequestError(getAIErrorMessage(error), {
+    cause: error,
+    ...getErrorDetails(error),
+  });
+}
+
+const RATE_LIMIT_MESSAGE =
+  "Rate limit exceeded. Please wait a moment and try again.";
+const AUTH_MESSAGE =
+  "Invalid API key. Please check your API key configuration.";
+const QUOTA_MESSAGE =
+  "API quota exceeded or billing issue. Please check your account status.";
+const MODEL_MESSAGE = "Model not available. Please select a different model.";
+
+/**
  * Extracts a user-friendly error message from AI provider errors.
  * Exported so consumers can use it in their own error handling.
  */
@@ -115,28 +188,35 @@ export function getAIErrorMessage(error: unknown): string {
 
   if (error instanceof Error) {
     const message = error.message.toLowerCase();
+    const isQuota = /\b(insufficient_quota|quota|billing)\b/.test(message);
+    const isModel =
+      message.includes("model") &&
+      (message.includes("not found") || message.includes("does not exist"));
 
-    if (message.includes("rate limit") || message.includes("429")) {
-      return "Rate limit exceeded. Please wait a moment and try again.";
+    // Prefer the HTTP status reported by the provider over the message text
+    const { statusCode } = getErrorDetails(error);
+    if (statusCode === 429) return isQuota ? QUOTA_MESSAGE : RATE_LIMIT_MESSAGE;
+    if (statusCode === 401) return AUTH_MESSAGE;
+    if (statusCode === 402) return QUOTA_MESSAGE;
+    if (statusCode === 404 && isModel) return MODEL_MESSAGE;
+
+    // Fallback on the text, matching status codes as whole words only (id_4290 is not a 429)
+    if (/\brate[ _-]?limit/.test(message) || /\b429\b/.test(message)) {
+      return RATE_LIMIT_MESSAGE;
     }
     if (
-      message.includes("unauthorized") ||
-      message.includes("401") ||
+      /\bunauthorized\b/.test(message) ||
+      /\b401\b/.test(message) ||
       message.includes("invalid api key") ||
       message.includes("invalid_api_key")
     ) {
-      return "Invalid API key. Please check your API key configuration.";
+      return AUTH_MESSAGE;
     }
+    if (isQuota) return QUOTA_MESSAGE;
     if (
-      message.includes("quota") ||
-      message.includes("insufficient_quota") ||
-      message.includes("billing")
-    ) {
-      return "API quota exceeded or billing issue. Please check your account status.";
-    }
-    if (
-      message.includes("network") ||
+      /\bnetwork\b/.test(message) ||
       message.includes("timeout") ||
+      message.includes("timed out") ||
       message.includes("econnrefused") ||
       message.includes("fetch failed") ||
       message.includes("failed to fetch") ||
@@ -144,17 +224,30 @@ export function getAIErrorMessage(error: unknown): string {
     ) {
       return "Network error: the AI provider could not be reached. Check your connection and API URL. If the provider blocks browser requests (CORS), use a server relay you control or a provider that supports browser access. This error does not verify your API key.";
     }
-    if (
-      message.includes("model") &&
-      (message.includes("not found") || message.includes("does not exist"))
-    ) {
-      return "Model not available. Please select a different model.";
-    }
+    if (isModel) return MODEL_MESSAGE;
 
     return error.message;
   }
 
   return "An unexpected error occurred. Please try again.";
+}
+
+// ============ Prompt size limits ============
+
+/** Longest cell value sent to the model; longer values are cut. */
+export const MAX_PROMPT_CELL_LENGTH = 200;
+
+/** Cut a cell value so one huge cell cannot blow up a prompt. */
+export function clipCell(value: string, max = MAX_PROMPT_CELL_LENGTH): string {
+  return value.length > max ? `${value.slice(0, max)}…` : value;
+}
+
+/**
+ * Check the shape of tabular data before building prompts. Only the headers,
+ * columns and a sample of rows are validated, so large files stay cheap.
+ */
+export function validateTabularData(data: TabularData): void {
+  TabularDataSchema.parse({ ...data, rows: data.rows.slice(0, 50) });
 }
 
 // ============ Data Summary Generation ============
@@ -189,7 +282,10 @@ export function summarizeTabularData(data: TabularData): string {
       }
     } else {
       const distinct = new Set(values).size;
-      const sample = values.slice(0, 5).join(", ");
+      const sample = values
+        .slice(0, 5)
+        .map((v) => clipCell(v))
+        .join(", ");
       lines.push(
         `- ${col.name} (${col.type}): ${distinct} distinct values, sample: [${sample}]`,
       );
@@ -234,7 +330,7 @@ export function generateDataSummary(data: TabularData): string {
       if (count > 0) {
         const avg = sum / count;
         summary.push(
-          `- ${col.name} (number): min=${min.toFixed(2)}, max=${max.toFixed(2)}, avg=${avg.toFixed(2)}, ${count} values`,
+          `- ${col.name} (number): min=${roundSignificant(min)}, max=${roundSignificant(max)}, avg=${roundSignificant(avg)}, ${count} values`,
         );
       } else {
         summary.push(`- ${col.name} (number): no valid values`);
@@ -246,7 +342,10 @@ export function generateDataSummary(data: TabularData): string {
         if (value.trim()) uniqueValues.add(value);
       }
       const uniqueCount = uniqueValues.size;
-      const sampleValues = Array.from(uniqueValues).slice(0, 5).join(", ");
+      const sampleValues = Array.from(uniqueValues)
+        .slice(0, 5)
+        .map((v) => clipCell(v))
+        .join(", ");
       summary.push(
         `- ${col.name} (text): ${uniqueCount} unique values, examples: ${sampleValues}`,
       );
@@ -266,7 +365,7 @@ export function generateDataSummary(data: TabularData): string {
   const sampleRows = data.rows.slice(0, 5);
   sampleRows.forEach((row, i) => {
     const rowData = data.columns
-      .map((col) => `${col.name}: ${row[col.index] ?? "N/A"}`)
+      .map((col) => `${col.name}: ${clipCell(row[col.index] ?? "N/A")}`)
       .join(", ");
     summary.push(`Row ${i + 1}: ${rowData}`);
   });
@@ -306,6 +405,7 @@ export function createModel(config: AIConfig): LanguageModel {
     apiKey: parsed.apiKey,
     model: parsed.model,
     ...(parsed.baseURL && { baseURL: parsed.baseURL }),
+    ...(parsed.headers && { headers: parsed.headers }),
   });
 }
 
@@ -434,6 +534,31 @@ function mapChartResult(
   };
 }
 
+/**
+ * Map the columns of a suggested chart onto the real headers (case-insensitive).
+ * Returns null when the X column, or the Y column of a non-count chart, does not exist;
+ * an unknown group column is dropped.
+ */
+function matchChartColumns(
+  raw: z.infer<typeof ChartSuggestionSchema>,
+  headers: string[],
+): z.infer<typeof ChartSuggestionSchema> | null {
+  const find = (name: string | undefined) =>
+    name === undefined
+      ? undefined
+      : headers.find((h) => h.toLowerCase() === name.trim().toLowerCase());
+  const xColumn = find(raw.xColumn);
+  const yColumn = find(raw.yColumn);
+  if (!xColumn) return null;
+  if (!yColumn && raw.aggregation !== "count") return null;
+  return {
+    ...raw,
+    xColumn,
+    yColumn: yColumn ?? raw.yColumn,
+    groupColumn: find(raw.groupColumn),
+  };
+}
+
 // ============ Options ============
 
 export interface SuggestChartsOptions {
@@ -449,6 +574,8 @@ export interface SuggestChartsOptions {
   temperature?: number;
   /** AbortSignal to cancel the request */
   signal?: AbortSignal;
+  /** Retries done by the AI SDK on transient errors (SDK default: 2). Set 0 when you retry yourself. */
+  maxRetries?: number;
 }
 
 export interface SuggestCustomChartOptions {
@@ -466,6 +593,8 @@ export interface SuggestCustomChartOptions {
   temperature?: number;
   /** AbortSignal to cancel the request */
   signal?: AbortSignal;
+  /** Retries done by the AI SDK on transient errors (SDK default: 2). Set 0 when you retry yourself. */
+  maxRetries?: number;
 }
 
 export interface RepairChartOptions {
@@ -483,6 +612,8 @@ export interface RepairChartOptions {
   temperature?: number;
   /** AbortSignal to cancel the request */
   signal?: AbortSignal;
+  /** Retries done by the AI SDK on transient errors (SDK default: 2). Set 0 when you retry yourself. */
+  maxRetries?: number;
 }
 
 // ============ Public API ============
@@ -518,11 +649,11 @@ export interface RepairChartOptions {
 export async function suggestCharts(
   options: SuggestChartsOptions,
 ): Promise<ChartConfig[]> {
-  const { data, language, temperature = 0.5, signal } = options;
-  const dataSummary = options.dataSummary ?? summarizeTabularData(data);
+  const { data, language, temperature = 0.5, signal, maxRetries } = options;
 
   try {
-    TabularDataSchema.parse(data);
+    validateTabularData(data);
+    const dataSummary = options.dataSummary ?? summarizeTabularData(data);
     const model = resolveModel(options.model);
 
     const { object } = await generateObject({
@@ -532,13 +663,16 @@ export async function suggestCharts(
       prompt: `Analyze this CSV data and suggest the best charts:\n\n${dataSummary}`,
       temperature,
       ...(signal && { abortSignal: signal }),
+      ...(maxRetries !== undefined && { maxRetries }),
     });
 
-    return object.charts.map((s, i) =>
-      mapChartResult(s, `chart-${i}-${Date.now()}`),
-    );
+    // Models sometimes invent column names: fix the case or drop the suggestion
+    return object.charts.flatMap((s, i) => {
+      const chart = matchChartColumns(s, data.headers);
+      return chart ? [mapChartResult(chart, `chart-${i}-${Date.now()}`)] : [];
+    });
   } catch (error) {
-    throw new Error(getAIErrorMessage(error));
+    throw toAIError(error);
   }
 }
 
@@ -557,11 +691,18 @@ export async function suggestCharts(
 export async function suggestCustomChart(
   options: SuggestCustomChartOptions,
 ): Promise<ChartConfig | null> {
-  const { data, prompt, language, temperature = 0.5, signal } = options;
-  const dataSummary = options.dataSummary ?? summarizeTabularData(data);
+  const {
+    data,
+    prompt,
+    language,
+    temperature = 0.5,
+    signal,
+    maxRetries,
+  } = options;
 
   try {
-    TabularDataSchema.parse(data);
+    validateTabularData(data);
+    const dataSummary = options.dataSummary ?? summarizeTabularData(data);
     const model = resolveModel(options.model);
 
     const { object } = await generateObject({
@@ -571,11 +712,12 @@ export async function suggestCustomChart(
       prompt: `Data summary:\n${dataSummary}\n\nUser request: ${prompt}`,
       temperature,
       ...(signal && { abortSignal: signal }),
+      ...(maxRetries !== undefined && { maxRetries }),
     });
 
     return mapChartResult(object.chart, `chart-custom-${Date.now()}`);
   } catch (error) {
-    throw new Error(getAIErrorMessage(error));
+    throw toAIError(error);
   }
 }
 
@@ -602,6 +744,7 @@ export async function repairChart(
     language,
     temperature = 0.3,
     signal,
+    maxRetries,
   } = options;
 
   try {
@@ -614,10 +757,11 @@ export async function repairChart(
       prompt: `The following chart configuration failed to render:\n${JSON.stringify(failedChart, null, 2)}\n\nError context: ${errorContext}\n\nPlease fix the configuration to use valid columns and aggregation. Available columns: ${columns.join(", ")}`,
       temperature,
       ...(signal && { abortSignal: signal }),
+      ...(maxRetries !== undefined && { maxRetries }),
     });
 
     return mapChartResult(object.chart, failedChart.id);
   } catch (error) {
-    throw new Error(getAIErrorMessage(error));
+    throw toAIError(error);
   }
 }

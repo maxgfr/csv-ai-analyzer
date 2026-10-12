@@ -2,6 +2,12 @@ import { describe, it, expect } from "vitest";
 import { computeDiff } from "./csv-diff";
 import { processChartData } from "./processChartData";
 import type { TabularData, ChartConfig } from "./types";
+import {
+  detectDateOrder,
+  inferValuesType,
+  parseDateValue,
+  parseNumericValue,
+} from "./values";
 const data = (rows: string[][]): TabularData => ({
   headers: ["id", "value"],
   columns: [
@@ -79,5 +85,60 @@ describe("data integrity regressions", () => {
       matchMode: "content",
     });
     expect(diff.counts.same).toBe(0);
+  });
+});
+
+describe("number and date parsing", () => {
+  it("reads a leading zero group as a decimal comma", () => {
+    expect(parseNumericValue("0,123")).toBe(0.123);
+    expect(parseNumericValue("1,234")).toBe(1234);
+    expect(parseNumericValue("12,345,678.5")).toBe(12345678.5);
+  });
+
+  it("accepts ISO datetimes with a space and single-digit parts", () => {
+    expect(parseDateValue("2024-01-15 10:30:00")).toBe(
+      Date.UTC(2024, 0, 15, 10, 30, 0),
+    );
+    expect(parseDateValue("2024-1-5")).toBe(Date.UTC(2024, 0, 5));
+    expect(parseDateValue("5/1/2024")).toBe(Date.UTC(2024, 0, 5));
+  });
+
+  it("reads datetimes without an offset as UTC and honours offsets", () => {
+    expect(parseDateValue("2024-01-15T10:30:00")).toBe(
+      Date.UTC(2024, 0, 15, 10, 30),
+    );
+    expect(parseDateValue("2024-01-15T10:30:00+02:00")).toBe(
+      Date.UTC(2024, 0, 15, 8, 30),
+    );
+    expect(parseDateValue("2024-01-15T10:30:00.250Z")).toBe(
+      Date.UTC(2024, 0, 15, 10, 30, 0, 250),
+    );
+    expect(parseDateValue("2024-02-30")).toBeNull();
+  });
+
+  it("chooses one day/month order per column", () => {
+    const us = ["03/04/2024", "04/25/2024", "12/31/2024"];
+    const eu = ["03/04/2024", "25/04/2024"];
+    expect(detectDateOrder(us)).toBe("mdy");
+    expect(detectDateOrder(eu)).toBe("dmy");
+    expect(parseDateValue("03/04/2024", detectDateOrder(us))).toBe(
+      Date.UTC(2024, 2, 4),
+    );
+    expect(parseDateValue("03/04/2024", detectDateOrder(eu))).toBe(
+      Date.UTC(2024, 3, 3),
+    );
+  });
+
+  it("infers the type from values spread over the whole column", () => {
+    const values = [
+      ...Array<string>(500).fill("n/a"),
+      ...Array.from({ length: 4500 }, (_, i) => String(i)),
+    ];
+    expect(inferValuesType(values)).toBe("number");
+    const strings = [
+      ...Array.from({ length: 200 }, (_, i) => String(i)),
+      ...Array<string>(4800).fill("label"),
+    ];
+    expect(inferValuesType(strings)).toBe("string");
   });
 });

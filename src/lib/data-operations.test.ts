@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { parseCSV } from "./csv-parser";
-import { transformData, tableRows } from "./data-operations";
+import { transformData, tableRows, tableRowIndices } from "./data-operations";
 import { executeDataTask } from "./data-tasks";
 import { compareDataSets } from "./comparison";
 
@@ -78,4 +78,32 @@ it("does not flag legitimate suffixed headers as renamed", async () => {
     },
   });
   expect(result.warnings).toEqual([]);
+});
+
+it("keeps empty cells at the end in both sort directions", () => {
+  const data = parseCSV("n\n2\n\n10\n1", {
+    delimiter: "",
+    hasHeader: true,
+    encoding: "UTF-8",
+    skipEmptyLines: false,
+  });
+  const values = (direction: "asc" | "desc") =>
+    tableRows(data, "", { column: "n", direction }).map((r) => r[0]);
+  expect(values("asc")).toEqual(["1", "2", "10", ""]);
+  expect(values("desc")).toEqual(["10", "2", "1", ""]);
+  const sorted = transformData(data, {
+    filters: [],
+    excludedColumns: [],
+    sort: { column: "n", direction: "desc" },
+  });
+  expect(sorted.rows.map((r) => r[0])).toEqual(["10", "2", "1", ""]);
+});
+
+it("returns table rows as indices for the worker", () => {
+  const data = parseCSV("name,v\nb,2\na,1\nc,3");
+  expect(tableRowIndices(data, "", { column: "v", direction: "asc" })).toEqual([
+    1, 0, 2,
+  ]);
+  expect(tableRowIndices(data, "c", null)).toEqual([2]);
+  expect(tableRows(data, "", null)).toBe(data.rows);
 });

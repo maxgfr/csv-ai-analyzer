@@ -88,3 +88,51 @@ it.each([
     );
   },
 );
+
+it("sends Anthropic-compatible keys to the provider's own URL", async () => {
+  const fetch = vi.fn(async () =>
+    Response.json(
+      { type: "error", error: { type: "authentication_error", message: "no" } },
+      { status: 401 },
+    ),
+  );
+  vi.stubGlobal("fetch", fetch);
+  await expect(
+    generateDataSummary(
+      {
+        apiKey: "test-key",
+        providerNpm: "@ai-sdk/anthropic",
+        providerApi: "https://api.minimax.io/anthropic/v1",
+        model: "MiniMax-M2",
+      },
+      "amount\n1",
+    ),
+  ).rejects.toMatchObject({ statusCode: 401 });
+  const [url] = fetch.mock.calls[0] as unknown as [string];
+  expect(url).toBe("https://api.minimax.io/anthropic/v1/messages");
+});
+
+it("falls back to the default SDK when the provider has no npm package", () => {
+  const model = getModel({ apiKey: "k", providerNpm: "", model: "gpt-4o" });
+  expect(model).toHaveProperty("modelId", "gpt-4o");
+});
+
+it("retries only in the app, never inside the AI SDK", async () => {
+  vi.useFakeTimers();
+  try {
+    const fetch = vi.fn(async () =>
+      Response.json({ error: { message: "overloaded" } }, { status: 503 }),
+    );
+    vi.stubGlobal("fetch", fetch);
+    const request = generateDataSummary(
+      { apiKey: "k", model: "gpt-4o" },
+      "amount\n1",
+    ).catch((error: unknown) => error);
+    await vi.runAllTimersAsync();
+    expect(await request).toMatchObject({ statusCode: 503 });
+    // 1 call + 2 app retries; the SDK's own retries would make it 9
+    expect(fetch).toHaveBeenCalledTimes(3);
+  } finally {
+    vi.useRealTimers();
+  }
+});

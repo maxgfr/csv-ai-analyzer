@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { computeDiff } from "./csv-diff";
+import { computeDiff } from "csv-charts-ai";
 import type { CSVData } from "./csv-parser";
 
 /** Helper to build a minimal CSVData from headers + rows */
@@ -266,10 +266,10 @@ describe("computeDiff – content matching", () => {
     const b = makeData(["b"], [["1"]]);
     const diff = computeDiff(a, b, { matchMode: "content" });
 
-    // No common columns → composite key is "" for all rows → all match
+    // No common columns → nothing can match: every row is removed or added
     expect(diff.commonHeaders).toEqual([]);
-    // With empty composite key, all rows map to same key
-    expect(diff.counts.same).toBe(1);
+    expect(diff.noCommonColumns).toBe(true);
+    expect(diff.counts).toEqual({ same: 0, changed: 0, added: 1, removed: 1 });
   });
 });
 

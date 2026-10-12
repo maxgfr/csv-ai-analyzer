@@ -42,9 +42,19 @@ export function CSVSettingsModal({
     return () => setMounted(false);
   }, []);
 
+  // Every open starts from the applied settings: unsaved edits are discarded
   useEffect(() => {
-    setLocalSettings(settings);
-  }, [settings]);
+    if (isOpen) setLocalSettings(settings);
+  }, [isOpen, settings]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [isOpen, onClose]);
 
   const modalRef = useRef<HTMLDivElement>(null);
   useFocusTrap(modalRef, isOpen && mounted);
@@ -73,6 +83,7 @@ export function CSVSettingsModal({
         className="pointer-events-none fixed inset-0 z-101 flex items-center justify-center p-4"
         role="dialog"
         aria-modal="true"
+        aria-labelledby="csv-settings-title"
       >
         <div
           ref={modalRef}
@@ -86,16 +97,20 @@ export function CSVSettingsModal({
                 <div className="rounded-xl border border-cyan-500/40 bg-cyan-500/20 p-2.5">
                   <Settings className="h-5 w-5 text-cyan-400" />
                 </div>
-                <h2 className="text-xl font-bold text-white">
+                <h2
+                  id="csv-settings-title"
+                  className="text-xl font-bold text-white"
+                >
                   Parser Settings
                 </h2>
               </div>
               <button
                 type="button"
                 onClick={onClose}
+                aria-label="Close parser settings"
                 className="rounded-lg p-2 transition-colors hover:bg-white/10"
               >
-                <X className="h-5 w-5 text-gray-400" />
+                <X className="h-5 w-5 text-gray-400" aria-hidden="true" />
               </button>
             </div>
           </div>
@@ -158,7 +173,10 @@ export function CSVSettingsModal({
             {/* Has Header */}
             <div className="flex items-center justify-between rounded-xl border border-gray-700 bg-gray-800 p-4">
               <div>
-                <p className="text-sm font-semibold text-gray-200">
+                <p
+                  id="has-header-label"
+                  className="text-sm font-semibold text-gray-200"
+                >
                   First row is header
                 </p>
                 <p className="text-xs text-gray-500">
@@ -167,6 +185,9 @@ export function CSVSettingsModal({
               </div>
               <button
                 type="button"
+                role="switch"
+                aria-checked={localSettings.hasHeader}
+                aria-labelledby="has-header-label"
                 onClick={() =>
                   setLocalSettings((s) => ({ ...s, hasHeader: !s.hasHeader }))
                 }
@@ -181,7 +202,10 @@ export function CSVSettingsModal({
             {/* Skip Empty Lines */}
             <div className="flex items-center justify-between rounded-xl border border-gray-700 bg-gray-800 p-4">
               <div>
-                <p className="text-sm font-semibold text-gray-200">
+                <p
+                  id="skip-empty-label"
+                  className="text-sm font-semibold text-gray-200"
+                >
                   Skip empty lines
                 </p>
                 <p className="text-xs text-gray-500">
@@ -190,6 +214,9 @@ export function CSVSettingsModal({
               </div>
               <button
                 type="button"
+                role="switch"
+                aria-checked={localSettings.skipEmptyLines}
+                aria-labelledby="skip-empty-label"
                 onClick={() =>
                   setLocalSettings((s) => ({
                     ...s,

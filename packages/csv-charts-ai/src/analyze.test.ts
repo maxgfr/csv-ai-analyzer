@@ -491,4 +491,88 @@ describe("analyze module", () => {
       expect(mockedGenerate.mock.calls.length - callsBefore).toBe(2);
     });
   });
+
+  describe("cancellation and history", () => {
+    it("cancels sibling requests when one fails", async () => {
+      const { generateObject } = await import("ai");
+      const signals: AbortSignal[] = [];
+      vi.mocked(generateObject).mockImplementation(((options: {
+        abortSignal: AbortSignal;
+        schema: unknown;
+      }) => {
+        signals.push(options.abortSignal);
+        if (signals.length === 1)
+          return Promise.reject(
+            Object.assign(new Error("Server error"), { statusCode: 500 }),
+          );
+        return new Promise((_, reject) =>
+          options.abortSignal.addEventListener("abort", () =>
+            reject(new DOMException("aborted", "AbortError")),
+          ),
+        );
+      }) as never);
+
+      const { analyzeData } = await import("./analyze");
+      await expect(
+        analyzeData({
+          model: { apiKey: "sk-test", model: "gpt-4o" },
+          data: sampleData,
+        }),
+      ).rejects.toMatchObject({ statusCode: 500 });
+      expect(signals).toHaveLength(3);
+      expect(signals.every((signal) => signal.aborted)).toBe(true);
+    });
+
+    it("rethrows an abort as is", async () => {
+      const { generateObject } = await import("ai");
+      const abort = new DOMException("aborted", "AbortError");
+      vi.mocked(generateObject).mockRejectedValueOnce(abort);
+      const { summarizeData } = await import("./analyze");
+      await expect(
+        summarizeData({
+          model: { apiKey: "sk-test", model: "gpt-4o" },
+          data: sampleData,
+        }),
+      ).rejects.toBe(abort);
+    });
+
+    it("bounds the history and leaves out failed answers", async () => {
+      const { buildHistoryContext } = await import("./analyze");
+      const history = Array.from({ length: 30 }, (_, i) => ({
+        prompt: `q${i}`,
+        response: `a${i}`,
+        error: i === 29,
+      }));
+      const context = buildHistoryContext(history, 3);
+      expect(context).not.toContain("q29");
+      expect(context).toContain("q28");
+      expect(context).toContain("q26");
+      expect(context).not.toContain("q25");
+      expect(context.indexOf("q26")).toBeLessThan(context.indexOf("q28"));
+
+      const long = [
+        { prompt: "old", response: "x".repeat(50) },
+        { prompt: "new", response: "y".repeat(50) },
+      ];
+      const budgeted = buildHistoryContext(long, 10, 80);
+      expect(budgeted).toContain("new");
+      expect(budgeted).not.toContain("old");
+    });
+
+    it("clips long cells in the anomaly sample", async () => {
+      const { generateObject } = await import("ai");
+      vi.mocked(generateObject).mockResolvedValueOnce({
+        object: { anomalies: [] },
+      } as never);
+      const { detectAnomalies } = await import("./analyze");
+      await detectAnomalies({
+        model: { apiKey: "sk-test", model: "gpt-4o" },
+        data: { ...sampleData, rows: [["A", "1", "z".repeat(10_000)]] },
+        dataSummary: "summary",
+      });
+      const prompt = vi.mocked(generateObject).mock.calls[0]![0]
+        .prompt as string;
+      expect(prompt.length).toBeLessThan(1000);
+    });
+  });
 });

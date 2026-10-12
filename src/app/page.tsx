@@ -1,6 +1,13 @@
 "use client";
 
-import { useState, useEffect, useCallback, lazy, Suspense } from "react";
+import {
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+  lazy,
+  Suspense,
+} from "react";
 import { toast } from "sonner";
 import { DataTable } from "./_components/DataTable";
 import { FullscreenCard } from "./_components/FullscreenCard";
@@ -40,7 +47,6 @@ import {
   type CSVData,
   type CSVSettings,
   DEFAULT_CSV_SETTINGS,
-  parseCSV,
   generateDataSummary as generateCSVSummary,
 } from "~/lib/csv-parser";
 import {
@@ -53,10 +59,16 @@ import {
   repairChartSuggestion,
 } from "~/lib/ai-service";
 import { loadApiSettings, type StoredSettings } from "~/lib/storage";
-import { clearChatStore, getChatStore } from "~/lib/chat-store";
+import {
+  clearChatStore,
+  getChatStore,
+  useChatIsLoading,
+} from "~/lib/chat-store";
 import { Sparkles, Loader2, ArrowLeft, FileDown } from "lucide-react";
 import { useRequestScope } from "~/lib/use-request-scope";
+import { useAIConfig } from "~/lib/use-ai-config";
 import type { ImportSource } from "~/lib/data-tasks";
+import { runDataTask } from "~/lib/data-client";
 import { FileUpload } from "./_components/FileUpload";
 import { DataQuality } from "./_components/DataQuality";
 
@@ -92,6 +104,9 @@ export default function HomePage() {
   >(null);
   const [summaryError, setSummaryError] = useState<string | null>(null);
   const [anomaliesError, setAnomaliesError] = useState<string | null>(null);
+  const chartsRootRef = useRef<HTMLDivElement>(null);
+  // A complete analysis would replace results while a chat answer streams
+  const isChatStreaming = useChatIsLoading();
 
   useEffect(() => {
     const settings = loadApiSettings();
@@ -102,11 +117,19 @@ export default function HomePage() {
 
   // Data used for analysis — transformed data if available, otherwise raw
   const effectiveData = workingData ?? csvData;
+  // In-flight requests are cancelled when the data or the AI settings change;
+  // results are kept unless the data itself changed (see resetAnalysis)
   const requests = useRequestScope(effectiveData, apiSettings);
-  const invalidate = useCallback(() => {
+  const [repairedCharts, setRepairedCharts] = useState<
+    Record<string, ChartSuggestion>
+  >({});
+
+  /** Forget every AI result: they describe data that is no longer analysed. */
+  const resetAnalysis = useCallback(() => {
     requests.cancelAll();
     setIsAnalyzingAll(false);
     setGeneratedCharts([]);
+    setRepairedCharts({});
     setAnalysisResults({ summary: null, anomalies: null, charts: null });
     setSummaryError(null);
     setAnomaliesError(null);
@@ -115,49 +138,67 @@ export default function HomePage() {
     setDataVersion((v) => v + 1);
     toast.dismiss("analysis-toast");
   }, [requests]);
-  useEffect(() => {
-    if (isTransforming) invalidate();
-  }, [isTransforming]);
-  const handleTransformed = useCallback((next: CSVData | null) => {
-    setWorkingData((previous) => (previous === next ? previous : next));
-  }, []);
-  useEffect(() => {
-    invalidate();
-  }, [effectiveData, apiSettings]);
 
-  const handleFileLoaded = (content: string, fileName: string) => {
-    const data = parseCSV(content, csvSettings);
-    setSourceVersion((v) => v + 1);
-    setCsvData(data);
-    setCurrentFileName(fileName);
-    setWorkingData(null);
-    setGeneratedCharts([]);
-    setAnalysisResults({ summary: null, anomalies: null, charts: null });
-    setChartGenerationError(null);
-    setSummaryError(null);
-    setAnomaliesError(null);
-    clearChatStore();
-    toast.success("File Loaded", {
-      description: `${fileName} loaded successfully with ${data.rows.length} rows`,
-    });
-  };
+  // Filters and hidden columns change what the AI saw; a sort alone does not
+  const [transformKey, setTransformKey] = useState("");
+  const handleTransformed = useCallback(
+    (next: CSVData | null, contentKey: string) => {
+      setWorkingData((previous) => (previous === next ? previous : next));
+      setTransformKey(contentKey);
+    },
+    [],
+  );
+  const appliedTransformKey = useRef(transformKey);
+  useEffect(() => {
+    if (appliedTransformKey.current === transformKey) return;
+    appliedTransformKey.current = transformKey;
+    resetAnalysis();
+  }, [transformKey, resetAnalysis]);
 
   const handleClearFile = () => {
-    requests.cancelAll();
+    resetAnalysis();
     setSource(undefined);
     setShowImport(false);
     setCsvData(null);
     setCurrentFileName(undefined);
     setWorkingData(null);
-    setGeneratedCharts([]);
-    setAnalysisResults({ summary: null, anomalies: null, charts: null });
-    setChartGenerationError(null);
-    setSummaryError(null);
-    setAnomaliesError(null);
-    clearChatStore();
     toast.info("File Cleared", {
       description: "Ready to upload a new file",
     });
+  };
+
+  /** New parser settings re-read the current file, so they take effect at once. */
+  const handleCsvSettingsChange = async (settings: CSVSettings) => {
+    setCsvSettings(settings);
+    if (!source || !currentFileName) return;
+    const next = { ...source, settings };
+    try {
+      const { data, warnings } = await runDataTask("import", next);
+      handleDataLoaded(data, currentFileName, next);
+      warnings.forEach((warning) => toast.warning(warning));
+    } catch (error) {
+      toast.error("Could not re-read the file", {
+        description:
+          error instanceof Error ? error.message : "Check the parser settings.",
+      });
+    }
+  };
+
+  const hasAnalysisResults = () =>
+    !!analysisResults.summary ||
+    !!analysisResults.anomalies ||
+    generatedCharts.length > 0 ||
+    getChatStore().history.length > 0;
+
+  const handleBack = () => {
+    if (
+      hasAnalysisResults() &&
+      !window.confirm(
+        "Load a different file? Your AI analysis, charts and chat will be lost.",
+      )
+    )
+      return;
+    handleClearFile();
   };
 
   const handleDataLoaded = (
@@ -165,7 +206,7 @@ export default function HomePage() {
     fileName: string,
     imported?: ImportSource,
   ) => {
-    requests.cancelAll();
+    resetAnalysis();
     setSource(imported);
     setShowImport(false);
     if (imported) setCsvSettings(imported.settings);
@@ -173,20 +214,13 @@ export default function HomePage() {
     setCsvData(data);
     setCurrentFileName(fileName);
     setWorkingData(null);
-    setGeneratedCharts([]);
-    setAnalysisResults({ summary: null, anomalies: null, charts: null });
-    setChartGenerationError(null);
-    setSummaryError(null);
-    setAnomaliesError(null);
-    clearChatStore();
     toast.success("Data Loaded", {
       description: `${fileName} loaded with ${data.rows.length} rows`,
     });
   };
 
-  const hasValidConfig = apiSettings?.customEndpoint
-    ? !!apiSettings.customModel
-    : !!apiSettings?.apiKey;
+  const ai = useAIConfig(apiSettings);
+  const hasValidConfig = ai.ready;
 
   const handleRunAllAnalysis = async () => {
     const analysisData = effectiveData ?? csvData;
@@ -204,17 +238,7 @@ export default function HomePage() {
       id: "analysis-toast",
     });
 
-    const config = {
-      signal,
-      apiKey: apiSettings!.apiKey,
-      model: apiSettings!.model,
-      providerId: apiSettings!.providerId,
-      providerNpm: apiSettings!.providerNpm,
-      providerApi: apiSettings!.providerApi,
-      language: apiSettings!.language,
-      customEndpoint: apiSettings!.customEndpoint,
-      customModel: apiSettings!.customModel,
-    };
+    const config = ai.configFor(signal)!;
 
     const csvSummary = generateCSVSummary(analysisData);
 
@@ -319,7 +343,14 @@ export default function HomePage() {
       anomaliesPromise,
       chartsPromise,
     ]);
-    if (signal.aborted) return;
+    if (signal.aborted) {
+      // Cancelled (settings changed, Cancel clicked): unless a newer run owns the spinner
+      if (requests.isLatest("all", signal)) {
+        setIsAnalyzingAll(false);
+        toast.dismiss("analysis-toast");
+      }
+      return;
+    }
     setIsAnalyzingAll(false);
 
     toast[completed.every((result) => result !== null) ? "success" : "warning"](
@@ -336,15 +367,15 @@ export default function HomePage() {
   const handleGlobalPDFExport = async () => {
     if (!csvData) return;
     try {
-      const { exportToPDF, captureChartImages } =
+      const { exportToPDF, captureChartImages, PDF_UNSUPPORTED_WARNING } =
         await import("~/lib/pdf-export");
       const chatStore = getChatStore();
       // Capture chart images from the DOM if charts are rendered
       const chartImages =
-        generatedCharts.length > 0
-          ? await captureChartImages(generatedCharts)
+        generatedCharts.length > 0 && chartsRootRef.current
+          ? await captureChartImages(generatedCharts, chartsRootRef.current)
           : undefined;
-      exportToPDF({
+      const report = await exportToPDF({
         fileName: currentFileName ?? "analysis",
         data: effectiveData ?? csvData,
         summary: analysisResults.summary,
@@ -354,6 +385,7 @@ export default function HomePage() {
         chartImages,
       });
       toast.success("PDF report exported");
+      if (report.unsupportedCharacters) toast.warning(PDF_UNSUPPORTED_WARNING);
     } catch (e) {
       console.error("PDF export failed:", e);
       toast.error("PDF export failed");
@@ -361,23 +393,10 @@ export default function HomePage() {
   };
 
   const handleRegenerateChart = async (failedChart: ChartSuggestion) => {
-    const hasValidCfg = apiSettings?.customEndpoint
-      ? !!apiSettings.customModel
-      : !!apiSettings?.apiKey;
-    if (!csvData || !hasValidCfg) return;
+    if (!csvData || !ai.ready) return;
 
     const signal = requests.start(`repair-${failedChart.id}`);
-    const config = {
-      signal,
-      apiKey: apiSettings!.apiKey,
-      model: apiSettings!.model,
-      providerId: apiSettings!.providerId,
-      providerNpm: apiSettings!.providerNpm,
-      providerApi: apiSettings!.providerApi,
-      language: apiSettings!.language,
-      customEndpoint: apiSettings!.customEndpoint,
-      customModel: apiSettings!.customModel,
-    };
+    const config = ai.configFor(signal)!;
 
     try {
       toast.loading("Regenerating Chart", {
@@ -396,6 +415,11 @@ export default function HomePage() {
         setGeneratedCharts((prev) =>
           prev.map((c) => (c.id === failedChart.id ? repairedChart : c)),
         );
+        // Also replace it in the suggestion list, which drives the displayed charts
+        setRepairedCharts((prev) => ({
+          ...prev,
+          [failedChart.id]: repairedChart,
+        }));
         toast.success("Chart Regenerated", {
           description: "The chart has been successfully fixed!",
           id: "regenerate-chart-toast",
@@ -418,36 +442,22 @@ export default function HomePage() {
   };
 
   return (
-    <ClientOnly
-      fallback={
-        <main className="min-h-screen p-4 md:p-8">
-          <div className="mx-auto flex min-h-[50vh] max-w-7xl items-center justify-center">
-            <div
-              className="animate-pulse"
-              style={{ color: "var(--text-secondary)" }}
-            >
-              Loading...
-            </div>
-          </div>
-        </main>
-      }
-    >
-      <main className="min-h-screen">
-        {/* Landing Section - Only show when no data */}
-        {!csvData && (
-          <LandingPage
-            csvSettings={csvSettings}
-            apiSettings={apiSettings}
-            currentFileName={currentFileName}
-            onSettingsChange={setCsvSettings}
-            onApiSettingsChange={setApiSettings}
-            onFileLoaded={handleFileLoaded}
-            onClearFile={handleClearFile}
-            onDataLoaded={handleDataLoaded}
-          />
-        )}
+    <main className="min-h-screen">
+      {/* Landing - rendered on the server too, so it is in the exported HTML */}
+      {!csvData && (
+        <LandingPage
+          csvSettings={csvSettings}
+          apiSettings={apiSettings}
+          currentFileName={currentFileName}
+          onSettingsChange={setCsvSettings}
+          onApiSettingsChange={setApiSettings}
+          onClearFile={handleClearFile}
+          onDataLoaded={handleDataLoaded}
+        />
+      )}
 
-        {/* App Section - Show when data is loaded */}
+      {/* App Section - Show when data is loaded (client only) */}
+      <ClientOnly>
         {csvData && (
           <div className="pb-12">
             {/* Sticky Header Bar */}
@@ -462,9 +472,10 @@ export default function HomePage() {
               <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-3 px-4 py-3 sm:flex-nowrap md:px-8">
                 {/* Left: Back + File info */}
                 <button
-                  onClick={handleClearFile}
+                  onClick={handleBack}
                   className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-white/5 hover:text-white"
                   title="Load a different file"
+                  aria-label="Load a different file"
                 >
                   <ArrowLeft className="h-4 w-4" />
                 </button>
@@ -491,10 +502,13 @@ export default function HomePage() {
                     <span className="hidden sm:inline">PDF</span>
                   </button>
                   <ThemeToggle />
-                  <CSVSettingsButton
-                    settings={csvSettings}
-                    onSettingsChange={setCsvSettings}
-                  />
+                  {/* Sample data has no file to re-read */}
+                  {source && (
+                    <CSVSettingsButton
+                      settings={csvSettings}
+                      onSettingsChange={handleCsvSettingsChange}
+                    />
+                  )}
                   <APIKeyButton
                     onSettingsChange={setApiSettings}
                     currentSettings={apiSettings}
@@ -586,6 +600,7 @@ export default function HomePage() {
                     onClick={handleRunAllAnalysis}
                     disabled={
                       isAnalyzingAll ||
+                      isChatStreaming ||
                       isTransforming ||
                       !effectiveData?.rowCount ||
                       !hasValidConfig
@@ -598,7 +613,9 @@ export default function HomePage() {
                     title={
                       !hasValidConfig
                         ? "Configure your API settings first"
-                        : "Run all AI analyses at once"
+                        : isChatStreaming
+                          ? "Wait for the chat answer to finish"
+                          : "Run all AI analyses at once"
                     }
                   >
                     {isAnalyzingAll ? (
@@ -653,6 +670,8 @@ export default function HomePage() {
                         onChartsGenerated={setGeneratedCharts}
                         externalSuggestions={analysisResults.charts}
                         externalError={chartGenerationError}
+                        onErrorChange={setChartGenerationError}
+                        repairedCharts={repairedCharts}
                         disabled={
                           isAnalyzingAll ||
                           isTransforming ||
@@ -664,14 +683,18 @@ export default function HomePage() {
                     {generatedCharts && generatedCharts.length > 0 && (
                       <FullscreenCard className="overflow-hidden rounded-2xl border border-white/10 bg-slate-900/50">
                         <Suspense fallback={<LazyFallback />}>
-                          <ChartDisplay
-                            data={effectiveData ?? csvData}
-                            charts={generatedCharts}
-                            fileName={currentFileName}
-                            onRegenerate={
-                              hasValidConfig ? handleRegenerateChart : undefined
-                            }
-                          />
+                          <div ref={chartsRootRef}>
+                            <ChartDisplay
+                              data={effectiveData ?? csvData}
+                              charts={generatedCharts}
+                              fileName={currentFileName}
+                              onRegenerate={
+                                hasValidConfig
+                                  ? handleRegenerateChart
+                                  : undefined
+                              }
+                            />
+                          </div>
                         </Suspense>
                       </FullscreenCard>
                     )}
@@ -681,8 +704,8 @@ export default function HomePage() {
             </div>
           </div>
         )}
-      </main>
-    </ClientOnly>
+      </ClientOnly>
+    </main>
   );
 }
 

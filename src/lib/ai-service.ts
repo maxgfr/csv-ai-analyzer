@@ -39,6 +39,8 @@ registerProvider("openai", fromSDK(createOpenAI));
 registerProvider("anthropic", (config) => {
   const anthropic = createAnthropic({
     apiKey: config.apiKey,
+    // Anthropic-compatible providers (MiniMax, …) have their own URL: never send their key to Anthropic
+    ...(config.baseURL && { baseURL: config.baseURL }),
     headers: {
       ...config.headers,
       "anthropic-dangerous-direct-browser-access": "true",
@@ -136,14 +138,18 @@ export function getModel(config: AIServiceConfig) {
   return createAppModel({
     apiKey: config.apiKey,
     model: config.model,
-    providerNpm: config.providerNpm,
-    providerApi: config.providerApi,
+    // A provider without an npm package uses the default (OpenAI) SDK
+    providerNpm: config.providerNpm || undefined,
+    providerApi: config.providerApi || undefined,
     customEndpoint: config.customEndpoint,
     customModel: config.customModel,
   });
 }
 
 // ============ Thin wrappers (delegate to package) ============
+
+// withRetry is the only retry layer: the AI SDK must not retry on its own too
+const SDK_RETRIES = { maxRetries: 0 } as const;
 
 export const generateChartSuggestions = async (
   config: AIServiceConfig,
@@ -168,6 +174,7 @@ export const generateChartSuggestions = async (
         dataSummary,
         signal: config.signal,
         language: LANGUAGE_NAMES[config.language ?? "en"],
+        ...SDK_RETRIES,
       }),
     2,
     1000,
@@ -200,6 +207,7 @@ export const generateCustomChart = async (
         prompt: userPrompt,
         signal: config.signal,
         language: LANGUAGE_NAMES[config.language ?? "en"],
+        ...SDK_RETRIES,
       }),
     2,
     1000,
@@ -223,6 +231,7 @@ export const repairChartSuggestion = async (
         errorContext,
         signal: config.signal,
         language: LANGUAGE_NAMES[config.language ?? "en"],
+        ...SDK_RETRIES,
       }),
     2,
     1000,
@@ -248,12 +257,16 @@ export const generateDataSummary = async (
         dataSummary,
         signal: config.signal,
         language: LANGUAGE_NAMES[config.language ?? "en"],
+        ...SDK_RETRIES,
       }),
     2,
     1000,
     config.signal,
   );
 };
+
+/** Rows sent to the model for anomaly detection (the rest is only summarized). */
+export const ANOMALY_SAMPLE_ROWS = 50;
 
 export const detectAnomalies = async (
   config: AIServiceConfig,
@@ -267,8 +280,10 @@ export const detectAnomalies = async (
         model,
         data,
         dataSummary,
+        maxRows: ANOMALY_SAMPLE_ROWS,
         signal: config.signal,
         language: LANGUAGE_NAMES[config.language ?? "en"],
+        ...SDK_RETRIES,
       }),
     2,
     1000,
@@ -299,6 +314,7 @@ export const streamCustomAnalysis = async (
     dataSummary,
     history: conversationHistory,
     language: LANGUAGE_NAMES[config.language ?? "en"],
+    ...SDK_RETRIES,
     onChunk: (chunk) => {
       if (!config.signal?.aborted) onChunk(chunk);
     },
@@ -327,6 +343,7 @@ export const fetchSuggestedQuestions = async (
         dataSummary,
         signal: config.signal,
         language: LANGUAGE_NAMES[config.language ?? "en"],
+        ...SDK_RETRIES,
         count: 6,
       }),
     2,

@@ -199,3 +199,17 @@ it("uses Chat Completions for OpenAI-compatible base URLs", () => {
   expect(chat).toHaveBeenCalledWith("local-model");
   expect(responses).not.toHaveBeenCalled();
 });
+
+it("keeps the SDK default model on the official OpenAI URL", () => {
+  const responses = vi.fn().mockReturnValue({ modelId: "gpt" });
+  const chat = vi.fn();
+  const provider = Object.assign(responses, { chat });
+  const factory = fromSDK(() => provider);
+  for (const baseURL of [
+    "https://api.openai.com/v1",
+    "https://api.openai.com/v1/",
+  ])
+    factory({ apiKey: "sk", model: "gpt-5", baseURL });
+  expect(responses).toHaveBeenCalledTimes(2);
+  expect(chat).not.toHaveBeenCalled();
+});

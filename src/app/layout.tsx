@@ -102,6 +102,17 @@ const jsonLd = {
   softwareVersion: "1.0.0",
 };
 
+// 'unsafe-eval' is only needed by the dev server (React Refresh / Turbopack)
+const CSP = [
+  "default-src 'self'",
+  `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""}`,
+  "style-src 'self' 'unsafe-inline'",
+  "connect-src *",
+  "img-src 'self' data: blob:",
+  "font-src 'self' data:",
+  "form-action 'self'",
+].join("; ");
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
@@ -112,11 +123,8 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        {/* Security: restrict framing and form targets */}
-        <meta
-          httpEquiv="Content-Security-Policy"
-          content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; connect-src *; img-src 'self' data: blob:; font-src 'self' data:; frame-ancestors 'none'; form-action 'self'"
-        />
+        {/* Security: restrict script, style and form sources (frame-ancestors is ignored in <meta>) */}
+        <meta httpEquiv="Content-Security-Policy" content={CSP} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -124,7 +132,7 @@ export default function RootLayout({
         {/* Anti-flash: apply theme class before first paint */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var m=(document.cookie.match(/csv-ai-theme=(\\w+)/)||[])[1]||"auto";var d=m==="dark"||(m==="auto"&&window.matchMedia("(prefers-color-scheme:dark)").matches);document.documentElement.classList.remove("dark","light");document.documentElement.classList.add(d?"dark":"light")}catch(e){}})();`,
+            __html: `(function(){try{var m=localStorage.getItem("csv-ai-theme")||(document.cookie.match(/csv-ai-theme=(\\w+)/)||[])[1]||"auto";var d=m==="dark"||(m==="auto"&&window.matchMedia("(prefers-color-scheme:dark)").matches);document.documentElement.classList.remove("dark","light");document.documentElement.classList.add(d?"dark":"light")}catch(e){}})();`,
           }}
         />
       </head>

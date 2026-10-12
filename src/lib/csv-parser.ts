@@ -1,6 +1,7 @@
 import Papa, { type ParseResult } from "papaparse";
 import {
   inferValuesType,
+  inferColumnValuesType,
   detectCSVDelimiter,
   uniqueHeaders,
   generateDataSummary as pkgGenerateDataSummary,
@@ -46,9 +47,22 @@ export const parseCSVWithDiagnostics = (
     skipEmptyLines: settings.skipEmptyLines ? "greedy" : false,
   });
 
-  const fatal = result.errors.find((error) => error.type === "Quotes");
+  // An unclosed quote breaks every following row; a stray quote Papa recovered from does not
+  const fatal = result.errors.find((error) => error.code === "MissingQuotes");
   if (fatal) throw new Error(fatal.message);
+  const recovered = result.errors.filter(
+    (error) => error.code === "InvalidQuotes",
+  );
   const allRows: string[][] = content.trim() ? result.data : [];
+  // The newline ending the file is not an empty data row
+  const last = allRows[allRows.length - 1];
+  if (
+    !settings.skipEmptyLines &&
+    /[\r\n]$/.test(content) &&
+    last?.length === 1 &&
+    last[0] === ""
+  )
+    allRows.pop();
 
   if (allRows.length === 0) {
     return {
@@ -69,6 +83,11 @@ export const parseCSVWithDiagnostics = (
 
   const rawDataRows = settings.hasHeader ? allRows.slice(1) : allRows;
   const warnings: string[] = [];
+  const quoteRows = [...new Set(recovered.map((error) => error.row ?? 0))];
+  if (quoteRows.length)
+    warnings.push(
+      `Misplaced quotes on ${quoteRows.length} row${quoteRows.length === 1 ? "" : "s"} (first: row ${quoteRows[0]! + 1}) were read as-is. Check the delimiter and quote settings.`,
+    );
   if (
     settings.hasHeader &&
     headers.some((h, i) => h !== (firstRow[i] ?? "").trim())
@@ -87,20 +106,34 @@ export const parseCSVWithDiagnostics = (
     headers.map((_, i) => row[i] ?? ""),
   );
 
-  const columns: CSVColumn[] = headers.map((name, index) => {
-    const columnValues = dataRows.slice(0, 100).map((row) => row[index] ?? "");
-    return {
-      name,
-      type: inferColumnType(columnValues),
-      index,
-    };
-  });
+  const columns: CSVColumn[] = headers.map((name, index) => ({
+    name,
+    type: inferColumnValuesType(dataRows, index),
+    index,
+  }));
 
   return {
     data: { headers, rows: dataRows, columns, rowCount: dataRows.length },
     warnings,
   };
 };
+
+/**
+ * Decode file bytes. A byte order mark wins over the chosen encoding, so
+ * UTF-16 exports (Excel "Unicode text") open correctly.
+ */
+export function decodeText(buffer: ArrayBuffer, encoding: string): string {
+  const bytes = new Uint8Array(buffer, 0, Math.min(buffer.byteLength, 3));
+  const bom =
+    bytes[0] === 0xff && bytes[1] === 0xfe
+      ? "utf-16le"
+      : bytes[0] === 0xfe && bytes[1] === 0xff
+        ? "utf-16be"
+        : bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf
+          ? "utf-8"
+          : null;
+  return new TextDecoder(bom ?? encoding).decode(buffer);
+}
 
 export const parseCSV = (
   content: string,
