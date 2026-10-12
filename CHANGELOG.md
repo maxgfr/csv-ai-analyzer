@@ -1,3 +1,10 @@
+## [1.15.5](https://github.com/maxgfr/csv-ai-analyzer/compare/v1.15.4...v1.15.5) (2026-10-12)
+
+
+### Bug Fixes
+
+* answer totals from exact group sums, keep recent points in time charts and update next, vitest and postcss ([#6](https://github.com/maxgfr/csv-ai-analyzer/issues/6)) ([a497a48](https://github.com/maxgfr/csv-ai-analyzer/commit/a497a48094c91532702d92e45386a516914120d7))
+
 ## [1.15.4](https://github.com/maxgfr/csv-ai-analyzer/compare/v1.15.3...v1.15.4) (2026-10-12)
 
 
