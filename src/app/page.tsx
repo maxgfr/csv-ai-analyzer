@@ -67,6 +67,7 @@ import {
 } from "~/lib/chat-store";
 import { Sparkles, Loader2, ArrowLeft, FileDown } from "lucide-react";
 import { useRequestScope } from "~/lib/use-request-scope";
+import { useAIConfig } from "~/lib/use-ai-config";
 import type { ImportSource } from "~/lib/data-tasks";
 import { FileUpload } from "./_components/FileUpload";
 import { DataQuality } from "./_components/DataQuality";
@@ -198,9 +199,8 @@ export default function HomePage() {
     });
   };
 
-  const hasValidConfig = apiSettings?.customEndpoint
-    ? !!apiSettings.customModel
-    : !!apiSettings?.apiKey;
+  const ai = useAIConfig(apiSettings);
+  const hasValidConfig = ai.ready;
 
   const handleRunAllAnalysis = async () => {
     const analysisData = effectiveData ?? csvData;
@@ -218,17 +218,7 @@ export default function HomePage() {
       id: "analysis-toast",
     });
 
-    const config = {
-      signal,
-      apiKey: apiSettings!.apiKey,
-      model: apiSettings!.model,
-      providerId: apiSettings!.providerId,
-      providerNpm: apiSettings!.providerNpm,
-      providerApi: apiSettings!.providerApi,
-      language: apiSettings!.language,
-      customEndpoint: apiSettings!.customEndpoint,
-      customModel: apiSettings!.customModel,
-    };
+    const config = ai.configFor(signal)!;
 
     const csvSummary = generateCSVSummary(analysisData);
 
@@ -376,23 +366,10 @@ export default function HomePage() {
   };
 
   const handleRegenerateChart = async (failedChart: ChartSuggestion) => {
-    const hasValidCfg = apiSettings?.customEndpoint
-      ? !!apiSettings.customModel
-      : !!apiSettings?.apiKey;
-    if (!csvData || !hasValidCfg) return;
+    if (!csvData || !ai.ready) return;
 
     const signal = requests.start(`repair-${failedChart.id}`);
-    const config = {
-      signal,
-      apiKey: apiSettings!.apiKey,
-      model: apiSettings!.model,
-      providerId: apiSettings!.providerId,
-      providerNpm: apiSettings!.providerNpm,
-      providerApi: apiSettings!.providerApi,
-      language: apiSettings!.language,
-      customEndpoint: apiSettings!.customEndpoint,
-      customModel: apiSettings!.customModel,
-    };
+    const config = ai.configFor(signal)!;
 
     try {
       toast.loading("Regenerating Chart", {

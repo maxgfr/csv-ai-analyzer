@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { useFocusTrap } from "~/lib/use-focus-trap";
 import { toast } from "sonner";
@@ -60,6 +60,32 @@ const KNOWN_PROVIDER_API: Record<string, string> = {
   mistral: "https://api.mistral.ai/v1",
 };
 
+// One download shared by every open of the modal; a failure can be retried.
+let catalogRequest: Promise<ModelCatalog> | null = null;
+
+function loadCatalog(): Promise<ModelCatalog> {
+  catalogRequest ??= fetch(
+    `${process.env.NEXT_PUBLIC_BASE_PATH || ""}/models.json`,
+  )
+    .then((res) => {
+      if (!res.ok) throw new Error(`Model list unavailable (${res.status})`);
+      return res.json() as Promise<ModelCatalog>;
+    })
+    .catch((error: unknown) => {
+      catalogRequest = null;
+      throw error;
+    });
+  return catalogRequest;
+}
+
+/** Recommended model of a provider when listed, else its first model. */
+function defaultModelFor(provider: ProviderInfo | undefined): ModelId {
+  if (!provider) return DEFAULT_MODEL;
+  const recommended = DEFAULT_MODEL_BY_PROVIDER[provider.id];
+  if (recommended && provider.models[recommended]) return recommended;
+  return Object.keys(provider.models)[0] ?? DEFAULT_MODEL;
+}
+
 interface APIKeySettingsProps {
   isOpen: boolean;
   onClose: () => void;
@@ -99,6 +125,7 @@ export function APIKeySettings({
   );
   const [searchTerm, setSearchTerm] = useState("");
   const [catalog, setCatalog] = useState<ModelCatalog | null>(null);
+  const [catalogError, setCatalogError] = useState<string | null>(null);
   const [isLoadingCatalog, setIsLoadingCatalog] = useState(false);
   const [isTestingConnection, setIsTestingConnection] = useState(false);
 
@@ -115,42 +142,53 @@ export function APIKeySettings({
     return () => setMounted(false);
   }, []);
 
+  // Every open starts from the saved settings: unsaved edits are discarded
   useEffect(() => {
-    if (currentSettings) {
-      setModel(currentSettings.model ?? DEFAULT_MODEL);
-      setProviderId(currentSettings.providerId ?? DEFAULT_PROVIDER_ID);
-      setLanguage(currentSettings.language ?? getBrowserLanguage());
-      setCustomEndpoint(currentSettings.customEndpoint ?? "");
-      setCustomModel(currentSettings.customModel ?? "");
-      const isCustom = !!currentSettings.customEndpoint;
-      setUseCustomEndpoint(isCustom);
-      if (isCustom) {
-        setCustomApiKey(currentSettings.apiKey);
-      } else {
-        setProviderApiKey(currentSettings.apiKey);
-      }
-      setApiKey(currentSettings.apiKey);
-      setRememberKey(currentSettings.rememberKey ?? false);
-    }
-  }, [currentSettings]);
+    if (!isOpen) return;
+    const isCustom = !!currentSettings?.customEndpoint;
+    const key = currentSettings?.apiKey ?? "";
+    setModel(currentSettings?.model ?? DEFAULT_MODEL);
+    setProviderId(currentSettings?.providerId ?? DEFAULT_PROVIDER_ID);
+    setLanguage(currentSettings?.language ?? getBrowserLanguage());
+    setCustomEndpoint(currentSettings?.customEndpoint ?? "");
+    setCustomModel(currentSettings?.customModel ?? "");
+    setUseCustomEndpoint(isCustom);
+    setCustomApiKey(isCustom ? key : "");
+    setProviderApiKey(isCustom ? "" : key);
+    setApiKey(key);
+    setRememberKey(currentSettings?.rememberKey ?? false);
+    setShowKey(false);
+    setSearchTerm("");
+  }, [isOpen, currentSettings]);
 
-  // Load catalog
+  const fetchCatalog = useCallback(() => {
+    setIsLoadingCatalog(true);
+    setCatalogError(null);
+    loadCatalog()
+      .then(setCatalog)
+      .catch((err: unknown) => {
+        console.error("Failed to load models catalog:", err);
+        setCatalogError(
+          err instanceof Error ? err.message : "Model list unavailable",
+        );
+      })
+      .finally(() => setIsLoadingCatalog(false));
+  }, []);
+
+  // The catalog is only downloaded once the modal is opened
   useEffect(() => {
-    if (!catalog && !isLoadingCatalog) {
-      setIsLoadingCatalog(true);
-      const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
-      fetch(`${basePath}/models.json`)
-        .then((res) => res.json())
-        .then((data: ModelCatalog) => {
-          setCatalog(data);
-          setIsLoadingCatalog(false);
-        })
-        .catch((err) => {
-          console.error("Failed to load models catalog:", err);
-          setIsLoadingCatalog(false);
-        });
-    }
-  }, [catalog, isLoadingCatalog]);
+    if (isOpen && !catalog) fetchCatalog();
+  }, [isOpen, catalog, fetchCatalog]);
+
+  // Escape closes the dialog
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [isOpen, onClose]);
 
   const selectedProvider = useMemo(() => {
     return catalog?.[providerId] ?? null;
@@ -272,10 +310,13 @@ export function APIKeySettings({
     }
     try {
       const headers: Record<string, string> = {};
-      if (providerMeta.providerId === "anthropic") {
+      if (providerMeta.providerNpm === "@ai-sdk/anthropic") {
         headers["x-api-key"] = apiKey;
         headers["anthropic-version"] = "2023-06-01";
         headers["anthropic-dangerous-direct-browser-access"] = "true";
+      } else if (providerMeta.providerNpm === "@ai-sdk/google") {
+        // The Gemini API authenticates with its own header, not a bearer token
+        headers["x-goog-api-key"] = apiKey;
       } else {
         headers["Authorization"] = `Bearer ${apiKey}`;
       }
@@ -355,6 +396,7 @@ export function APIKeySettings({
         className="pointer-events-none fixed inset-0 z-101 flex items-center justify-center p-4"
         role="dialog"
         aria-modal="true"
+        aria-labelledby="api-settings-title"
       >
         <div
           ref={modalRef}
@@ -368,7 +410,10 @@ export function APIKeySettings({
                 <div className="rounded-xl border border-violet-500/40 bg-violet-500/20 p-2.5">
                   <Key className="h-5 w-5 text-violet-400" />
                 </div>
-                <h2 className="text-xl font-bold text-white">
+                <h2
+                  id="api-settings-title"
+                  className="text-xl font-bold text-white"
+                >
                   API Configuration
                 </h2>
               </div>
@@ -388,9 +433,10 @@ export function APIKeySettings({
                 <button
                   type="button"
                   onClick={onClose}
+                  aria-label="Close API settings"
                   className="rounded-lg p-2 transition-colors hover:bg-white/10"
                 >
-                  <X className="h-5 w-5 text-gray-400" />
+                  <X className="h-5 w-5 text-gray-400" aria-hidden="true" />
                 </button>
               </div>
             </div>
@@ -615,6 +661,8 @@ export function APIKeySettings({
                 <button
                   type="button"
                   onClick={() => setShowKey(!showKey)}
+                  aria-label={showKey ? "Hide API key" : "Show API key"}
+                  aria-pressed={showKey}
                   className="absolute top-1/2 right-3 -translate-y-1/2 rounded-lg p-1.5 transition-colors hover:bg-white/10"
                 >
                   {showKey ? (
@@ -648,6 +696,23 @@ export function APIKeySettings({
 
             {/* catalog status & refresh UI removed — we use only the simple model selector for users */}
 
+            {!useCustomEndpoint && catalogError && (
+              <div
+                role="alert"
+                className="flex items-center justify-between gap-3 rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-300"
+              >
+                <span>Could not load the model list. {catalogError}.</span>
+                <button
+                  type="button"
+                  onClick={fetchCatalog}
+                  disabled={isLoadingCatalog}
+                  className="shrink-0 rounded-lg border border-red-400/40 px-3 py-1.5 font-medium hover:bg-red-500/10 disabled:opacity-50"
+                >
+                  Retry
+                </button>
+              </div>
+            )}
+
             {/* Provider Selection */}
             {!useCustomEndpoint && (
               <div className="space-y-2">
@@ -661,7 +726,11 @@ export function APIKeySettings({
                   id="provider-select"
                   value={providerId}
                   onChange={(e) => {
-                    setProviderId(e.target.value);
+                    const id = e.target.value;
+                    setProviderId(id);
+                    // A model of the previous provider would be sent to the new one
+                    setModel(defaultModelFor(catalog?.[id]));
+                    setSearchTerm("");
                   }}
                   className="w-full rounded-xl border-2 border-gray-700 bg-gray-800 px-4 py-3 text-white transition-all focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none"
                 >
@@ -840,8 +909,13 @@ export function APIKeySettings({
                   ))}
                   {modelOptions.length === 0 && (
                     <p className="text-sm text-gray-500">
-                      No models available for this provider. Please wait for the
-                      catalog to load.
+                      {isLoadingCatalog
+                        ? "Loading models…"
+                        : catalogError
+                          ? "Models are unavailable until the list loads."
+                          : searchTerm.trim()
+                            ? "No model matches your search."
+                            : "No models available for this provider."}
                     </p>
                   )}
                   {modelOptions.length > 0 && !model && (

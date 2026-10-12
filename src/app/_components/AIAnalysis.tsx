@@ -41,6 +41,7 @@ import type { StoredSettings } from "~/lib/storage";
 import { useChatStore, toModelHistory } from "~/lib/chat-store";
 import { ChartDisplay } from "./ChartDisplay";
 import { useRequestScope } from "~/lib/use-request-scope";
+import { useAIConfig } from "~/lib/use-ai-config";
 
 interface AIAnalysisProps {
   data: CSVData;
@@ -280,24 +281,10 @@ export function AIAnalysis({
     }
   }, [fileName, data, summaryResult, anomaliesResult, customHistory]);
 
-  const getConfig = (action: string): AIServiceConfig | null => {
-    // Allow custom endpoint without API key
-    const hasValidConfig = apiSettings?.customEndpoint
-      ? !!apiSettings.customModel
-      : !!apiSettings?.apiKey;
-    if (!hasValidConfig) return null;
-    return {
-      signal: requests.start(action),
-      apiKey: apiSettings!.apiKey,
-      model: apiSettings!.model,
-      providerId: apiSettings!.providerId,
-      providerNpm: apiSettings!.providerNpm,
-      providerApi: apiSettings!.providerApi,
-      language: apiSettings!.language,
-      customEndpoint: apiSettings!.customEndpoint,
-      customModel: apiSettings!.customModel,
-    };
-  };
+  const ai = useAIConfig(apiSettings);
+  // Starting a request replaces the previous one of the same action
+  const getConfig = (action: string): AIServiceConfig | null =>
+    ai.ready ? ai.configFor(requests.start(action)) : null;
 
   // Auto-fetch suggested questions when custom tab is first shown
   useEffect(() => {
@@ -646,7 +633,7 @@ export function AIAnalysis({
       )}
 
       {/* No API Key Warning */}
-      {!apiSettings?.apiKey && !apiSettings?.customEndpoint && (
+      {!ai.ready && (
         <div className="mb-4 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4">
           <p className="text-sm text-amber-400">
             Configure your API key or custom endpoint to use AI analysis
@@ -682,11 +669,7 @@ export function AIAnalysis({
                 <button
                   type="button"
                   onClick={handleGenerateSummary}
-                  disabled={
-                    disabled ||
-                    isLoadingSummary ||
-                    (!apiSettings?.apiKey && !apiSettings?.customEndpoint)
-                  }
+                  disabled={disabled || isLoadingSummary || !ai.ready}
                   className="btn-primary inline-flex items-center gap-2 disabled:opacity-50"
                 >
                   {isLoadingSummary ? (
@@ -822,11 +805,7 @@ export function AIAnalysis({
                 <button
                   type="button"
                   onClick={handleDetectAnomalies}
-                  disabled={
-                    disabled ||
-                    isLoadingAnomalies ||
-                    (!apiSettings?.apiKey && !apiSettings?.customEndpoint)
-                  }
+                  disabled={disabled || isLoadingAnomalies || !ai.ready}
                   className="btn-primary inline-flex items-center gap-2 disabled:opacity-50"
                 >
                   {isLoadingAnomalies ? (
@@ -1109,11 +1088,7 @@ export function AIAnalysis({
                 }}
                 placeholder="Ask a question about your data..."
                 className="input-field flex-1"
-                disabled={
-                  disabled ||
-                  isLoadingCustom ||
-                  (!apiSettings?.apiKey && !apiSettings?.customEndpoint)
-                }
+                disabled={disabled || isLoadingCustom || !ai.ready}
               />
               <button
                 type="button"
@@ -1122,7 +1097,7 @@ export function AIAnalysis({
                   disabled ||
                   isLoadingCustom ||
                   !customPrompt.trim() ||
-                  (!apiSettings?.apiKey && !apiSettings?.customEndpoint)
+                  !ai.ready
                 }
                 className="btn-primary px-4 disabled:opacity-50"
                 aria-label="Send question"

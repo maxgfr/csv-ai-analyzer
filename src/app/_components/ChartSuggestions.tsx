@@ -14,6 +14,7 @@ import {
   X,
 } from "lucide-react";
 import { useRequestScope } from "~/lib/use-request-scope";
+import { useAIConfig } from "~/lib/use-ai-config";
 import { validateChart } from "~/lib/chart-validation";
 import { type CSVData, generateDataSummary } from "~/lib/csv-parser";
 import {
@@ -150,24 +151,9 @@ export function ChartSuggestions({
     onChartsGenerated(selected);
   }, [selectedCharts, suggestions, onChartsGenerated]);
 
-  const getConfig = (action: string): AIServiceConfig | null => {
-    // Allow custom endpoint without API key
-    const hasValidConfig = apiSettings?.customEndpoint
-      ? !!apiSettings.customModel
-      : !!apiSettings?.apiKey;
-    if (!hasValidConfig) return null;
-    return {
-      signal: requests.start(action),
-      apiKey: apiSettings!.apiKey,
-      model: apiSettings!.model,
-      providerId: apiSettings!.providerId,
-      providerNpm: apiSettings!.providerNpm,
-      providerApi: apiSettings!.providerApi,
-      language: apiSettings!.language,
-      customEndpoint: apiSettings!.customEndpoint,
-      customModel: apiSettings!.customModel,
-    };
-  };
+  const ai = useAIConfig(apiSettings);
+  const getConfig = (action: string): AIServiceConfig | null =>
+    ai.ready ? ai.configFor(requests.start(action)) : null;
 
   const handleGenerate = async () => {
     const config = getConfig("charts");
@@ -430,11 +416,7 @@ export function ChartSuggestions({
           <button
             type="button"
             onClick={handleGenerate}
-            disabled={
-              disabled ||
-              isLoading ||
-              (!apiSettings?.apiKey && !apiSettings?.customEndpoint)
-            }
+            disabled={disabled || isLoading || !ai.ready}
             className="btn-primary inline-flex items-center gap-2 disabled:opacity-50"
           >
             {isLoading ? (
@@ -466,7 +448,7 @@ export function ChartSuggestions({
         </div>
       )}
 
-      {!apiSettings?.apiKey && !apiSettings?.customEndpoint && (
+      {!ai.ready && (
         <div className="py-6 text-center">
           <p className="text-gray-400">
             Configure your API key or custom endpoint to generate AI-powered
@@ -781,10 +763,7 @@ export function ChartSuggestions({
           <div className="flex gap-3">
             <button
               type="button"
-              disabled={
-                disabled ||
-                (!apiSettings?.apiKey && !apiSettings?.customEndpoint)
-              }
+              disabled={disabled || !ai.ready}
               onClick={() => setShowCustomInput(true)}
               className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-dashed border-white/20 p-4 text-gray-400 transition-all hover:border-violet-500/50 hover:bg-violet-500/5 hover:text-violet-400"
             >
@@ -807,11 +786,7 @@ export function ChartSuggestions({
           <button
             type="button"
             onClick={handleGenerate}
-            disabled={
-              disabled ||
-              isLoading ||
-              (!apiSettings?.apiKey && !apiSettings?.customEndpoint)
-            }
+            disabled={disabled || isLoading || !ai.ready}
             className="btn-secondary inline-flex items-center gap-2 text-sm"
           >
             {isLoading ? (
