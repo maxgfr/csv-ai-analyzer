@@ -1,3 +1,38 @@
+## [1.15.4](https://github.com/maxgfr/csv-ai-analyzer/compare/v1.15.3...v1.15.4) (2026-10-12)
+
+
+### Bug Fixes
+
+* cancel AI requests per action and always clear loading states ([096c7b6](https://github.com/maxgfr/csv-ai-analyzer/commit/096c7b6d550d710a6b70feacc819404f1bc6dd34))
+* **csv-charts-ai:** detect the date order on the whole column before the Top N cut ([8220839](https://github.com/maxgfr/csv-ai-analyzer/commit/82208395d10382df50abe05534dbc9d83f984bc1))
+* **csv-charts-ai:** keep abort and status details on AI errors and bound prompt sizes ([f144eda](https://github.com/maxgfr/csv-ai-analyzer/commit/f144eda7091959c114163069c1705647487965b5))
+* **csv-charts-ai:** keep the Responses API on the official OpenAI URL ([1dee2a6](https://github.com/maxgfr/csv-ai-analyzer/commit/1dee2a6fde60a673c0befed941333806ccdabeac))
+* **csv-charts-ai:** parse decimal commas, ISO datetimes and per-column date order ([336063d](https://github.com/maxgfr/csv-ai-analyzer/commit/336063d81c89508c159aab6341650cf2a54fe5da))
+* **csv-charts-ai:** rank Top N by value, order lines chronologically and keep scatter/pie data whole ([6e6a57d](https://github.com/maxgfr/csv-ai-analyzer/commit/6e6a57d5bd9de0e180c3d49529a323114f96edc9))
+* **csv-charts-ai:** report every row as added or removed when files share no column ([0ff50b9](https://github.com/maxgfr/csv-ai-analyzer/commit/0ff50b971168a7f171580490d3a836dcb661ffcd))
+* **csv-charts-ai:** show zero averages, theme the brush and use a numeric scatter axis ([2d0d1b3](https://github.com/maxgfr/csv-ai-analyzer/commit/2d0d1b33f5caebe94263750f6f07cccad48c043c))
+* **csv-charts-ai:** treat mid-field quotes as literal in CSV parser ([7e09644](https://github.com/maxgfr/csv-ai-analyzer/commit/7e096442da49d6e4fb6f3308a6c1eec2579b2878))
+* drop unsafe-eval from the production CSP and guard clipboard copies ([20ce351](https://github.com/maxgfr/csv-ai-analyzer/commit/20ce351d8a4b98a0bc68eb60ff76c4b06a08da4c))
+* import trailing newlines, stray quotes and UTF-16 files cleanly ([c6e4ed1](https://github.com/maxgfr/csv-ai-analyzer/commit/c6e4ed19716e8178004076ccb8a44d841e3ba74a))
+* keep AI results across sorts and settings changes, and keep repaired charts ([dc7a58f](https://github.com/maxgfr/csv-ai-analyzer/commit/dc7a58fabf2b5ba6c35afc99e1b6728ac1732a82))
+* keep dollar amounts in PDF text, capture charts by id in light colors and embed a Unicode font ([ed08120](https://github.com/maxgfr/csv-ai-analyzer/commit/ed081206403e3546527196ae74f6b9cd94399c53))
+* keep negative numbers in every local format as numbers in CSV exports ([4ae41ba](https://github.com/maxgfr/csv-ai-analyzer/commit/4ae41ba265920c8333daaa330533a273b6b2f0ab))
+* keep the API key out of cookies, in session or local storage ([65c1124](https://github.com/maxgfr/csv-ai-analyzer/commit/65c112467f8b0a2aad06d2cb4485cd3b80fb1570))
+* load the model list when the settings open, reset the model on provider change and test Google keys correctly ([e727d2b](https://github.com/maxgfr/csv-ai-analyzer/commit/e727d2bea62b7757b6e1c1e090b4498143f51ee6))
+* pre-render the landing, fix legal canonical and title, and state the anomaly sample size ([33ea6f3](https://github.com/maxgfr/csv-ai-analyzer/commit/33ea6f379d5a46a2d290bf2942b61335d94fee04))
+* re-read the file on parser changes and neutralise formulas in CSV exports ([3bee418](https://github.com/maxgfr/csv-ai-analyzer/commit/3bee418a5f7bcd2f2a8965f37cdf31bd1e244efe))
+* readable status colors in light theme and labelled tabs, menus and icon buttons ([5b6bbb4](https://github.com/maxgfr/csv-ai-analyzer/commit/5b6bbb4c1a7b69028dce897143755ff7ca3429bf))
+* release chart spinners and keep interrupted questions when a sort or settings change cancels them ([13dd04b](https://github.com/maxgfr/csv-ai-analyzer/commit/13dd04b49b0a4485255fe25e7a671d8534a3358d))
+* render dollar amounts as text in AI answers and keep code blocks verbatim ([1c49e03](https://github.com/maxgfr/csv-ai-analyzer/commit/1c49e03aaf43f0f40a27c98f9ca493f3693461d1))
+* route Anthropic-compatible keys to their own URL and keep a single retry layer ([3e1a38f](https://github.com/maxgfr/csv-ai-analyzer/commit/3e1a38f250de7d46848d0834747625ab163f1339))
+
+
+### Performance Improvements
+
+* generate a slim model catalog from llm-models, limited to callable providers ([ea4f528](https://github.com/maxgfr/csv-ai-analyzer/commit/ea4f528e42d396be55a6fbd1d0bef624e719cf05))
+* query large tables from a long-lived worker and keep empty cells last ([e298e1f](https://github.com/maxgfr/csv-ai-analyzer/commit/e298e1fd98889e99e363ca27b54a65fe61b3efb1))
+* render chat streaming once per frame, lazy-load chat charts and skip version checks in hidden tabs ([a94b005](https://github.com/maxgfr/csv-ai-analyzer/commit/a94b005ec251df88822aaa46a5d54a334c162203))
+
 ## [1.15.3](https://github.com/maxgfr/csv-ai-analyzer/compare/v1.15.2...v1.15.3) (2026-09-08)
 
 
