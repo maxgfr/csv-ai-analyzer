@@ -16,7 +16,7 @@ pnpm typecheck        # TypeScript type checking (tsc --noEmit)
 # Package (csv-charts-ai)
 cd packages/csv-charts-ai
 pnpm build            # Build package with tsup
-pnpm test             # Run vitest tests (122 tests)
+pnpm test             # Run vitest tests (169 tests)
 pnpm test:watch       # Run tests in watch mode
 ```
 
