@@ -2,6 +2,7 @@ import Cookies from "js-cookie";
 import {
   DEFAULT_MODEL,
   DEFAULT_PROVIDER_ID,
+  SUPPORTED_LANGUAGES,
   getBrowserLanguage,
   type ModelId,
   type ProviderId,
@@ -18,107 +19,189 @@ export interface StoredSettings {
   language: LanguageCode;
   customEndpoint?: string;
   customModel?: string;
+  /**
+   * Keep the API key on this device (localStorage). Otherwise it lives in
+   * sessionStorage and is forgotten when the tab closes.
+   */
+  rememberKey?: boolean;
 }
 
-const API_KEY_COOKIE = "csv-ai-api-key";
-const MODEL_COOKIE = "csv-ai-model";
-const LANGUAGE_COOKIE = "csv-ai-language";
-const PROVIDER_COOKIE = "csv-ai-provider";
-const PROVIDER_NAME_COOKIE = "csv-ai-provider-name";
-const PROVIDER_NPM_COOKIE = "csv-ai-provider-npm";
-const PROVIDER_API_COOKIE = "csv-ai-provider-api";
-const CUSTOM_ENDPOINT_COOKIE = "csv-ai-custom-endpoint";
-const CUSTOM_MODEL_COOKIE = "csv-ai-custom-model";
-// Cookie options for security
-const COOKIE_OPTIONS: Cookies.CookieAttributes = {
-  expires: 365, // 1 year
-  secure: true, // Only sent over HTTPS
-  sameSite: "strict", // Prevent CSRF
+/** Non-secret preferences, in localStorage. */
+const SETTINGS_KEY = "csv-ai-settings";
+/** The API key: sessionStorage by default, localStorage when remembered. */
+const API_KEY_KEY = "csv-ai-api-key";
+
+// ============ Safe Web Storage access ============
+// Storage can be missing or throw (private mode, blocked site data, quota).
+
+function getStorage(kind: "localStorage" | "sessionStorage"): Storage | null {
+  try {
+    return typeof window === "undefined" ? null : window[kind];
+  } catch {
+    return null;
+  }
+}
+
+function read(kind: "localStorage" | "sessionStorage", key: string) {
+  try {
+    return getStorage(kind)?.getItem(key) ?? null;
+  } catch {
+    return null;
+  }
+}
+
+function write(
+  kind: "localStorage" | "sessionStorage",
+  key: string,
+  value: string,
+) {
+  try {
+    getStorage(kind)?.setItem(key, value);
+  } catch {
+    // Storage full or blocked: the settings only last for this page
+  }
+}
+
+function remove(kind: "localStorage" | "sessionStorage", key: string) {
+  try {
+    getStorage(kind)?.removeItem(key);
+  } catch {
+    // Nothing to clean up
+  }
+}
+
+const isLanguage = (value: unknown): value is LanguageCode =>
+  SUPPORTED_LANGUAGES.some((l) => l.code === value);
+
+const optionalString = (value: unknown) =>
+  typeof value === "string" && value ? value : undefined;
+
+// ============ Legacy cookies (before v1.16) ============
+// Cookies were sent to the host with every request: migrate them once, then delete them.
+
+const LEGACY_COOKIES = {
+  apiKey: "csv-ai-api-key",
+  model: "csv-ai-model",
+  language: "csv-ai-language",
+  providerId: "csv-ai-provider",
+  providerName: "csv-ai-provider-name",
+  providerNpm: "csv-ai-provider-npm",
+  providerApi: "csv-ai-provider-api",
+  customEndpoint: "csv-ai-custom-endpoint",
+  customModel: "csv-ai-custom-model",
+} as const;
+
+/** Attributes the cookies were written with; removal must match them. */
+export const LEGACY_COOKIE_ATTRIBUTES: Cookies.CookieAttributes = {
+  secure: true,
+  sameSite: "strict",
 };
 
-export const saveApiSettings = (settings: StoredSettings): void => {
-  if (typeof window !== "undefined") {
-    Cookies.set(API_KEY_COOKIE, settings.apiKey, COOKIE_OPTIONS);
-    Cookies.set(MODEL_COOKIE, settings.model, COOKIE_OPTIONS);
-    Cookies.set(LANGUAGE_COOKIE, settings.language, COOKIE_OPTIONS);
-    Cookies.set(
-      PROVIDER_COOKIE,
-      settings.providerId ?? DEFAULT_PROVIDER_ID,
-      COOKIE_OPTIONS,
-    );
-    if (settings.providerName) {
-      Cookies.set(PROVIDER_NAME_COOKIE, settings.providerName, COOKIE_OPTIONS);
-    } else {
-      Cookies.remove(PROVIDER_NAME_COOKIE);
-    }
-    if (settings.providerNpm) {
-      Cookies.set(PROVIDER_NPM_COOKIE, settings.providerNpm, COOKIE_OPTIONS);
-    } else {
-      Cookies.remove(PROVIDER_NPM_COOKIE);
-    }
-    if (settings.providerApi) {
-      Cookies.set(PROVIDER_API_COOKIE, settings.providerApi, COOKIE_OPTIONS);
-    } else {
-      Cookies.remove(PROVIDER_API_COOKIE);
-    }
-    if (settings.customEndpoint) {
-      Cookies.set(
-        CUSTOM_ENDPOINT_COOKIE,
-        settings.customEndpoint,
-        COOKIE_OPTIONS,
-      );
-    } else {
-      Cookies.remove(CUSTOM_ENDPOINT_COOKIE);
-    }
-    if (settings.customModel) {
-      Cookies.set(CUSTOM_MODEL_COOKIE, settings.customModel, COOKIE_OPTIONS);
-    } else {
-      Cookies.remove(CUSTOM_MODEL_COOKIE);
-    }
+/** Delete a cookie written by an older version, with and without its original attributes. */
+export function removeLegacyCookie(name: string) {
+  try {
+    Cookies.remove(name, LEGACY_COOKIE_ATTRIBUTES);
+    Cookies.remove(name);
+  } catch {
+    // Cookies unavailable
   }
+}
+
+function migrateLegacyCookies() {
+  let values: Partial<Record<keyof typeof LEGACY_COOKIES, string>>;
+  try {
+    values = Object.fromEntries(
+      Object.entries(LEGACY_COOKIES)
+        .map(([field, name]) => [field, Cookies.get(name)])
+        .filter(([, value]) => value !== undefined),
+    );
+  } catch {
+    return;
+  }
+  if (Object.keys(values).length === 0) return;
+  // Only fill what the new storage does not already hold
+  if (!read("localStorage", SETTINGS_KEY)) {
+    const apiKey = values.apiKey ?? "";
+    saveApiSettings({
+      apiKey,
+      model: values.model ?? DEFAULT_MODEL,
+      providerId: values.providerId ?? DEFAULT_PROVIDER_ID,
+      providerName: values.providerName,
+      providerNpm: values.providerNpm,
+      providerApi: values.providerApi,
+      language: isLanguage(values.language)
+        ? values.language
+        : getBrowserLanguage(),
+      customEndpoint: values.customEndpoint,
+      customModel: values.customModel,
+      // People who already saved a key stay signed in after the upgrade
+      rememberKey: !!apiKey,
+    });
+  }
+  for (const name of Object.values(LEGACY_COOKIES)) removeLegacyCookie(name);
+}
+
+// ============ Public API ============
+
+export const saveApiSettings = (settings: StoredSettings): void => {
+  if (typeof window === "undefined") return;
+  const { apiKey, ...preferences } = settings;
+  write(
+    "localStorage",
+    SETTINGS_KEY,
+    JSON.stringify({ ...preferences, rememberKey: !!settings.rememberKey }),
+  );
+  remove("localStorage", API_KEY_KEY);
+  remove("sessionStorage", API_KEY_KEY);
+  if (apiKey)
+    write(
+      settings.rememberKey ? "localStorage" : "sessionStorage",
+      API_KEY_KEY,
+      apiKey,
+    );
 };
 
 export const loadApiSettings = (): StoredSettings | null => {
-  if (typeof window !== "undefined") {
-    const apiKey = Cookies.get(API_KEY_COOKIE);
-    // Use nullish-coalescing to avoid treating empty strings as missing values
-    const model = Cookies.get(MODEL_COOKIE) ?? DEFAULT_MODEL;
-    const providerId = Cookies.get(PROVIDER_COOKIE) ?? DEFAULT_PROVIDER_ID;
-    const providerName = Cookies.get(PROVIDER_NAME_COOKIE);
-    const providerNpm = Cookies.get(PROVIDER_NPM_COOKIE);
-    const providerApi = Cookies.get(PROVIDER_API_COOKIE);
-    const language = (Cookies.get(LANGUAGE_COOKIE) ??
-      getBrowserLanguage()) as LanguageCode;
-    const customEndpoint = Cookies.get(CUSTOM_ENDPOINT_COOKIE);
-    const customModel = Cookies.get(CUSTOM_MODEL_COOKIE);
+  if (typeof window === "undefined") return null;
+  migrateLegacyCookies();
 
-    if (apiKey || customEndpoint) {
-      return {
-        apiKey: apiKey ?? "",
-        model,
-        providerId,
-        providerName: providerName ?? undefined,
-        providerNpm: providerNpm ?? undefined,
-        providerApi: providerApi ?? undefined,
-        language,
-        customEndpoint,
-        customModel,
-      };
-    }
+  let preferences: Record<string, unknown> = {};
+  try {
+    const parsed: unknown = JSON.parse(
+      read("localStorage", SETTINGS_KEY) ?? "{}",
+    );
+    if (parsed && typeof parsed === "object")
+      preferences = parsed as Record<string, unknown>;
+  } catch {
+    // Corrupted preferences: start from the defaults
   }
-  return null;
+  const apiKey =
+    read("sessionStorage", API_KEY_KEY) ??
+    read("localStorage", API_KEY_KEY) ??
+    "";
+  const customEndpoint = optionalString(preferences.customEndpoint);
+  if (!apiKey && !customEndpoint) return null;
+
+  return {
+    apiKey,
+    model: optionalString(preferences.model) ?? DEFAULT_MODEL,
+    providerId: optionalString(preferences.providerId) ?? DEFAULT_PROVIDER_ID,
+    providerName: optionalString(preferences.providerName),
+    providerNpm: optionalString(preferences.providerNpm),
+    providerApi: optionalString(preferences.providerApi),
+    language: isLanguage(preferences.language)
+      ? preferences.language
+      : getBrowserLanguage(),
+    customEndpoint,
+    customModel: optionalString(preferences.customModel),
+    rememberKey: preferences.rememberKey === true,
+  };
 };
 
 export const clearApiSettings = (): void => {
-  if (typeof window !== "undefined") {
-    Cookies.remove(API_KEY_COOKIE);
-    Cookies.remove(MODEL_COOKIE);
-    Cookies.remove(LANGUAGE_COOKIE);
-    Cookies.remove(PROVIDER_COOKIE);
-    Cookies.remove(PROVIDER_NAME_COOKIE);
-    Cookies.remove(PROVIDER_NPM_COOKIE);
-    Cookies.remove(PROVIDER_API_COOKIE);
-    Cookies.remove(CUSTOM_ENDPOINT_COOKIE);
-    Cookies.remove(CUSTOM_MODEL_COOKIE);
-  }
+  if (typeof window === "undefined") return;
+  remove("localStorage", SETTINGS_KEY);
+  remove("localStorage", API_KEY_KEY);
+  remove("sessionStorage", API_KEY_KEY);
+  for (const name of Object.values(LEGACY_COOKIES)) removeLegacyCookie(name);
 };

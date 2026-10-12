@@ -90,6 +90,9 @@ export function APIKeySettings({
     currentSettings?.customModel ?? "",
   );
   const [showKey, setShowKey] = useState(false);
+  const [rememberKey, setRememberKey] = useState(
+    currentSettings?.rememberKey ?? false,
+  );
   const [mounted, setMounted] = useState(false);
   const [useCustomEndpoint, setUseCustomEndpoint] = useState(
     !!currentSettings?.customEndpoint,
@@ -127,6 +130,7 @@ export function APIKeySettings({
         setProviderApiKey(currentSettings.apiKey);
       }
       setApiKey(currentSettings.apiKey);
+      setRememberKey(currentSettings.rememberKey ?? false);
     }
   }, [currentSettings]);
 
@@ -325,6 +329,7 @@ export function APIKeySettings({
       providerApi: providerMeta.providerApi,
       customEndpoint: useCustomEndpoint ? customEndpoint : undefined,
       customModel: useCustomEndpoint ? customModel : undefined,
+      rememberKey,
     };
     saveApiSettings(settings);
     onSettingsChange(settings);
@@ -619,8 +624,25 @@ export function APIKeySettings({
                   )}
                 </button>
               </div>
-              <p className="mt-2 text-xs text-gray-500">
-                🔒 Your key is stored securely in a cookie
+              <label className="mt-3 flex cursor-pointer items-start gap-2 text-sm text-gray-300">
+                <input
+                  type="checkbox"
+                  checked={rememberKey}
+                  onChange={(e) => setRememberKey(e.target.checked)}
+                  className="mt-0.5 h-4 w-4 accent-violet-600"
+                />
+                <span>Remember on this device</span>
+              </label>
+              <p
+                id="api-key-storage-hint"
+                className="mt-2 text-xs text-gray-500"
+              >
+                🔒{" "}
+                {rememberKey
+                  ? "Kept in this browser's local storage until you clear it. "
+                  : "Kept in this tab only and forgotten when you close it. "}
+                It is sent only to the AI provider you choose, never to this
+                site.
               </p>
             </div>
 
