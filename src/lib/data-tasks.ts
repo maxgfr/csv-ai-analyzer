@@ -6,6 +6,7 @@ import {
   type DiffOptions,
 } from "csv-charts-ai";
 import {
+  decodeText,
   parseCSVWithDiagnostics,
   type CSVData,
   type CSVSettings,
@@ -54,7 +55,7 @@ export async function executeDataTask<K extends keyof TaskInputs>(
       const sheets = isXLSXFile(file.name) ? await listXLSXSheets(file) : [];
       const text = sheets.length
         ? ""
-        : new TextDecoder(settings.encoding).decode(await file.arrayBuffer());
+        : decodeText(await file.arrayBuffer(), settings.encoding);
       const parsed = sheets.length
         ? {
             data: await parseXLSX(file, { ...settings, sheet }),

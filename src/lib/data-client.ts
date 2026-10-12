@@ -32,6 +32,11 @@ export async function runDataTask<K extends keyof TaskInputs>(
       if (event.data.error) reject(new Error(event.data.error));
       else resolve(event.data.result);
     };
+    // The result could not be deserialized: fail instead of waiting forever
+    worker.onmessageerror = () => {
+      cleanup();
+      reject(new Error("Data worker sent an unreadable result. Try again."));
+    };
     worker.onerror = (event) => {
       cleanup();
       reject(

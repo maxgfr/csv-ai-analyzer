@@ -1,3 +1,4 @@
+import { parseXLSX as parsePackageXLSX } from "csv-charts-ai";
 import type { CSVData } from "./csv-parser";
 /**
  * Check whether a file name indicates an Excel spreadsheet (.xlsx).
@@ -23,8 +24,7 @@ export async function parseXLSX(
     sheet?: string | number;
   } = {},
 ): Promise<CSVData> {
-  const { parseXLSX: parse } = await import("csv-charts-ai");
-  return parse(file, {
+  return parsePackageXLSX(file, {
     hasHeader: options.hasHeader,
     skipEmpty: options.skipEmptyLines,
     sheet: options.sheet,
