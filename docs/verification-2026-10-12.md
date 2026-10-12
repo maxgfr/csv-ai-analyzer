@@ -50,11 +50,11 @@ catalog script and the CI workflows. Base revision: `e04fc3284bc9036f3d84a69cf00
 
 | Command | Result |
 | --- | --- |
-| `pnpm test:all` | package 169 passed, app 98 passed |
+| `pnpm test:all` | package 170 passed, app 99 passed |
 | `pnpm lint` | 0 errors, 0 warnings |
 | `pnpm typecheck` | 0 errors |
 | `pnpm build:github-pages` | static export built |
-| `pnpm test:e2e` | 44 passed (Chromium desktop + mobile) |
+| `pnpm test:e2e` | 46 passed (Chromium desktop + mobile) |
 | `node scripts/fetch-models.mjs` | 920 KB, rerun reports "Unchanged" |
 | `action-validator` on 4 workflows | valid |
 
@@ -71,3 +71,13 @@ No console error, CSP violation or hydration error; no cookie set.
 - A PDF embedding a captured chart weighed about 6 MB in the smoke test (full
   resolution PNG at 2× scale); not changed here.
 - CJK text is not rendered in PDFs; the export warns instead.
+
+## Independent audit
+
+A separate review of the whole diff against the plan found four issues, all fixed
+with a test that fails before the fix: chart spinners and toasts stayed on when a
+sort or settings change cancelled the request; a question cancelled that way was
+dropped from the chat instead of being kept as cancelled; line charts detected the
+date order on the points left after the Top N cut instead of the whole column;
+the CSV formula guard turned negative numbers such as `-1,234.56` or `-5%` into text.
+All gates were rerun afterwards with the results above.
