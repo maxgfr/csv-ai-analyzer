@@ -8,6 +8,11 @@ import {
   suggestCharts,
   suggestCustomChart,
   repairChart,
+  AIRequestError,
+  resolveModel,
+  generateDataSummary,
+  clipCell,
+  MAX_PROMPT_CELL_LENGTH,
 } from "./ai";
 import { registerProvider, clearProviders } from "./providers";
 import type { LanguageModel } from "ai";
@@ -472,5 +477,155 @@ describe("repairChart", () => {
 
     expect(fixed?.id).toBe("chart-original-123");
     expect(fixed?.xAxis).toBe("name");
+  });
+});
+
+describe("AI error handling", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    clearProviders();
+    registerProvider("openai", (config) => mockLanguageModel(config.model));
+  });
+
+  it("does not read status codes inside identifiers", () => {
+    expect(getAIErrorMessage(new Error("request id_4290 failed"))).toBe(
+      "request id_4290 failed",
+    );
+  });
+
+  it("classifies by the provider status code kept in the cause", () => {
+    const apiError = Object.assign(new Error("Too Many Requests"), {
+      statusCode: 429,
+      isRetryable: true,
+    });
+    const wrapped = new Error("Request failed", { cause: apiError });
+    expect(getAIErrorMessage(wrapped)).toBe(
+      "Rate limit exceeded. Please wait a moment and try again.",
+    );
+    const quota = Object.assign(new Error("You exceeded your current quota"), {
+      statusCode: 429,
+    });
+    expect(getAIErrorMessage(quota)).toBe(
+      "API quota exceeded or billing issue. Please check your account status.",
+    );
+  });
+
+  it("rethrows aborts untouched and keeps status details otherwise", async () => {
+    const { generateObject } = await import("ai");
+    const abort = new DOMException("The operation was aborted.", "AbortError");
+    vi.mocked(generateObject).mockRejectedValueOnce(abort);
+    await expect(
+      suggestCharts({
+        model: { apiKey: "sk-test", model: "gpt-4o" },
+        data: sampleData,
+      }),
+    ).rejects.toBe(abort);
+
+    const apiError = Object.assign(new Error("Unauthorized"), {
+      statusCode: 401,
+      isRetryable: false,
+    });
+    vi.mocked(generateObject).mockRejectedValueOnce(apiError);
+    const error = await suggestCharts({
+      model: { apiKey: "sk-test", model: "gpt-4o" },
+      data: sampleData,
+    }).catch((e: unknown) => e);
+    expect(error).toBeInstanceOf(AIRequestError);
+    expect(error).toMatchObject({
+      message: "Invalid API key. Please check your API key configuration.",
+      statusCode: 401,
+      isRetryable: false,
+      cause: apiError,
+    });
+  });
+
+  it("passes maxRetries to the AI SDK", async () => {
+    const { generateObject } = await import("ai");
+    vi.mocked(generateObject).mockResolvedValueOnce({
+      object: { charts: [] },
+    } as never);
+    await suggestCharts({
+      model: { apiKey: "sk-test", model: "gpt-4o" },
+      data: sampleData,
+      maxRetries: 0,
+    });
+    expect(generateObject).toHaveBeenCalledWith(
+      expect.objectContaining({ maxRetries: 0 }),
+    );
+  });
+
+  it("drops suggested charts whose columns do not exist and fixes case", async () => {
+    const { generateObject } = await import("ai");
+    const base = {
+      title: "t",
+      description: "",
+      reasoning: "",
+      type: "bar" as const,
+    };
+    vi.mocked(generateObject).mockResolvedValueOnce({
+      object: {
+        charts: [
+          { ...base, xColumn: "NAME", yColumn: "Age", aggregation: "sum" },
+          { ...base, xColumn: "city", yColumn: "age", aggregation: "sum" },
+          {
+            ...base,
+            xColumn: "name",
+            yColumn: "anything",
+            groupColumn: "nope",
+            aggregation: "count",
+          },
+        ],
+      },
+    } as never);
+    const charts = await suggestCharts({
+      model: { apiKey: "sk-test", model: "gpt-4o" },
+      data: sampleData,
+    });
+    expect(charts).toHaveLength(2);
+    expect(charts[0]).toMatchObject({ xAxis: "name", yAxis: "age" });
+    expect(charts[1]).toMatchObject({ xAxis: "name", groupBy: undefined });
+  });
+});
+
+describe("createModel headers", () => {
+  it("keeps the headers of a simple config", () => {
+    clearProviders();
+    const factory = vi.fn((config: { model: string }) =>
+      mockLanguageModel(config.model),
+    );
+    registerProvider("openai", factory);
+    resolveModel({
+      apiKey: "sk-test",
+      model: "gpt-4o",
+      headers: { "x-test": "1" },
+    } as never);
+    expect(factory).toHaveBeenCalledWith(
+      expect.objectContaining({ headers: { "x-test": "1" } }),
+    );
+  });
+});
+
+describe("prompt sizing", () => {
+  it("rounds the data summary to significant digits", () => {
+    const data: TabularData = {
+      headers: ["ratio"],
+      rows: [["0.000123456"], ["0.000123458"]],
+      columns: [{ name: "ratio", type: "number", index: 0 }],
+      rowCount: 2,
+    };
+    expect(generateDataSummary(data)).toContain("min=0.000123456");
+  });
+
+  it("clips long cells in the data summary", () => {
+    const long = "x".repeat(5000);
+    const data: TabularData = {
+      headers: ["text"],
+      rows: [[long]],
+      columns: [{ name: "text", type: "string", index: 0 }],
+      rowCount: 1,
+    };
+    const summary = generateDataSummary(data);
+    expect(summary.length).toBeLessThan(1000);
+    expect(clipCell(long)).toHaveLength(MAX_PROMPT_CELL_LENGTH + 1);
   });
 });

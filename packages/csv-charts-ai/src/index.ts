@@ -49,6 +49,13 @@ export {
   summarizeTabularData,
   generateDataSummary,
   getAIErrorMessage,
+  getErrorDetails,
+  isAbortError,
+  toAIError,
+  AIRequestError,
+  clipCell,
+  validateTabularData,
+  MAX_PROMPT_CELL_LENGTH,
 } from "./ai";
 export { AIConfigSchema, TabularDataSchema } from "./ai";
 export type {
@@ -79,6 +86,9 @@ export {
   streamAskAboutData,
   analyzeData,
   suggestQuestions,
+  buildHistoryContext,
+  MAX_HISTORY_TURNS,
+  MAX_HISTORY_CHARS,
 } from "./analyze";
 export type {
   DataSummaryResult,
@@ -91,6 +101,7 @@ export type {
   StreamAskAboutDataOptions,
   AnalyzeOptions,
   SuggestQuestionsOptions,
+  ChatHistoryItem,
 } from "./analyze";
 
 export { analyzeDataQuality } from "./data-quality";

@@ -2,8 +2,14 @@ import { generateObject, generateText, streamText } from "ai";
 import { z } from "zod";
 import type { TabularData, ChartConfig } from "./types";
 import type { ModelInput } from "./ai";
-import { summarizeTabularData, getAIErrorMessage, resolveModel } from "./ai";
-import { suggestCharts } from "./ai";
+import {
+  clipCell,
+  resolveModel,
+  suggestCharts,
+  summarizeTabularData,
+  toAIError,
+  validateTabularData,
+} from "./ai";
 
 // ============ Schemas ============
 
@@ -98,12 +104,50 @@ function escapeCSVField(value: string): string {
 }
 
 function buildSampleCSV(data: TabularData, maxRows = 50): string {
-  const header = data.headers.map(escapeCSVField).join(",");
+  const cell = (value: string) => escapeCSVField(clipCell(value));
+  const header = data.headers.map(cell).join(",");
   const rows = data.rows
     .slice(0, maxRows)
-    .map((row) => row.map(escapeCSVField).join(","))
+    .map((row) => row.map(cell).join(","))
     .join("\n");
   return `${header}\n${rows}`;
+}
+
+/** One question/answer pair of a chat about the data. */
+export interface ChatHistoryItem {
+  prompt: string;
+  response: string;
+  /** Failed answers are not sent back to the model. */
+  error?: boolean;
+}
+
+/** Most previous turns sent back to the model. */
+export const MAX_HISTORY_TURNS = 10;
+/** Character budget of the conversation history in a prompt. */
+export const MAX_HISTORY_CHARS = 12_000;
+
+/**
+ * Keep the most recent successful turns that fit the budget, oldest first.
+ * Failed or empty answers are left out.
+ */
+export function buildHistoryContext(
+  history: ChatHistoryItem[],
+  maxTurns = MAX_HISTORY_TURNS,
+  maxChars = MAX_HISTORY_CHARS,
+): string {
+  const turns: string[] = [];
+  let used = 0;
+  for (let i = history.length - 1; i >= 0 && turns.length < maxTurns; i--) {
+    const item = history[i]!;
+    if (item.error || !item.response.trim()) continue;
+    const turn = `User: ${item.prompt}\nAI: ${item.response}`;
+    if (used + turn.length > maxChars) break;
+    used += turn.length;
+    turns.unshift(turn);
+  }
+  return turns.length
+    ? `Previous conversation history:\n${turns.join("\n\n")}\n\n`
+    : "";
 }
 
 // ============ Individual Functions ============
@@ -116,6 +160,8 @@ export interface SummarizeDataOptions {
   temperature?: number;
   /** AbortSignal to cancel the request */
   signal?: AbortSignal;
+  /** Retries done by the AI SDK on transient errors (SDK default: 2). Set 0 when you retry yourself. */
+  maxRetries?: number;
 }
 
 /**
@@ -135,10 +181,11 @@ export interface SummarizeDataOptions {
 export async function summarizeData(
   options: SummarizeDataOptions,
 ): Promise<DataSummaryResult> {
-  const { data, language, temperature = 0.5, signal } = options;
-  const dataSummary = options.dataSummary ?? summarizeTabularData(data);
+  const { data, language, temperature = 0.5, signal, maxRetries } = options;
 
   try {
+    validateTabularData(data);
+    const dataSummary = options.dataSummary ?? summarizeTabularData(data);
     const model = resolveModel(options.model);
 
     const { object } = await generateObject({
@@ -148,6 +195,7 @@ export async function summarizeData(
       prompt: `Here is the data to analyze:\n\n${dataSummary}`,
       temperature,
       ...(signal && { abortSignal: signal }),
+      ...(maxRetries !== undefined && { maxRetries }),
     });
 
     return {
@@ -156,7 +204,7 @@ export async function summarizeData(
       dataQuality: object.dataQuality,
     };
   } catch (error) {
-    throw new Error(getAIErrorMessage(error));
+    throw toAIError(error);
   }
 }
 
@@ -170,6 +218,8 @@ export interface DetectAnomaliesOptions {
   temperature?: number;
   /** AbortSignal to cancel the request */
   signal?: AbortSignal;
+  /** Retries done by the AI SDK on transient errors (SDK default: 2). Set 0 when you retry yourself. */
+  maxRetries?: number;
 }
 
 /**
@@ -187,11 +237,19 @@ export interface DetectAnomaliesOptions {
 export async function detectAnomalies(
   options: DetectAnomaliesOptions,
 ): Promise<AnomalyResult[]> {
-  const { data, maxRows = 50, language, temperature = 0.3, signal } = options;
-  const dataSummary = options.dataSummary ?? summarizeTabularData(data);
-  const sampleCSV = buildSampleCSV(data, maxRows);
+  const {
+    data,
+    maxRows = 50,
+    language,
+    temperature = 0.3,
+    signal,
+    maxRetries,
+  } = options;
 
   try {
+    validateTabularData(data);
+    const dataSummary = options.dataSummary ?? summarizeTabularData(data);
+    const sampleCSV = buildSampleCSV(data, maxRows);
     const model = resolveModel(options.model);
 
     const { object } = await generateObject({
@@ -201,11 +259,12 @@ export async function detectAnomalies(
       prompt: `Data summary:\n${dataSummary}\n\nData to analyze (CSV format):\n${sampleCSV}`,
       temperature,
       ...(signal && { abortSignal: signal }),
+      ...(maxRetries !== undefined && { maxRetries }),
     });
 
     return object.anomalies;
   } catch (error) {
-    throw new Error(getAIErrorMessage(error));
+    throw toAIError(error);
   }
 }
 
@@ -214,12 +273,14 @@ export interface AskAboutDataOptions {
   data: TabularData;
   question: string;
   dataSummary?: string;
-  /** Previous conversation messages for context */
-  history?: Array<{ prompt: string; response: string }>;
+  /** Previous conversation messages for context (the latest turns that fit a budget are sent) */
+  history?: ChatHistoryItem[];
   language?: string;
   temperature?: number;
   /** AbortSignal to cancel the request */
   signal?: AbortSignal;
+  /** Retries done by the AI SDK on transient errors (SDK default: 2). Set 0 when you retry yourself. */
+  maxRetries?: number;
 }
 
 /**
@@ -245,18 +306,14 @@ export async function askAboutData(
     language,
     temperature = 0.5,
     signal,
+    maxRetries,
   } = options;
-  const dataSummary = options.dataSummary ?? summarizeTabularData(data);
 
   try {
+    validateTabularData(data);
+    const dataSummary = options.dataSummary ?? summarizeTabularData(data);
     const model = resolveModel(options.model);
-
-    const historyText = history
-      .map((item) => `User: ${item.prompt}\nAI: ${item.response}`)
-      .join("\n\n");
-    const contextPrompt = historyText
-      ? `Previous conversation history:\n${historyText}\n\n`
-      : "";
+    const contextPrompt = buildHistoryContext(history);
 
     const { text } = await generateText({
       model,
@@ -264,11 +321,12 @@ export async function askAboutData(
       prompt: `Here is the data:\n\n${dataSummary}\n\n${contextPrompt}User question: ${question}`,
       temperature,
       ...(signal && { abortSignal: signal }),
+      ...(maxRetries !== undefined && { maxRetries }),
     });
 
     return text;
   } catch (error) {
-    throw new Error(getAIErrorMessage(error));
+    throw toAIError(error);
   }
 }
 
@@ -306,20 +364,16 @@ export async function streamAskAboutData(
     language,
     temperature = 0.5,
     signal,
+    maxRetries,
     onChunk,
     onComplete,
   } = options;
-  const dataSummary = options.dataSummary ?? summarizeTabularData(data);
 
   try {
+    validateTabularData(data);
+    const dataSummary = options.dataSummary ?? summarizeTabularData(data);
     const model = resolveModel(options.model);
-
-    const historyText = history
-      .map((item) => `User: ${item.prompt}\nAI: ${item.response}`)
-      .join("\n\n");
-    const contextPrompt = historyText
-      ? `Previous conversation history:\n${historyText}\n\n`
-      : "";
+    const contextPrompt = buildHistoryContext(history);
 
     let streamError: Error | null = null;
 
@@ -329,6 +383,7 @@ export async function streamAskAboutData(
       prompt: `Here is the data:\n\n${dataSummary}\n\n${contextPrompt}User question: ${question}`,
       temperature,
       ...(signal && { abortSignal: signal }),
+      ...(maxRetries !== undefined && { maxRetries }),
       onError: ({ error }) => {
         streamError = error instanceof Error ? error : new Error(String(error));
       },
@@ -352,7 +407,7 @@ export async function streamAskAboutData(
 
     onComplete(fullText);
   } catch (error) {
-    throw new Error(getAIErrorMessage(error));
+    throw toAIError(error);
   }
 }
 
@@ -369,6 +424,8 @@ export interface AnalyzeOptions {
   suggestCharts?: boolean;
   /** AbortSignal to cancel all parallel requests */
   signal?: AbortSignal;
+  /** Retries done by the AI SDK on transient errors (SDK default: 2). */
+  maxRetries?: number;
 }
 
 /**
@@ -400,39 +457,47 @@ export async function analyzeData(
     signal,
     detectAnomalies: runAnomalies = true,
     suggestCharts: runCharts = true,
+    maxRetries,
   } = options;
+  try {
+    validateTabularData(data);
+  } catch (error) {
+    throw toAIError(error);
+  }
   const dataSummary = options.dataSummary ?? summarizeTabularData(data);
 
-  // Run all in parallel
-  const [summary, anomalies, charts] = await Promise.all([
-    summarizeData({
-      model: options.model,
-      data,
-      dataSummary,
-      language,
-      signal,
-    }),
-    runAnomalies
-      ? detectAnomalies({
-          model: options.model,
-          data,
-          dataSummary,
-          language,
-          signal,
-        })
-      : Promise.resolve([]),
-    runCharts
-      ? suggestCharts({
-          model: options.model,
-          data,
-          dataSummary,
-          language,
-          signal,
-        })
-      : Promise.resolve([]),
-  ]);
+  // The first failure cancels the sibling requests instead of letting them run on
+  const controller = new AbortController();
+  const forwardAbort = () => controller.abort(signal?.reason);
+  if (signal?.aborted) forwardAbort();
+  else signal?.addEventListener("abort", forwardAbort, { once: true });
+  const shared = {
+    model: options.model,
+    data,
+    dataSummary,
+    language,
+    signal: controller.signal,
+    maxRetries,
+  };
+  const cancelOnFailure = <T>(promise: Promise<T>) =>
+    promise.catch((error: unknown) => {
+      controller.abort(error);
+      throw error;
+    });
 
-  return { summary, anomalies, charts };
+  try {
+    // Run all in parallel
+    const [summary, anomalies, charts] = await Promise.all([
+      cancelOnFailure(summarizeData(shared)),
+      runAnomalies
+        ? cancelOnFailure(detectAnomalies(shared))
+        : Promise.resolve([]),
+      runCharts ? cancelOnFailure(suggestCharts(shared)) : Promise.resolve([]),
+    ]);
+    return { summary, anomalies, charts };
+  } finally {
+    signal?.removeEventListener("abort", forwardAbort);
+  }
 }
 
 // ============ Question Suggestions ============
@@ -473,6 +538,8 @@ export interface SuggestQuestionsOptions {
   temperature?: number;
   /** AbortSignal to cancel the request */
   signal?: AbortSignal;
+  /** Retries done by the AI SDK on transient errors (SDK default: 2). Set 0 when you retry yourself. */
+  maxRetries?: number;
 }
 
 export interface SuggestedQuestion {
@@ -500,10 +567,18 @@ export interface SuggestedQuestion {
 export async function suggestQuestions(
   options: SuggestQuestionsOptions,
 ): Promise<SuggestedQuestion[]> {
-  const { data, language, count = 6, temperature = 0.7, signal } = options;
-  const dataSummary = options.dataSummary ?? summarizeTabularData(data);
+  const {
+    data,
+    language,
+    count = 6,
+    temperature = 0.7,
+    signal,
+    maxRetries,
+  } = options;
 
   try {
+    validateTabularData(data);
+    const dataSummary = options.dataSummary ?? summarizeTabularData(data);
     const model = resolveModel(options.model);
 
     const { object } = await generateObject({
@@ -513,10 +588,11 @@ export async function suggestQuestions(
       prompt: `Here is the dataset to analyze:\n\n${dataSummary}\n\nSuggest ${count} insightful questions about this data.`,
       temperature,
       ...(signal && { abortSignal: signal }),
+      ...(maxRetries !== undefined && { maxRetries }),
     });
 
     return object.questions.slice(0, count);
   } catch (error) {
-    throw new Error(getAIErrorMessage(error));
+    throw toAIError(error);
   }
 }
