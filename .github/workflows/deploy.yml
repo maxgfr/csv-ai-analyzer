@@ -2,7 +2,8 @@ name: Deploy to GitHub Pages
 
 on:
   workflow_run:
-    workflows: ["Publish", "Update models.json daily"]
+    # The daily catalog update dispatches this workflow itself when models.json changes
+    workflows: ["Publish"]
     types:
       - completed
     branches: [main]
@@ -25,7 +26,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
         with:
-          ref: main
+          # Deploy the commit that was published, not whatever main points to now
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
@@ -38,9 +40,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build csv-charts-ai package
-        run: pnpm --filter csv-charts-ai build
-
+      # The package is built by the "prebuild" script
       - name: Build static export for GitHub Pages
         run: pnpm run build:export
         env:

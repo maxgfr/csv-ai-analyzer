@@ -1,12 +1,11 @@
 name: Docker Build
 
 on:
-  push:
-    branches: [main, master]
+  # Pushes to main are covered by the Publish workflow below
   pull_request:
     branches: [main, master]
   workflow_run:
-    workflows: ["Update models.json daily", "Publish"]
+    workflows: ["Publish"]
     types:
       - completed
     branches:

@@ -25,9 +25,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build csv-charts-ai package
-        run: pnpm --filter csv-charts-ai build
-
+      # The package is built by the "pretest" and "prebuild" scripts
       - name: Test csv-charts-ai package
         run: pnpm --filter csv-charts-ai test
 
