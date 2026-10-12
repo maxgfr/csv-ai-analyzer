@@ -11,7 +11,9 @@ export function downloadBlob(blob: Blob, fileName: string): void {
   setTimeout(() => URL.revokeObjectURL(url), 10_000);
 }
 
-const PLAIN_NUMBER = /^[+-]?(?:\d+(?:[.,]\d*)?|[.,]\d+)(?:e[+-]?\d+)?$/i;
+/** Signed numbers in any local format (-1,234.56, -1.234,56, -5%, 1e3) or a lone sign. */
+const PLAIN_NUMBER =
+  /^(?:[+-]|[+-]?[\d\s.,'\u00a0\u202f]*\d[\d\s.,'\u00a0\u202f]*(?:e[+-]?\d+)?\s*%?)$/i;
 
 /**
  * Quote a CSV field. Text starting with = + - @ (or a tab/CR) is prefixed with
