@@ -20,6 +20,7 @@ import {
   type SortConfig,
 } from "~/lib/data-operations";
 import type { CSVData } from "~/lib/csv-parser";
+import { downloadBlob, toCSV } from "~/lib/download";
 
 interface DataTransformProps {
   data: CSVData;
@@ -154,20 +155,8 @@ export function DataTransform({
 
   const handleExport = useCallback(() => {
     if (!transformedData) return;
-    const escapeField = (v: string) => `"${v.replace(/"/g, '""')}"`;
-    const csv = [
-      transformedData.headers.map(escapeField).join(","),
-      ...transformedData.rows.map((r) =>
-        r.map((v) => escapeField(String(v))).join(","),
-      ),
-    ].join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "transformed-data.csv";
-    a.click();
-    URL.revokeObjectURL(url);
+    const csv = toCSV(transformedData.headers, transformedData.rows);
+    downloadBlob(new Blob([csv], { type: "text/csv" }), "transformed-data.csv");
   }, [transformedData]);
 
   const activeFiltersCount = filters.filter(isActiveFilter).length;

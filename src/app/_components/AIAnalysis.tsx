@@ -42,6 +42,7 @@ import { useChatStore, toModelHistory } from "~/lib/chat-store";
 import { ChartDisplay } from "./ChartDisplay";
 import { useRequestScope } from "~/lib/use-request-scope";
 import { useAIConfig } from "~/lib/use-ai-config";
+import { downloadBlob } from "~/lib/download";
 
 interface AIAnalysisProps {
   data: CSVData;
@@ -245,13 +246,10 @@ export function AIAnalysis({
     }
 
     const markdown = sections.join("\n");
-    const blob = new Blob([markdown], { type: "text/markdown" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "ai-analysis-report.md";
-    a.click();
-    URL.revokeObjectURL(url);
+    downloadBlob(
+      new Blob([markdown], { type: "text/markdown" }),
+      "ai-analysis-report.md",
+    );
     toast.success("Report exported as Markdown");
   }, [summaryResult, anomaliesResult, customHistory]);
 

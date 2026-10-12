@@ -68,6 +68,7 @@ import { Sparkles, Loader2, ArrowLeft, FileDown } from "lucide-react";
 import { useRequestScope } from "~/lib/use-request-scope";
 import { useAIConfig } from "~/lib/use-ai-config";
 import type { ImportSource } from "~/lib/data-tasks";
+import { runDataTask } from "~/lib/data-client";
 import { FileUpload } from "./_components/FileUpload";
 import { DataQuality } from "./_components/DataQuality";
 
@@ -164,6 +165,23 @@ export default function HomePage() {
     toast.info("File Cleared", {
       description: "Ready to upload a new file",
     });
+  };
+
+  /** New parser settings re-read the current file, so they take effect at once. */
+  const handleCsvSettingsChange = async (settings: CSVSettings) => {
+    setCsvSettings(settings);
+    if (!source || !currentFileName) return;
+    const next = { ...source, settings };
+    try {
+      const { data, warnings } = await runDataTask("import", next);
+      handleDataLoaded(data, currentFileName, next);
+      warnings.forEach((warning) => toast.warning(warning));
+    } catch (error) {
+      toast.error("Could not re-read the file", {
+        description:
+          error instanceof Error ? error.message : "Check the parser settings.",
+      });
+    }
   };
 
   const hasAnalysisResults = () =>
@@ -497,10 +515,13 @@ export default function HomePage() {
                     <span className="hidden sm:inline">PDF</span>
                   </button>
                   <ThemeToggle />
-                  <CSVSettingsButton
-                    settings={csvSettings}
-                    onSettingsChange={setCsvSettings}
-                  />
+                  {/* Sample data has no file to re-read */}
+                  {source && (
+                    <CSVSettingsButton
+                      settings={csvSettings}
+                      onSettingsChange={handleCsvSettingsChange}
+                    />
+                  )}
                   <APIKeyButton
                     onSettingsChange={setApiSettings}
                     currentSettings={apiSettings}
