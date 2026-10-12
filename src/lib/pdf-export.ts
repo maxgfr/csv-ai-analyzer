@@ -1,15 +1,18 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import type { CSVData } from "./csv-parser";
-import type {
-  DataSummaryResult,
-  AnomalyResult,
-  ChartConfig,
+import {
+  defaultDarkTheme,
+  defaultLightTheme,
+  type DataSummaryResult,
+  type AnomalyResult,
+  type ChartConfig,
 } from "csv-charts-ai";
 
 interface ChatMessage {
   prompt: string;
   response: string;
+  cancelled?: boolean;
 }
 
 export interface ChartImage {
@@ -33,11 +36,60 @@ const MARGIN = 20;
 const PAGE_WIDTH = 210; // A4
 const CONTENT_WIDTH = PAGE_WIDTH - MARGIN * 2;
 
+/** Plain-text replacement of LaTeX commands (without the backslash). */
+const LATEX_COMMANDS: Record<string, string> = {
+  sum: "Sum",
+  prod: "Prod",
+  int: "Integral",
+  log: "log",
+  ln: "ln",
+  exp: "exp",
+  sin: "sin",
+  cos: "cos",
+  tan: "tan",
+  min: "min",
+  max: "max",
+  lim: "lim",
+  left: "",
+  right: "",
+  cdot: " * ",
+  cdots: "...",
+  ldots: "...",
+  times: " x ",
+  div: " / ",
+  pm: " +/- ",
+  mp: " -/+ ",
+  leq: " <= ",
+  le: " <= ",
+  geq: " >= ",
+  ge: " >= ",
+  neq: " != ",
+  ne: " != ",
+  approx: " ~ ",
+  infty: "Inf",
+  alpha: "alpha",
+  beta: "beta",
+  gamma: "gamma",
+  delta: "delta",
+  sigma: "sigma",
+  mu: "mu",
+  pi: "pi",
+  theta: "theta",
+  lambda: "lambda",
+  in: " in ",
+  forall: "for all ",
+  exists: "exists ",
+  partial: "d",
+  nabla: "nabla",
+  quad: "  ",
+  qquad: "    ",
+};
+
 /**
  * Convert LaTeX math notation to readable plain text.
  * jsPDF cannot render LaTeX natively, so we produce clean ASCII math.
  */
-function latexToPlainText(tex: string): string {
+export function latexToPlainText(tex: string): string {
   let result = tex.trim();
 
   // \text{...} → content
@@ -58,55 +110,12 @@ function latexToPlainText(tex: string): string {
   result = result.replace(/\\hat\{([^}]*)\}/g, "$1_hat");
   // \vec{x} → x_vec
   result = result.replace(/\\vec\{([^}]*)\}/g, "$1");
-  // Named functions
-  result = result.replace(/\\sum/g, "Sum");
-  result = result.replace(/\\prod/g, "Prod");
-  result = result.replace(/\\int/g, "Integral");
-  result = result.replace(/\\log/g, "log");
-  result = result.replace(/\\ln/g, "ln");
-  result = result.replace(/\\exp/g, "exp");
-  result = result.replace(/\\sin/g, "sin");
-  result = result.replace(/\\cos/g, "cos");
-  result = result.replace(/\\tan/g, "tan");
-  result = result.replace(/\\min/g, "min");
-  result = result.replace(/\\max/g, "max");
-  result = result.replace(/\\lim/g, "lim");
-  // Symbols
-  const symbols: Record<string, string> = {
-    "\\left": "",
-    "\\right": "",
-    "\\cdot": " * ",
-    "\\times": " x ",
-    "\\div": " / ",
-    "\\pm": " +/- ",
-    "\\mp": " -/+ ",
-    "\\leq": " <= ",
-    "\\geq": " >= ",
-    "\\neq": " != ",
-    "\\approx": " ~ ",
-    "\\infty": "Inf",
-    "\\alpha": "alpha",
-    "\\beta": "beta",
-    "\\gamma": "gamma",
-    "\\delta": "delta",
-    "\\sigma": "sigma",
-    "\\mu": "mu",
-    "\\pi": "pi",
-    "\\theta": "theta",
-    "\\lambda": "lambda",
-    "\\in": " in ",
-    "\\forall": "for all ",
-    "\\exists": "exists ",
-    "\\partial": "d",
-    "\\nabla": "nabla",
-    "\\ldots": "...",
-    "\\cdots": "...",
-    "\\quad": "  ",
-    "\\qquad": "    ",
-  };
-  for (const [cmd, replacement] of Object.entries(symbols)) {
-    result = result.split(cmd).join(replacement);
-  }
+  // Commands are matched as whole tokens, so \cdots never becomes "\cdot" + "s"
+  // and \infty never becomes "\in" + "fty"
+  result = result.replace(
+    /\\([a-zA-Z]+)/g,
+    (match, name: string) => LATEX_COMMANDS[name] ?? match,
+  );
   // Subscript: x_{sub} → x_sub  or  x_i → x_i
   result = result.replace(/\_\{([^}]*)\}/g, "_$1");
   // Superscript: x^{sup} → x^sup  or  x^2 → x^2
@@ -122,8 +131,15 @@ function latexToPlainText(tex: string): string {
   return result;
 }
 
+/**
+ * Inline math `$...$` follows the pandoc rule: the opening `$` is followed by a
+ * non-space, the closing `$` is preceded by a non-space and not followed by a
+ * digit. So "$1,200 to $5,000" stays plain text.
+ */
+const INLINE_MATH = /(?<!\\)\$(?=\S)((?:[^$\\\n]|\\.)+?)(?<=\S)\$(?!\d)/g;
+
 /** Strip markdown + LaTeX for plain-text PDF rendering */
-function stripMarkdown(text: string): string {
+export function stripMarkdown(text: string): string {
   let result = text;
 
   // Extract and convert display math: $$...$$ or \[...\]
@@ -138,8 +154,8 @@ function stripMarkdown(text: string): string {
     /^\[\s*(\\(?:text|frac|sqrt|sum|prod|int|left|right|bar|hat)\b[\s\S]*?)\s*\]$/gm,
     (_m, inner: string) => latexToPlainText(inner),
   );
-  // Inline math: $...$ or \(...\)
-  result = result.replace(/\$(.*?)\$/g, (_m, inner: string) =>
+  // Inline math: $...$ (pandoc rule) or \(...\)
+  result = result.replace(INLINE_MATH, (_m, inner: string) =>
     latexToPlainText(inner),
   );
   result = result.replace(/\\\((.*?)\\\)/g, (_m, inner: string) =>
@@ -154,9 +170,136 @@ function stripMarkdown(text: string): string {
     .replace(/`(.*?)`/g, "$1")
     .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
     .replace(/^[-*+]\s/gm, "- ")
+    .replace(/\\\$/g, "$")
     .trim();
 
   return result;
+}
+
+/** Chat turns worth printing: failed answers are left out. */
+export function chatEntriesForPDF(history: ChatMessage[]): ChatMessage[] {
+  return history.filter((item) => !item.response.startsWith("[ERROR]"));
+}
+
+// ============ Fonts ============
+// The built-in PDF fonts only cover WinAnsi (Western European). Text outside it
+// (Polish, Czech, Greek, Russian…) uses Noto Sans, loaded only when needed.
+
+const WIN_ANSI_EXTRA = new Set(
+  "\u20ac\u201a\u0192\u201e\u2026\u2020\u2021\u02c6\u2030\u0160\u2039\u0152\u017d\u2018\u2019\u201c\u201d\u2022\u2013\u2014\u02dc\u2122\u0161\u203a\u0153\u017e\u0178",
+);
+
+/** Ranges included in public/fonts/NotoSans-*-subset.ttf. */
+const UNICODE_FONT_RANGES: [number, number][] = [
+  [0x20, 0x7e],
+  [0xa0, 0x24f],
+  [0x300, 0x36f],
+  [0x370, 0x3ff],
+  [0x400, 0x4ff],
+  [0x1e00, 0x1eff],
+  [0x2000, 0x206f],
+  [0x20a0, 0x20cf],
+  [0x2100, 0x214f],
+  [0x2190, 0x21ff],
+  [0x2200, 0x22ff],
+  [0x25a0, 0x25ff],
+];
+
+const isControl = (code: number) => code < 0x20 || code === 0x7f;
+
+/** True when the standard PDF fonts cannot draw some of this text. */
+export function needsUnicodeFont(text: string): boolean {
+  for (const char of text) {
+    const code = char.codePointAt(0)!;
+    if (isControl(code) || code < 0x80) continue;
+    if (code >= 0xa0 && code <= 0xff) continue;
+    if (WIN_ANSI_EXTRA.has(char)) continue;
+    return true;
+  }
+  return false;
+}
+
+/** True when even the Unicode font lacks some characters (CJK, emoji, …). */
+export function hasUnsupportedCharacters(text: string): boolean {
+  for (const char of text) {
+    const code = char.codePointAt(0)!;
+    if (isControl(code)) continue;
+    if (UNICODE_FONT_RANGES.some(([lo, hi]) => code >= lo && code <= hi))
+      continue;
+    return true;
+  }
+  return false;
+}
+
+const UNICODE_FONT = "NotoSans";
+const fontFiles: Record<"normal" | "bold", string> = {
+  normal: "NotoSans-Regular-subset.ttf",
+  bold: "NotoSans-Bold-subset.ttf",
+};
+let fontData: Promise<Record<"normal" | "bold", string>> | null = null;
+
+function toBase64(buffer: ArrayBuffer): string {
+  const bytes = new Uint8Array(buffer);
+  let binary = "";
+  for (let i = 0; i < bytes.length; i += 0x8000)
+    binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  return btoa(binary);
+}
+
+function loadUnicodeFont() {
+  fontData ??= Promise.all(
+    (["normal", "bold"] as const).map(async (style) => {
+      const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+      const res = await fetch(`${basePath}/fonts/${fontFiles[style]}`);
+      if (!res.ok) throw new Error(`Font download failed (${res.status})`);
+      return [style, toBase64(await res.arrayBuffer())] as const;
+    }),
+  )
+    .then(
+      (entries) =>
+        Object.fromEntries(entries) as Record<"normal" | "bold", string>,
+    )
+    .catch((error: unknown) => {
+      fontData = null; // allow a retry on the next export
+      throw error;
+    });
+  return fontData;
+}
+
+const docFonts = new WeakMap<jsPDF, string>();
+
+/** Pick the font for this document: Noto Sans when the text needs it. */
+async function prepareFont(doc: jsPDF, texts: string[]): Promise<string> {
+  const text = texts.join("\n");
+  let font = "helvetica";
+  if (needsUnicodeFont(text)) {
+    try {
+      const data = await loadUnicodeFont();
+      for (const style of ["normal", "bold"] as const) {
+        doc.addFileToVFS(fontFiles[style], data[style]);
+        doc.addFont(fontFiles[style], UNICODE_FONT, style);
+      }
+      font = UNICODE_FONT;
+    } catch (error) {
+      console.error("Unicode PDF font unavailable:", error);
+    }
+  }
+  docFonts.set(doc, font);
+  return font;
+}
+
+function setFont(doc: jsPDF, style: "normal" | "bold") {
+  doc.setFont(docFonts.get(doc) ?? "helvetica", style);
+}
+
+/** Toast shown when {@link PDFExportReport.unsupportedCharacters} is true. */
+export const PDF_UNSUPPORTED_WARNING =
+  "Some characters (Chinese, Japanese, Korean, emoji…) cannot be drawn in the PDF and may be missing.";
+
+/** What the export could not render faithfully. */
+export interface PDFExportReport {
+  /** Some characters (CJK, emoji…) have no glyph in the PDF fonts. */
+  unsupportedCharacters: boolean;
 }
 
 function addSectionTitle(doc: jsPDF, title: string, y: number): number {
@@ -165,7 +308,7 @@ function addSectionTitle(doc: jsPDF, title: string, y: number): number {
     y = MARGIN;
   }
   doc.setFontSize(14);
-  doc.setFont("helvetica", "bold");
+  setFont(doc, "bold");
   doc.setTextColor(79, 70, 229); // violet-600
   doc.text(title, MARGIN, y);
   // Underline
@@ -182,7 +325,7 @@ function addWrappedText(
   fontSize = 10,
 ): number {
   doc.setFontSize(fontSize);
-  doc.setFont("helvetica", "normal");
+  setFont(doc, "normal");
   doc.setTextColor(30, 30, 30);
   const lines = doc.splitTextToSize(text, CONTENT_WIDTH);
   for (const line of lines) {
@@ -200,18 +343,37 @@ function addWrappedText(
 const truncate = (v: string, max = 30) =>
   v.length > max ? v.slice(0, max - 1) + "\u2026" : v;
 
-export function exportToPDF(options: PDFExportOptions) {
+export async function exportToPDF(
+  options: PDFExportOptions,
+): Promise<PDFExportReport> {
   const {
     fileName = "analysis-report",
     data,
     summary,
     anomalies,
-    chatHistory,
     charts,
     chartImages,
   } = options;
+  const chatHistory = chatEntriesForPDF(options.chatHistory ?? []);
 
   const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+  const texts = [
+    fileName,
+    ...data.headers,
+    summary?.summary ?? "",
+    ...(summary?.keyInsights ?? []),
+    summary?.dataQuality ?? "",
+    ...(anomalies ?? []).flatMap((a) => [a.column, a.value, a.issue]),
+    ...(charts ?? []).flatMap((c) => [
+      c.title,
+      c.description,
+      c.xAxis,
+      c.yAxis,
+    ]),
+    ...(chartImages ?? []).map((c) => c.title),
+    ...chatHistory.flatMap((c) => [c.prompt, c.response]),
+  ];
+  const font = await prepareFont(doc, texts);
   const now = new Date();
   const dateStr = now.toLocaleDateString("en-US", {
     year: "numeric",
@@ -226,12 +388,12 @@ export function exportToPDF(options: PDFExportOptions) {
   doc.rect(0, 0, PAGE_WIDTH, 45, "F");
 
   doc.setFontSize(22);
-  doc.setFont("helvetica", "bold");
+  setFont(doc, "bold");
   doc.setTextColor(255, 255, 255);
   doc.text("CSV AI Analyzer", MARGIN, 20);
 
   doc.setFontSize(11);
-  doc.setFont("helvetica", "normal");
+  setFont(doc, "normal");
   doc.text("Analysis Report", MARGIN, 28);
 
   doc.setFontSize(9);
@@ -243,7 +405,7 @@ export function exportToPDF(options: PDFExportOptions) {
   y = addSectionTitle(doc, "File Overview", y);
 
   doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
+  setFont(doc, "normal");
   doc.setTextColor(30, 30, 30);
 
   const displayName = fileName.replace(/\.(csv|xlsx?)$/i, "") || "untitled";
@@ -270,7 +432,7 @@ export function exportToPDF(options: PDFExportOptions) {
 
     if (summary.keyInsights?.length) {
       doc.setFontSize(11);
-      doc.setFont("helvetica", "bold");
+      setFont(doc, "bold");
       doc.setTextColor(30, 30, 30);
       if (y > 265) {
         doc.addPage();
@@ -285,7 +447,7 @@ export function exportToPDF(options: PDFExportOptions) {
           y = MARGIN;
         }
         doc.setFontSize(10);
-        doc.setFont("helvetica", "normal");
+        setFont(doc, "normal");
         const bullet = `\u2022  ${stripMarkdown(insight)}`;
         const lines = doc.splitTextToSize(bullet, CONTENT_WIDTH - 4);
         for (const line of lines) {
@@ -303,7 +465,7 @@ export function exportToPDF(options: PDFExportOptions) {
 
     if (summary.dataQuality) {
       doc.setFontSize(11);
-      doc.setFont("helvetica", "bold");
+      setFont(doc, "bold");
       doc.setTextColor(30, 30, 30);
       if (y > 265) {
         doc.addPage();
@@ -335,6 +497,7 @@ export function exportToPDF(options: PDFExportOptions) {
         a.severity.charAt(0).toUpperCase() + a.severity.slice(1),
       ]),
       styles: {
+        font,
         fontSize: 8,
         cellPadding: 2.5,
         textColor: [30, 30, 30],
@@ -419,6 +582,7 @@ export function exportToPDF(options: PDFExportOptions) {
         c.yAxis,
       ]),
       styles: {
+        font,
         fontSize: 8,
         cellPadding: 2.5,
         textColor: [30, 30, 30],
@@ -453,7 +617,7 @@ export function exportToPDF(options: PDFExportOptions) {
 
       // Question
       doc.setFontSize(10);
-      doc.setFont("helvetica", "bold");
+      setFont(doc, "bold");
       doc.setTextColor(79, 70, 229);
       const qLines = doc.splitTextToSize(
         `Q${i + 1}: ${item.prompt}`,
@@ -470,7 +634,15 @@ export function exportToPDF(options: PDFExportOptions) {
       y += 2;
 
       // Response
-      y = addWrappedText(doc, stripMarkdown(item.response), y, 9);
+      const response = stripMarkdown(item.response);
+      y = addWrappedText(
+        doc,
+        item.cancelled
+          ? `${response}${response ? "\n" : ""}(Cancelled before the answer finished)`
+          : response,
+        y,
+        9,
+      );
       y += 5;
     }
   }
@@ -489,6 +661,44 @@ export function exportToPDF(options: PDFExportOptions) {
   }
 
   doc.save(`${displayName}-report.pdf`);
+  return { unsupportedCharacters: hasUnsupportedCharacters(texts.join("\n")) };
+}
+
+const LIGHT_COLOR_PAIRS: [string, string][] = (() => {
+  const pairs: [string, string][] = defaultDarkTheme.colors.map((c, i) => [
+    c,
+    defaultLightTheme.colors[i] ?? c,
+  ]);
+  for (const key of [
+    "text",
+    "textMuted",
+    "textDimmed",
+    "gridStroke",
+    "cardBackground",
+    "accentPrimary",
+    "accentSecondary",
+    "accentSuccess",
+    "accentDanger",
+  ] as const)
+    pairs.push([defaultDarkTheme[key], defaultLightTheme[key]]);
+  return pairs;
+})();
+
+/**
+ * Swap dark-theme chart colors for their light-theme counterparts, so a chart
+ * captured from the dark UI stays readable on the white PDF page.
+ */
+export function toLightColors(svg: string): string {
+  let result = svg;
+  for (const [dark, light] of LIGHT_COLOR_PAIRS) {
+    if (dark === light) continue;
+    const escaped = dark.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    result = result.replace(
+      new RegExp(`(["'(:\\s])${escaped}(?=["');\\s])`, "gi"),
+      `$1${light}`,
+    );
+  }
+  return result;
 }
 
 /**
@@ -504,7 +714,7 @@ function serializeSvgWithBg(
   const rect = svgElement.getBoundingClientRect();
   if (rect.width === 0 || rect.height === 0) return null;
 
-  let svg = new XMLSerializer().serializeToString(svgElement);
+  let svg = toLightColors(new XMLSerializer().serializeToString(svgElement));
 
   const openTag = svg.match(/<svg[^>]*>/);
   if (!openTag) return null;
@@ -584,26 +794,24 @@ async function svgStringToPng(
 }
 
 /**
- * Capture all chart SVGs from the DOM and convert them to PNG data URLs.
+ * Capture the chart SVGs rendered under `root` and convert them to PNG data URLs.
+ * Each chart is found by its `data-chart-id`, so other charts on the page
+ * (chat answers, suggestions) are never mixed in.
  */
 export async function captureChartImages(
   charts: ChartConfig[],
+  root: ParentNode = document,
 ): Promise<ChartImage[]> {
-  // Iterate per responsive-container so we pick exactly one SVG per chart.
-  // Recharts v3 legend icons are also <svg class="recharts-surface"> (14×14),
-  // so we select the largest SVG inside each container.
-  const containers = document.querySelectorAll(
-    ".recharts-responsive-container",
-  );
-  if (containers.length === 0) return [];
-
   const results: ChartImage[] = [];
 
-  for (let i = 0; i < containers.length; i++) {
-    const container = containers[i]!;
-    const chart = charts[i];
-    const title = chart?.title ?? `Chart ${i + 1}`;
+  for (const chart of charts) {
+    const container = root.querySelector(
+      `[data-chart-id="${CSS.escape(chart.id)}"]`,
+    );
+    if (!container) continue;
 
+    // Recharts v3 legend icons are also <svg class="recharts-surface"> (14×14),
+    // so we select the largest SVG inside the chart.
     const allSvgs = container.querySelectorAll("svg.recharts-surface");
     let svgElement: Element | null = null;
     let maxArea = 0;
@@ -627,7 +835,7 @@ export async function captureChartImages(
     );
     if (dataUrl) {
       results.push({
-        title,
+        title: chart.title,
         dataUrl,
         width: serialized.width,
         height: serialized.height,
@@ -644,11 +852,14 @@ export async function captureChartImages(
 export async function exportChartsPDF(
   charts: ChartConfig[],
   fileName = "charts",
-) {
-  const chartImages = await captureChartImages(charts);
-  if (chartImages.length === 0) return;
+  root: ParentNode = document,
+): Promise<PDFExportReport | null> {
+  const chartImages = await captureChartImages(charts, root);
+  if (chartImages.length === 0) return null;
 
   const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+  const titles = chartImages.map((img) => img.title);
+  await prepareFont(doc, titles);
   const now = new Date();
   const dateStr = now.toLocaleDateString("en-US", {
     year: "numeric",
@@ -660,11 +871,11 @@ export async function exportChartsPDF(
   doc.setFillColor(79, 70, 229);
   doc.rect(0, 0, PAGE_WIDTH, 35, "F");
   doc.setFontSize(18);
-  doc.setFont("helvetica", "bold");
+  setFont(doc, "bold");
   doc.setTextColor(255, 255, 255);
   doc.text("Charts Report", MARGIN, 18);
   doc.setFontSize(9);
-  doc.setFont("helvetica", "normal");
+  setFont(doc, "normal");
   doc.text(dateStr, MARGIN, 27);
 
   const MAX_Y = 280; // leave room for footer
@@ -714,4 +925,5 @@ export async function exportChartsPDF(
 
   const displayName = fileName.replace(/\.(csv|xlsx?)$/i, "") || "charts";
   doc.save(`${displayName}-charts.pdf`);
+  return { unsupportedCharacters: hasUnsupportedCharacters(titles.join("\n")) };
 }

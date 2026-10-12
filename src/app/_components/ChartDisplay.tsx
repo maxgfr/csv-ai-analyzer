@@ -18,6 +18,7 @@ import {
   FileDown,
   BarChart3,
 } from "lucide-react";
+import { useRef } from "react";
 import { toast } from "sonner";
 import type { CSVData } from "~/lib/csv-parser";
 import type { ChartSuggestion } from "~/lib/ai-service";
@@ -49,14 +50,28 @@ export function ChartDisplay({
   onRegenerate,
 }: ChartDisplayProps) {
   const { resolved } = useTheme();
+  const rootRef = useRef<HTMLDivElement>(null);
   const chartTheme =
     resolved === "light" ? defaultLightTheme : defaultDarkTheme;
 
   const handleExportChartsPDF = async () => {
     try {
-      const { exportChartsPDF } = await import("~/lib/pdf-export");
-      await exportChartsPDF(charts, fileName);
+      const { exportChartsPDF, PDF_UNSUPPORTED_WARNING } =
+        await import("~/lib/pdf-export");
+      // Only this card's charts, matched by id (not every chart on the page)
+      const report = await exportChartsPDF(
+        charts,
+        fileName,
+        rootRef.current ?? document,
+      );
+      if (!report) {
+        toast.error("No chart to export", {
+          description: "Charts must be visible on screen to be captured.",
+        });
+        return;
+      }
       toast.success("Charts PDF exported");
+      if (report.unsupportedCharacters) toast.warning(PDF_UNSUPPORTED_WARNING);
     } catch (e) {
       console.error("Charts PDF export failed:", e);
       toast.error("Charts PDF export failed");
@@ -64,7 +79,7 @@ export function ChartDisplay({
   };
 
   return (
-    <div>
+    <div ref={rootRef}>
       {/* Charts header */}
       <div className="flex items-center gap-4 border-b border-white/10 px-6 pt-6 pb-4">
         <div className="rounded-xl border border-violet-500/30 bg-linear-to-br from-violet-500/20 to-fuchsia-500/20 p-3">

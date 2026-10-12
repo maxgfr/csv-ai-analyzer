@@ -263,8 +263,9 @@ export function AIAnalysis({
 
   const handleExportPDF = useCallback(async () => {
     try {
-      const { exportToPDF } = await import("~/lib/pdf-export");
-      exportToPDF({
+      const { exportToPDF, PDF_UNSUPPORTED_WARNING } =
+        await import("~/lib/pdf-export");
+      const report = await exportToPDF({
         fileName: fileName ?? "analysis",
         data,
         summary: summaryResult,
@@ -272,6 +273,7 @@ export function AIAnalysis({
         chatHistory: customHistory,
       });
       toast.success("PDF report exported");
+      if (report.unsupportedCharacters) toast.warning(PDF_UNSUPPORTED_WARNING);
     } catch (e) {
       console.error("PDF export failed:", e);
       toast.error("PDF export failed");

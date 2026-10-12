@@ -75,7 +75,7 @@ export function ChartDisplay({
       <div className={containerCls}>
         {charts.map((chart) => (
           <CardWrapper key={chart.id} title={chart.title} className={cardCls}>
-            <div className={innerCls}>
+            <div className={innerCls} data-chart-id={chart.id}>
               <h3 className={titleCls}>{chart.title}</h3>
               <p className={descCls}>{chart.description}</p>
               <SingleChart

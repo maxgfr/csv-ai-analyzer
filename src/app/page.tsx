@@ -1,6 +1,13 @@
 "use client";
 
-import { useState, useEffect, useCallback, lazy, Suspense } from "react";
+import {
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+  lazy,
+  Suspense,
+} from "react";
 import { toast } from "sonner";
 import { DataTable } from "./_components/DataTable";
 import { FullscreenCard } from "./_components/FullscreenCard";
@@ -96,6 +103,7 @@ export default function HomePage() {
   >(null);
   const [summaryError, setSummaryError] = useState<string | null>(null);
   const [anomaliesError, setAnomaliesError] = useState<string | null>(null);
+  const chartsRootRef = useRef<HTMLDivElement>(null);
   // A complete analysis would replace results while a chat answer streams
   const isChatStreaming = useChatIsLoading();
 
@@ -342,15 +350,15 @@ export default function HomePage() {
   const handleGlobalPDFExport = async () => {
     if (!csvData) return;
     try {
-      const { exportToPDF, captureChartImages } =
+      const { exportToPDF, captureChartImages, PDF_UNSUPPORTED_WARNING } =
         await import("~/lib/pdf-export");
       const chatStore = getChatStore();
       // Capture chart images from the DOM if charts are rendered
       const chartImages =
-        generatedCharts.length > 0
-          ? await captureChartImages(generatedCharts)
+        generatedCharts.length > 0 && chartsRootRef.current
+          ? await captureChartImages(generatedCharts, chartsRootRef.current)
           : undefined;
-      exportToPDF({
+      const report = await exportToPDF({
         fileName: currentFileName ?? "analysis",
         data: effectiveData ?? csvData,
         summary: analysisResults.summary,
@@ -360,6 +368,7 @@ export default function HomePage() {
         chartImages,
       });
       toast.success("PDF report exported");
+      if (report.unsupportedCharacters) toast.warning(PDF_UNSUPPORTED_WARNING);
     } catch (e) {
       console.error("PDF export failed:", e);
       toast.error("PDF export failed");
@@ -673,14 +682,18 @@ export default function HomePage() {
                     {generatedCharts && generatedCharts.length > 0 && (
                       <FullscreenCard className="overflow-hidden rounded-2xl border border-white/10 bg-slate-900/50">
                         <Suspense fallback={<LazyFallback />}>
-                          <ChartDisplay
-                            data={effectiveData ?? csvData}
-                            charts={generatedCharts}
-                            fileName={currentFileName}
-                            onRegenerate={
-                              hasValidConfig ? handleRegenerateChart : undefined
-                            }
-                          />
+                          <div ref={chartsRootRef}>
+                            <ChartDisplay
+                              data={effectiveData ?? csvData}
+                              charts={generatedCharts}
+                              fileName={currentFileName}
+                              onRegenerate={
+                                hasValidConfig
+                                  ? handleRegenerateChart
+                                  : undefined
+                              }
+                            />
+                          </div>
                         </Suspense>
                       </FullscreenCard>
                     )}
