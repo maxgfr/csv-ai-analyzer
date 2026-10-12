@@ -597,11 +597,19 @@ export function AIAnalysis({
       </div>
 
       {/* Tabs */}
-      <div className="mb-6 flex gap-2 border-b border-white/10 pb-4">
+      <div
+        role="tablist"
+        aria-label="AI analysis"
+        className="mb-6 flex flex-wrap gap-2 border-b border-white/10 pb-4"
+      >
         {tabs.map((tab) => (
           <button
             key={tab.id}
             type="button"
+            role="tab"
+            id={`ai-tab-${tab.id}`}
+            aria-selected={activeTab === tab.id}
+            aria-controls="ai-tab-panel"
             onClick={() => setActiveTab(tab.id)}
             className={`flex items-center gap-2 rounded-lg px-4 py-2 transition-all ${
               activeTab === tab.id
@@ -645,7 +653,13 @@ export function AIAnalysis({
       )}
 
       {/* Tab Content */}
-      <div className="min-h-[200px] flex-1 overflow-y-auto" aria-live="polite">
+      <div
+        id="ai-tab-panel"
+        role="tabpanel"
+        aria-labelledby={`ai-tab-${activeTab}`}
+        className="min-h-[200px] flex-1 overflow-y-auto"
+        aria-live="polite"
+      >
         {/* Summary Tab */}
         {activeTab === "summary" && (
           <div className="space-y-4">
@@ -938,6 +952,7 @@ export function AIAnalysis({
                   }}
                   className="flex items-center gap-1.5 rounded-lg bg-white/5 px-3 py-1.5 text-sm text-gray-400 transition-colors hover:bg-red-500/10 hover:text-red-400"
                   title="Clear chat history"
+                  aria-label="Clear chat history"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                   Clear
@@ -984,8 +999,9 @@ export function AIAnalysis({
                             <button
                               type="button"
                               onClick={() => void handleCopy(item.response, i)}
-                              className="absolute top-2 right-2 rounded-md bg-white/5 p-1.5 text-gray-500 opacity-0 transition-opacity group-hover/msg:opacity-100 hover:bg-white/10 hover:text-white"
+                              className="absolute top-2 right-2 rounded-md bg-white/5 p-1.5 text-gray-500 opacity-0 transition-opacity group-hover/msg:opacity-100 hover:bg-white/10 hover:text-white focus-visible:opacity-100"
                               title="Copy to clipboard"
+                              aria-label="Copy answer to clipboard"
                             >
                               {copiedIndex === i ? (
                                 <Check className="h-3.5 w-3.5 text-emerald-400" />

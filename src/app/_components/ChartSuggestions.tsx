@@ -524,8 +524,9 @@ export function ChartSuggestions({
                   onClick={() => removeChart(suggestion.id)}
                   className="absolute top-2 right-2 rounded-lg p-1 text-gray-500 transition-colors hover:bg-white/10 hover:text-red-400"
                   title="Remove chart"
+                  aria-label={`Remove chart ${suggestion.title}`}
                 >
-                  ×
+                  <span aria-hidden="true">×</span>
                 </button>
               </div>
             ))}
@@ -542,6 +543,7 @@ export function ChartSuggestions({
             <div className="flex gap-3">
               <input
                 type="text"
+                aria-label="Describe your chart"
                 value={customPrompt}
                 onChange={(e) => setCustomPrompt(e.target.value)}
                 onKeyDown={(e) => {
@@ -558,6 +560,7 @@ export function ChartSuggestions({
                 type="button"
                 onClick={handleCustomChart}
                 disabled={isCustomLoading || !customPrompt.trim()}
+                aria-label="Create chart from description"
                 className="btn-primary px-4 disabled:opacity-50"
               >
                 {isCustomLoading ? (
@@ -593,9 +596,10 @@ export function ChartSuggestions({
               <button
                 type="button"
                 onClick={() => setShowManualCreate(false)}
+                aria-label="Close manual chart creation"
                 className="rounded-lg p-1 text-gray-400 transition-colors hover:bg-white/10 hover:text-white"
               >
-                <X className="h-4 w-4" />
+                <X className="h-4 w-4" aria-hidden="true" />
               </button>
             </div>
 

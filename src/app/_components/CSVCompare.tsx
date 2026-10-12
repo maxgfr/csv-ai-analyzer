@@ -583,6 +583,7 @@ export function CSVCompare({
                             setCurrentPage((p) => Math.max(0, p - 1))
                           }
                           disabled={currentPage === 0}
+                          aria-label="Previous page"
                           className="rounded-md p-1 text-gray-400 hover:bg-white/5 hover:text-white disabled:opacity-30"
                         >
                           <ChevronLeft className="h-4 w-4" />
@@ -597,6 +598,7 @@ export function CSVCompare({
                             )
                           }
                           disabled={currentPage >= totalPages - 1}
+                          aria-label="Next page"
                           className="rounded-md p-1 text-gray-400 hover:bg-white/5 hover:text-white disabled:opacity-30"
                         >
                           <ChevronRight className="h-4 w-4" />

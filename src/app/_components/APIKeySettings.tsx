@@ -818,6 +818,7 @@ export function APIKeySettings({
                         <button
                           key={recommendedModel.id}
                           type="button"
+                          aria-pressed={model === recommendedModel.id}
                           onClick={() => setModel(recommendedModel.id)}
                           className={`w-full rounded-xl border-2 p-4 text-left transition-all duration-200 ${
                             model === recommendedModel.id
@@ -868,6 +869,7 @@ export function APIKeySettings({
                     <button
                       key={m.id}
                       type="button"
+                      aria-pressed={model === m.id}
                       onClick={() => setModel(m.id)}
                       className={`w-full rounded-xl border-2 p-4 text-left transition-all duration-200 ${
                         model === m.id
