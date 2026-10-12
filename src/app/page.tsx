@@ -53,7 +53,11 @@ import {
   repairChartSuggestion,
 } from "~/lib/ai-service";
 import { loadApiSettings, type StoredSettings } from "~/lib/storage";
-import { clearChatStore, getChatStore } from "~/lib/chat-store";
+import {
+  clearChatStore,
+  getChatStore,
+  useChatIsLoading,
+} from "~/lib/chat-store";
 import { Sparkles, Loader2, ArrowLeft, FileDown } from "lucide-react";
 import { useRequestScope } from "~/lib/use-request-scope";
 import type { ImportSource } from "~/lib/data-tasks";
@@ -92,6 +96,8 @@ export default function HomePage() {
   >(null);
   const [summaryError, setSummaryError] = useState<string | null>(null);
   const [anomaliesError, setAnomaliesError] = useState<string | null>(null);
+  // A complete analysis would replace results while a chat answer streams
+  const isChatStreaming = useChatIsLoading();
 
   useEffect(() => {
     const settings = loadApiSettings();
@@ -586,6 +592,7 @@ export default function HomePage() {
                     onClick={handleRunAllAnalysis}
                     disabled={
                       isAnalyzingAll ||
+                      isChatStreaming ||
                       isTransforming ||
                       !effectiveData?.rowCount ||
                       !hasValidConfig
@@ -598,7 +605,9 @@ export default function HomePage() {
                     title={
                       !hasValidConfig
                         ? "Configure your API settings first"
-                        : "Run all AI analyses at once"
+                        : isChatStreaming
+                          ? "Wait for the chat answer to finish"
+                          : "Run all AI analyses at once"
                     }
                   >
                     {isAnalyzingAll ? (

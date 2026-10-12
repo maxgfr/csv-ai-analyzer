@@ -9,6 +9,8 @@ type ChatMessage = {
   prompt: string;
   response: string;
   chart?: ChartSuggestion;
+  /** Stopped by the user: `response` holds what was streamed so far. */
+  cancelled?: boolean;
 };
 
 type AnalysisTab = "summary" | "anomalies" | "custom";
@@ -140,6 +142,24 @@ export function subscribeToChatStore(callback: () => void): () => void {
   return () => {
     subscribers.delete(callback);
   };
+}
+
+/** True while a chat answer is streaming. Re-renders only when that flag changes. */
+export function useChatIsLoading(): boolean {
+  return useSyncExternalStore(
+    subscribeToChatStore,
+    () => store.isLoading,
+    () => false,
+  );
+}
+
+/** Chat turns to send back to the model: failed and cancelled answers are flagged. */
+export function toModelHistory(history: ChatMessage[]) {
+  return history.map((item) => ({
+    prompt: item.prompt,
+    response: item.response,
+    error: !!item.cancelled || item.response.startsWith("[ERROR]"),
+  }));
 }
 
 // React hook to use the chat store

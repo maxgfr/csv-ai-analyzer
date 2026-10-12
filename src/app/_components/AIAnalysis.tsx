@@ -38,7 +38,7 @@ import {
   type SuggestedQuestion,
 } from "~/lib/ai-service";
 import type { StoredSettings } from "~/lib/storage";
-import { useChatStore } from "~/lib/chat-store";
+import { useChatStore, toModelHistory } from "~/lib/chat-store";
 import { ChartDisplay } from "./ChartDisplay";
 import { useRequestScope } from "~/lib/use-request-scope";
 
@@ -295,27 +295,26 @@ export function AIAnalysis({
 
     const config = getConfig("suggestions");
     if (!config) return;
+    const signal = config.signal!;
 
     suggestionsLoadedRef.current = true;
     setIsLoadingSuggestions(true);
 
-    // Guard against stale responses when data changes mid-flight
-    let cancelled = false;
+    // The request scope cancels this when the data or settings change
     const csvSummary = generateCSVSummary(data);
     void fetchSuggestedQuestions(config, csvSummary)
       .then((questions) => {
-        if (!cancelled) setSuggestedQuestions(questions);
+        if (!signal.aborted) setSuggestedQuestions(questions);
       })
       .catch(() => {
         // Non-critical — silently ignore
       })
       .finally(() => {
-        if (!cancelled) setIsLoadingSuggestions(false);
+        // A cancelled fetch may run again next time the tab is shown
+        if (signal.aborted) suggestionsLoadedRef.current = false;
+        if (requests.isLatest("suggestions", signal))
+          setIsLoadingSuggestions(false);
       });
-
-    return () => {
-      cancelled = true;
-    };
   }, [activeTab, data, apiSettings]);
 
   const handleGenerateSummary = async () => {
@@ -347,7 +346,10 @@ export function AIAnalysis({
         id: "summary-toast",
       });
     } catch (err) {
-      if (config.signal?.aborted) return;
+      if (config.signal?.aborted) {
+        toast.dismiss("summary-toast");
+        return;
+      }
       const errorMessage =
         err instanceof Error
           ? err.message
@@ -360,7 +362,9 @@ export function AIAnalysis({
         id: "summary-toast",
       });
     } finally {
-      if (!config.signal?.aborted) setIsLoadingSummary(false);
+      // Always clear the spinner unless a newer summary request owns it
+      if (requests.isLatest("summary", config.signal!))
+        setIsLoadingSummary(false);
     }
   };
 
@@ -394,7 +398,10 @@ export function AIAnalysis({
         id: "anomalies-toast",
       });
     } catch (err) {
-      if (config.signal?.aborted) return;
+      if (config.signal?.aborted) {
+        toast.dismiss("anomalies-toast");
+        return;
+      }
       const errorMessage =
         err instanceof Error
           ? err.message
@@ -407,7 +414,8 @@ export function AIAnalysis({
         id: "anomalies-toast",
       });
     } finally {
-      if (!config.signal?.aborted) setIsLoadingAnomalies(false);
+      if (requests.isLatest("anomalies", config.signal!))
+        setIsLoadingAnomalies(false);
     }
   };
 
@@ -476,10 +484,13 @@ export function AIAnalysis({
               });
           }
         },
-        customHistory, // Pass current history
+        toModelHistory(customHistory),
       );
     } catch (err) {
-      if (config.signal?.aborted) return;
+      if (config.signal?.aborted) {
+        toast.dismiss("custom-query-toast");
+        return;
+      }
       let errorMessage = "Unable to analyze. Please try again.";
       if (err instanceof Error && err.message && err.message.trim() !== "") {
         errorMessage = err.message;
@@ -499,7 +510,32 @@ export function AIAnalysis({
         description: errorMessage,
         id: "custom-query-toast",
       });
+    } finally {
+      // A cancelled answer must not leave the chat stuck in "Analyzing..."
+      if (config.signal?.aborted && requests.isLatest("chat", config.signal)) {
+        setLoadingCustom(false);
+        setStreaming("");
+      }
     }
+  };
+
+  const stopAll = () => {
+    requests.cancelAll();
+    // Keep the interrupted question, with what was streamed so far
+    if (isLoadingCustom && pendingPrompt)
+      addMessage({
+        prompt: pendingPrompt,
+        response: streamingResponse,
+        cancelled: true,
+      });
+    setIsLoadingSummary(false);
+    setIsLoadingAnomalies(false);
+    setLoadingCustom(false);
+    setStreaming("");
+    setIsLoadingSuggestions(false);
+    ["summary-toast", "anomalies-toast", "custom-query-toast"].forEach((id) =>
+      toast.dismiss(id),
+    );
   };
 
   const tabs = [
@@ -513,17 +549,7 @@ export function AIAnalysis({
       {(isLoadingSummary || isLoadingAnomalies || isLoadingCustom) && (
         <button
           type="button"
-          onClick={() => {
-            requests.cancelAll();
-            setIsLoadingSummary(false);
-            setIsLoadingAnomalies(false);
-            setLoadingCustom(false);
-            setStreaming("");
-            setIsLoadingSuggestions(false);
-            ["summary-toast", "anomalies-toast", "custom-query-toast"].forEach(
-              (id) => toast.dismiss(id),
-            );
-          }}
+          onClick={stopAll}
           className="mb-4 self-start rounded-lg border border-white/20 px-3 py-2 text-sm"
         >
           Stop analysis
@@ -903,7 +929,7 @@ export function AIAnalysis({
                 <button
                   type="button"
                   onClick={() => {
-                    requests.cancelAll();
+                    requests.cancel("chat");
                     clearChat();
                   }}
                   className="flex items-center gap-1.5 rounded-lg bg-white/5 px-3 py-1.5 text-sm text-gray-400 transition-colors hover:bg-red-500/10 hover:text-red-400"
@@ -968,11 +994,17 @@ export function AIAnalysis({
                             <p className="text-sm whitespace-pre-wrap text-red-300">
                               {item.response}
                             </p>
-                          ) : (
+                          ) : item.response ? (
                             <MarkdownRenderer
                               content={item.response}
                               className="text-sm"
                             />
+                          ) : null}
+                          {item.cancelled && (
+                            <p className="mt-1 text-xs text-gray-500 italic">
+                              Cancelled — this answer was stopped before it
+                              finished.
+                            </p>
                           )}
                           {item.chart && (
                             <div className="mt-3 border-t border-white/10 pt-3">
