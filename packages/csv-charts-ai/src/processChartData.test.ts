@@ -485,7 +485,7 @@ describe("chart point selection", () => {
     expect(result[0]?.["y"]).toBe(0.000123457);
   });
 
-  it("detects the date order on the whole column before the Top N cut", () => {
+  it("keeps the most recent points of a time series, in order", () => {
     const data = series("date", [
       ["01/02/2024", "100"],
       ["02/01/2024", "90"],
@@ -498,8 +498,10 @@ describe("chart point selection", () => {
       "none",
       3,
     );
+    // US order is detected on the whole column (01/20 cannot be day-first);
+    // a trend keeps consecutive recent dates, not the 3 largest values
     expect(result.map((p) => p["x"])).toEqual([
-      "01/02/2024",
+      "01/20/2024",
       "02/01/2024",
       "03/01/2024",
     ]);

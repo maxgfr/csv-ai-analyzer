@@ -243,8 +243,10 @@ export const processChartDataMultiSeries = (
 };
 
 /**
- * Sort by value when asked; otherwise keep the `limit` largest points ("Top N")
- * in their original order, or in x order for line/area charts over dates or numbers.
+ * Sort by value when asked. Otherwise line/area charts over dates or numbers
+ * keep the `limit` most recent points in x order (a trend needs consecutive
+ * points), and other charts keep the `limit` largest points ("Top N") in their
+ * original order.
  */
 function selectPoints(
   points: ChartDataPoint[],
@@ -262,34 +264,34 @@ function selectPoints(
       )
       .slice(0, limit);
 
-  let kept = points;
-  if (points.length > limit) {
-    const top = new Set(
-      [...points].sort((a, b) => valueOf(b) - valueOf(a)).slice(0, limit),
-    );
-    kept = points.filter((p) => top.has(p));
+  if (x.chronological) {
+    const labels = points.map((p) => String(p[x.xCol] ?? ""));
+    // One day/month order for the whole column
+    const order =
+      x.xColDef.type === "date" ? detectDateOrder(labels) : undefined;
+    const keyed = points.map((point, i) => ({
+      point,
+      key:
+        x.xColDef.type === "date"
+          ? parseDateValue(labels[i]!, order)
+          : parseNumericValue(labels[i]!),
+    }));
+    // Unreadable x values first, so the kept tail holds the latest valid points
+    return keyed
+      .sort((a, b) =>
+        a.key === null || b.key === null
+          ? (a.key === null ? 0 : 1) - (b.key === null ? 0 : 1)
+          : a.key - b.key,
+      )
+      .slice(-limit)
+      .map(({ point }) => point);
   }
-  if (!x.chronological) return kept;
 
-  const labels = kept.map((p) => String(p[x.xCol] ?? ""));
-  // One day/month order for the whole column, not just the points kept
-  const order =
-    x.xColDef.type === "date"
-      ? detectDateOrder(points.map((p) => String(p[x.xCol] ?? "")))
-      : undefined;
-  const keys = labels.map((label) =>
-    x.xColDef.type === "date"
-      ? parseDateValue(label, order)
-      : parseNumericValue(label),
+  if (points.length <= limit) return points;
+  const top = new Set(
+    [...points].sort((a, b) => valueOf(b) - valueOf(a)).slice(0, limit),
   );
-  return kept
-    .map((point, i) => ({ point, key: keys[i] ?? null }))
-    .sort((a, b) =>
-      a.key === null || b.key === null
-        ? (a.key === null ? 1 : 0) - (b.key === null ? 1 : 0)
-        : a.key - b.key,
-    )
-    .map(({ point }) => point);
+  return points.filter((p) => top.has(p));
 }
 
 /** Scatter keeps every point (up to a cap) with a numeric x when the column is numeric. */

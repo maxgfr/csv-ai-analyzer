@@ -1,4 +1,9 @@
-import { parseNumericValue, roundSignificant } from "./values";
+import {
+  detectDateOrder,
+  parseDateValue,
+  parseNumericValue,
+  roundSignificant,
+} from "./values";
 import { generateObject, type LanguageModel } from "ai";
 import { z } from "zod";
 import type { ChartConfig, TabularData } from "./types";
@@ -330,7 +335,7 @@ export function generateDataSummary(data: TabularData): string {
       if (count > 0) {
         const avg = sum / count;
         summary.push(
-          `- ${col.name} (number): min=${roundSignificant(min)}, max=${roundSignificant(max)}, avg=${roundSignificant(avg)}, ${count} values`,
+          `- ${col.name} (number): min=${roundSignificant(min)}, max=${roundSignificant(max)}, avg=${roundSignificant(avg)}, sum=${roundSignificant(sum)}, ${count} values`,
         );
       } else {
         summary.push(`- ${col.name} (number): no valid values`);
@@ -350,8 +355,9 @@ export function generateDataSummary(data: TabularData): string {
         `- ${col.name} (text): ${uniqueCount} unique values, examples: ${sampleValues}`,
       );
     } else if (col.type === "date") {
+      const range = dateRange(data, col.index);
       summary.push(
-        `- ${col.name} (date): ${data.rows.reduce((n, row) => n + ((row[col.index] ?? "").trim() ? 1 : 0), 0)} values`,
+        `- ${col.name} (date): ${range.count} values${range.count ? `, from ${range.first} to ${range.last}` : ""}`,
       );
     } else if (col.type === "boolean") {
       summary.push(
@@ -359,6 +365,16 @@ export function generateDataSummary(data: TabularData): string {
       );
     }
   });
+
+  // Totals per category and per period, computed here on every row: the model
+  // only sees a few sample rows, so it cannot add them up itself
+  const groups = summarizeGroups(data);
+  if (groups.length) {
+    summary.push(
+      `\nGroup totals (exact, computed on all ${data.rowCount} rows):`,
+      ...groups,
+    );
+  }
 
   // Add sample rows
   summary.push("\nFirst 5 rows sample:");
@@ -371,6 +387,128 @@ export function generateDataSummary(data: TabularData): string {
   });
 
   return summary.join("\n");
+}
+
+// ============ Group totals ============
+
+/** Categorical columns with at most this many distinct values get group totals. */
+const MAX_GROUPS = 50;
+/** Groups listed per breakdown (largest first); the rest are counted. */
+const SHOWN_GROUPS = 10;
+
+function dateRange(data: TabularData, index: number) {
+  const values = data.rows.map((row) => row[index] ?? "");
+  const order = detectDateOrder(values);
+  let first: { time: number; text: string } | null = null;
+  let last: { time: number; text: string } | null = null;
+  let count = 0;
+  for (const text of values) {
+    const time = parseDateValue(text, order);
+    if (time === null) continue;
+    count++;
+    if (!first || time < first.time) first = { time, text: text.trim() };
+    if (!last || time > last.time) last = { time, text: text.trim() };
+  }
+  return { count, first: first?.text, last: last?.text };
+}
+
+function formatTotals(
+  title: string,
+  totals: Map<string, { sum: number; count: number }>,
+  byKey = false,
+): string {
+  const entries = [...totals.entries()].sort((a, b) =>
+    byKey ? a[0].localeCompare(b[0]) : b[1].sum - a[1].sum,
+  );
+  const shown = byKey ? entries : entries.slice(0, SHOWN_GROUPS);
+  const rest = entries.length - shown.length;
+  return `- ${title}: ${shown
+    .map(
+      ([key, t]) =>
+        `${clipCell(key, 60)}=${roundSignificant(t.sum)} (${t.count} rows)`,
+    )
+    .join("; ")}${rest > 0 ? `; … ${rest} more groups` : ""}`;
+}
+
+/**
+ * Sums of up to 3 numeric columns per value of up to 4 low-cardinality text
+ * columns, and per month (or year) of the first date column.
+ */
+function summarizeGroups(data: TabularData): string[] {
+  const numeric = data.columns.filter((c) => c.type === "number").slice(0, 3);
+  const lines: string[] = [];
+  const categorical = data.columns
+    .filter((c) => c.type === "string" || c.type === "boolean")
+    .filter((c) => {
+      const distinct = new Set<string>();
+      for (const row of data.rows) {
+        distinct.add((row[c.index] ?? "").trim());
+        if (distinct.size > MAX_GROUPS) return false;
+      }
+      return distinct.size >= 2 && distinct.size < data.rows.length;
+    })
+    .slice(0, 4);
+
+  const accumulate = (key: (row: string[]) => string | null) =>
+    (numeric.length ? numeric : [null]).map((num) => {
+      const totals = new Map<string, { sum: number; count: number }>();
+      for (const row of data.rows) {
+        const k = key(row);
+        if (k === null) continue;
+        const value = num ? parseNumericValue(row[num.index] ?? "") : 1;
+        if (value === null) continue;
+        const t = totals.get(k) ?? { sum: 0, count: 0 };
+        t.sum += value;
+        t.count++;
+        totals.set(k, t);
+      }
+      return { num, totals };
+    });
+
+  for (const cat of categorical) {
+    for (const { num, totals } of accumulate(
+      (row) => (row[cat.index] ?? "").trim() || "(empty)",
+    ))
+      lines.push(
+        formatTotals(
+          num ? `${num.name} by ${cat.name}` : `Rows by ${cat.name}`,
+          totals,
+        ),
+      );
+  }
+
+  const dateCol = data.columns.find((c) => c.type === "date");
+  if (dateCol) {
+    const order = detectDateOrder(data.rows.map((r) => r[dateCol.index] ?? ""));
+    const times = data.rows
+      .map((r) => parseDateValue(r[dateCol.index] ?? "", order))
+      .filter((t): t is number => t !== null);
+    if (times.length) {
+      let min = Infinity,
+        max = -Infinity;
+      for (const t of times) {
+        if (t < min) min = t;
+        if (t > max) max = t;
+      }
+      const span = (max - min) / (1000 * 60 * 60 * 24 * 31);
+      const monthly = span <= 36;
+      const period = (row: string[]) => {
+        const t = parseDateValue(row[dateCol.index] ?? "", order);
+        if (t === null) return null;
+        const iso = new Date(t).toISOString();
+        return monthly ? iso.slice(0, 7) : iso.slice(0, 4);
+      };
+      for (const { num, totals } of accumulate(period))
+        lines.push(
+          formatTotals(
+            `${num ? num.name : "Rows"} by ${monthly ? "month" : "year"} of ${dateCol.name}`,
+            totals,
+            true,
+          ),
+        );
+    }
+  }
+  return lines;
 }
 
 // ============ Model Resolution ============
