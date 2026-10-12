@@ -3,9 +3,11 @@ import Link from "next/link";
 import { ArrowLeft, Shield, Database, Lock, ExternalLink } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Legal & Privacy - CSV AI Analyzer",
+  // The root layout's template appends " | CSV AI Analyzer"
+  title: "Legal & Privacy",
   description:
     "Privacy policy and legal information for CSV AI Analyzer. Your data stays in your browser.",
+  alternates: { canonical: "/legal/" },
 };
 
 export default function LegalPage() {
@@ -21,7 +23,7 @@ export default function LegalPage() {
           Back to App
         </Link>
 
-        <h1 className="mb-8 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-4xl font-bold text-transparent">
+        <h1 className="mb-8 bg-gradient-to-r from-(--text-primary) to-(--text-secondary) bg-clip-text text-4xl font-bold text-transparent">
           Legal & Privacy
         </h1>
 

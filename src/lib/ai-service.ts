@@ -265,6 +265,9 @@ export const generateDataSummary = async (
   );
 };
 
+/** Rows sent to the model for anomaly detection (the rest is only summarized). */
+export const ANOMALY_SAMPLE_ROWS = 50;
+
 export const detectAnomalies = async (
   config: AIServiceConfig,
   dataSummary: string,
@@ -277,6 +280,7 @@ export const detectAnomalies = async (
         model,
         data,
         dataSummary,
+        maxRows: ANOMALY_SAMPLE_ROWS,
         signal: config.signal,
         language: LANGUAGE_NAMES[config.language ?? "en"],
         ...SDK_RETRIES,

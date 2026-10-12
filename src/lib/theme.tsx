@@ -5,6 +5,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useLayoutEffect,
   useState,
 } from "react";
 import Cookies from "js-cookie";
@@ -62,15 +63,14 @@ function applyTheme(resolved: "light" | "dark") {
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [mode, setModeState] = useState<ThemeMode>(() => {
-    if (typeof window === "undefined") return "auto";
-    return loadThemeMode();
-  });
-
-  const [systemDark, setSystemDark] = useState(() => {
-    if (typeof window === "undefined") return true;
-    return window.matchMedia("(prefers-color-scheme: dark)").matches;
-  });
+  // Start like the server render ("auto", dark), then read the browser before
+  // paint: the landing is pre-rendered, so the first client render must match it
+  const [mode, setModeState] = useState<ThemeMode>("auto");
+  const [systemDark, setSystemDark] = useState(true);
+  useLayoutEffect(() => {
+    setModeState(loadThemeMode());
+    setSystemDark(window.matchMedia("(prefers-color-scheme: dark)").matches);
+  }, []);
 
   const resolved = resolveTheme(mode, systemDark);
 

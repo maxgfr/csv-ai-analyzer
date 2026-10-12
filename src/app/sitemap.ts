@@ -7,13 +7,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [
     {
-      url: baseUrl,
+      url: `${baseUrl}/`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 1,
     },
     {
-      url: `${baseUrl}/legal`,
+      url: `${baseUrl}/legal/`,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.5,

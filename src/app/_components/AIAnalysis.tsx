@@ -43,6 +43,7 @@ import {
   type AnomalyResult,
   type AIServiceConfig,
   type SuggestedQuestion,
+  ANOMALY_SAMPLE_ROWS,
 } from "~/lib/ai-service";
 import type { StoredSettings } from "~/lib/storage";
 import { useChatStore, toModelHistory } from "~/lib/chat-store";
@@ -802,7 +803,9 @@ export function AIAnalysis({
             {!anomaliesResult ? (
               <div className="py-8 text-center">
                 <p className="mb-4 text-gray-400">
-                  AI will scan your data to detect anomalies
+                  AI checks the first {ANOMALY_SAMPLE_ROWS} rows for anomalies,
+                  using column statistics of the whole file as context. Rows
+                  beyond them are not inspected one by one.
                 </p>
                 <button
                   type="button"
@@ -830,7 +833,9 @@ export function AIAnalysis({
                 </div>
                 <p className="mb-2 text-gray-300">No anomalies detected</p>
                 <p className="text-sm text-gray-500">
-                  Your data appears to be valid and consistent
+                  {data.rowCount > ANOMALY_SAMPLE_ROWS
+                    ? `In the first ${ANOMALY_SAMPLE_ROWS} of ${data.rowCount} rows`
+                    : "Your data appears to be valid and consistent"}
                 </p>
                 <button
                   type="button"
@@ -854,6 +859,8 @@ export function AIAnalysis({
                       {anomaliesResult.length}
                     </span>{" "}
                     anomal{anomaliesResult.length > 1 ? "ies" : "y"} detected
+                    {data.rowCount > ANOMALY_SAMPLE_ROWS &&
+                      ` in the first ${ANOMALY_SAMPLE_ROWS} of ${data.rowCount} rows`}
                   </p>
                   <button
                     type="button"

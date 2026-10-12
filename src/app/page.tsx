@@ -442,35 +442,22 @@ export default function HomePage() {
   };
 
   return (
-    <ClientOnly
-      fallback={
-        <main className="min-h-screen p-4 md:p-8">
-          <div className="mx-auto flex min-h-[50vh] max-w-7xl items-center justify-center">
-            <div
-              className="animate-pulse"
-              style={{ color: "var(--text-secondary)" }}
-            >
-              Loading...
-            </div>
-          </div>
-        </main>
-      }
-    >
-      <main className="min-h-screen">
-        {/* Landing Section - Only show when no data */}
-        {!csvData && (
-          <LandingPage
-            csvSettings={csvSettings}
-            apiSettings={apiSettings}
-            currentFileName={currentFileName}
-            onSettingsChange={setCsvSettings}
-            onApiSettingsChange={setApiSettings}
-            onClearFile={handleClearFile}
-            onDataLoaded={handleDataLoaded}
-          />
-        )}
+    <main className="min-h-screen">
+      {/* Landing - rendered on the server too, so it is in the exported HTML */}
+      {!csvData && (
+        <LandingPage
+          csvSettings={csvSettings}
+          apiSettings={apiSettings}
+          currentFileName={currentFileName}
+          onSettingsChange={setCsvSettings}
+          onApiSettingsChange={setApiSettings}
+          onClearFile={handleClearFile}
+          onDataLoaded={handleDataLoaded}
+        />
+      )}
 
-        {/* App Section - Show when data is loaded */}
+      {/* App Section - Show when data is loaded (client only) */}
+      <ClientOnly>
         {csvData && (
           <div className="pb-12">
             {/* Sticky Header Bar */}
@@ -717,8 +704,8 @@ export default function HomePage() {
             </div>
           </div>
         )}
-      </main>
-    </ClientOnly>
+      </ClientOnly>
+    </main>
   );
 }
 
