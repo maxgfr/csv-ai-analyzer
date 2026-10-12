@@ -76,15 +76,21 @@ export function SingleChart({
 
   const yColName = processed.yKey;
 
-  // Calculate average for trend line
+  // Calculate average for trend line (undefined when it does not apply; 0 is a valid average)
   const average = useMemo(() => {
-    if (processedData.length === 0 || isMultiSeries) return 0;
+    if (processedData.length === 0 || isMultiSeries) return undefined;
     const sum = processedData.reduce((acc, item) => {
       const val = item[yColName];
       return acc + (typeof val === "number" ? val : 0);
     }, 0);
     return sum / processedData.length;
   }, [processedData, yColName, isMultiSeries]);
+
+  // Stacking only makes sense for additive aggregations
+  const stackId =
+    chart.aggregation === "sum" || chart.aggregation === "count"
+      ? "stack"
+      : undefined;
 
   const handleRegenerate = async () => {
     if (!onRegenerate) return;
@@ -106,7 +112,7 @@ export function SingleChart({
     const rows = processedData
       .map((row) =>
         Object.values(row)
-          .map((v) => escapeField(String(v)))
+          .map((v) => escapeField(String(v ?? "")))
           .join(","),
       )
       .join("\n");
@@ -299,12 +305,12 @@ export function SingleChart({
         dataKey={xKey}
         height={30}
         stroke={theme.accentPrimary}
-        fill="#1e1b4b"
+        fill={theme.cardBackground}
       />
     ) : null;
 
     const trendlineComponent =
-      enableTrendline && avgValue && !isMultiSeries ? (
+      enableTrendline && avgValue !== undefined && !isMultiSeries ? (
         <ReferenceLine
           y={avgValue}
           stroke={theme.accentSuccess}
@@ -324,7 +330,9 @@ export function SingleChart({
       angle: -45,
       textAnchor: "end" as const,
       height: 80,
-      interval: 0 as const,
+      // Every label fits up to ~50 points; beyond that let Recharts skip some
+      interval:
+        chartData.length > 50 ? ("preserveStartEnd" as const) : (0 as const),
       tick: { fill: theme.textMuted },
     };
 
@@ -350,9 +358,11 @@ export function SingleChart({
                   key={key}
                   dataKey={key}
                   fill={theme.colors[i % theme.colors.length]}
-                  stackId="stack"
+                  stackId={stackId}
                   radius={
-                    i === seriesKeys.length - 1 ? [4, 4, 0, 0] : undefined
+                    !stackId || i === seriesKeys.length - 1
+                      ? [4, 4, 0, 0]
+                      : undefined
                   }
                 />
               ))}
@@ -419,7 +429,7 @@ export function SingleChart({
                   stroke={theme.colors[i % theme.colors.length]}
                   fillOpacity={1}
                   fill={`url(#grad-${chart.id}-${i})`}
-                  stackId="stack"
+                  stackId={stackId}
                 />
               ))}
               {brushComponent}
@@ -514,11 +524,17 @@ export function SingleChart({
         );
       }
 
-      case "scatter":
+      case "scatter": {
+        const numericX = chartData.every((p) => typeof p[xKey] === "number");
         return (
           <ScatterChart {...commonProps}>
             <CartesianGrid strokeDasharray="3 3" stroke={theme.gridStroke} />
-            <XAxis type="category" {...xAxisProps} />
+            <XAxis
+              {...xAxisProps}
+              type={numericX ? "number" : "category"}
+              domain={numericX ? ["auto", "auto"] : undefined}
+              interval={numericX ? "preserveStartEnd" : xAxisProps.interval}
+            />
             <YAxis type="number" dataKey={yKey} {...yAxisProps} />
             <Tooltip
               cursor={{ strokeDasharray: "3 3" }}
@@ -528,6 +544,7 @@ export function SingleChart({
             <Scatter name={yKey} data={chartData} fill={theme.accentPrimary} />
           </ScatterChart>
         );
+      }
 
       case "pie":
         return (
