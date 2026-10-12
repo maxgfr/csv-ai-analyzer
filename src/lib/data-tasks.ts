@@ -12,12 +12,7 @@ import {
   type CSVSettings,
 } from "./csv-parser";
 import { isXLSXFile, parseXLSX } from "./xlsx-parser";
-import {
-  transformData,
-  tableRows,
-  type SortConfig,
-  type TransformOptions,
-} from "./data-operations";
+import { transformData, type TransformOptions } from "./data-operations";
 
 export interface ImportSource {
   file: File;
@@ -33,14 +28,12 @@ export interface TaskInputs {
   import: ImportSource;
   quality: CSVData;
   transform: { data: CSVData; options: TransformOptions };
-  table: { data: CSVData; query: string; sort: SortConfig | null };
   diff: { a: CSVData; b: CSVData; options: DiffOptions };
 }
 export interface TaskOutputs {
   import: ImportResult;
   quality: DataQualityResult;
   transform: CSVData;
-  table: string[][];
   diff: ComparisonResult;
 }
 
@@ -80,11 +73,6 @@ export async function executeDataTask<K extends keyof TaskInputs>(
     case "transform": {
       const { data, options } = input as TaskInputs["transform"];
       result = transformData(data, options);
-      break;
-    }
-    case "table": {
-      const { data, query, sort } = input as TaskInputs["table"];
-      result = tableRows(data, query, sort);
       break;
     }
     case "diff": {

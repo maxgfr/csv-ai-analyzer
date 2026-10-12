@@ -30,3 +30,16 @@ it("clamps pagination after the dataset shrinks", () => {
   view.rerender(<DataTable data={parseCSV("name\nonly")} />);
   expect(screen.getByText("only")).toBeTruthy();
 });
+it("keeps the sort on the same column when columns move", () => {
+  const data = parseCSV("a,b\nx,3\ny,1\nz,2");
+  const view = render(<DataTable data={data} />);
+  fireEvent.click(screen.getByRole("button", { name: /^b/ }));
+  const firstCell = () =>
+    screen.getAllByRole("row")[1]!.querySelectorAll("td")[0]!.textContent;
+  expect(firstCell()).toBe("y");
+  view.rerender(<DataTable data={parseCSV("b,a\n3,x\n1,y\n2,z")} />);
+  expect(firstCell()).toBe("1");
+  expect(
+    screen.getByRole("columnheader", { name: /^b/ }).getAttribute("aria-sort"),
+  ).toBe("ascending");
+});

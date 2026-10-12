@@ -101,18 +101,40 @@ export function transformData(
   };
 }
 
+/** Rows of the table preview: search over every cell, then sort. */
 export function tableRows(
   data: CSVData,
   query: string,
   sort: SortConfig | null,
 ): string[][] {
+  if (!query.trim() && !sort) return data.rows;
+  return tableRowIndices(data, query, sort).map((i) => data.rows[i]!);
+}
+
+/** Same as {@link tableRows}, as indices into `data.rows` (cheap to send from a worker). */
+export function tableRowIndices(
+  data: CSVData,
+  query: string,
+  sort: SortConfig | null,
+): number[] {
   const needle = query.trim().toLowerCase();
-  const rows = needle
-    ? data.rows.filter((row) =>
-        row.some((cell) => cell.toLowerCase().includes(needle)),
-      )
-    : data.rows;
-  return sort ? sortRows(rows, data.columns, sort) : rows;
+  const indices: number[] = [];
+  for (let i = 0; i < data.rows.length; i++) {
+    if (
+      !needle ||
+      data.rows[i]!.some((cell) => cell.toLowerCase().includes(needle))
+    )
+      indices.push(i);
+  }
+  if (!sort) return indices;
+  const compare = rowComparator(
+    data.columns,
+    sort,
+    indices.map((i) => data.rows[i]!),
+  );
+  return compare
+    ? indices.sort((a, b) => compare(data.rows[a]!, data.rows[b]!))
+    : indices;
 }
 
 function sortRows(
@@ -120,16 +142,29 @@ function sortRows(
   columns: CSVData["columns"],
   sort: SortConfig,
 ): string[][] {
+  const compare = rowComparator(columns, sort, rows);
+  return compare ? [...rows].sort(compare) : rows;
+}
+
+/** Empty cells stay at the end whatever the direction; the rest follow the column type. */
+function rowComparator(
+  columns: CSVData["columns"],
+  sort: SortConfig,
+  rows: string[][],
+): ((a: string[], b: string[]) => number) | null {
   const col = columns.find((c) => c.name === sort.column);
-  if (!col) return rows;
+  if (!col) return null;
   const order =
     col.type === "date"
       ? detectDateOrder(rows.map((row) => row[col.index] ?? ""))
       : undefined;
   const sign = sort.direction === "desc" ? -1 : 1;
-  return [...rows].sort(
-    (a, b) =>
-      compareCells(a[col.index] ?? "", b[col.index] ?? "", col.type, order) *
-      sign,
-  );
+  return (a, b) => {
+    const x = a[col.index] ?? "",
+      y = b[col.index] ?? "";
+    const emptyX = !x.trim(),
+      emptyY = !y.trim();
+    if (emptyX || emptyY) return emptyX === emptyY ? 0 : emptyX ? 1 : -1;
+    return compareCells(x, y, col.type, order) * sign;
+  };
 }

@@ -8,8 +8,7 @@ import {
   ChevronRight,
   Table2,
 } from "lucide-react";
-import { useDataTask } from "~/lib/use-data-task";
-import { tableRows } from "~/lib/data-operations";
+import { useTableRows } from "~/lib/use-data-task";
 import type { CSVData } from "~/lib/csv-parser";
 
 interface DataTableProps {
@@ -24,34 +23,23 @@ const TYPE_COLORS: Record<string, string> = {
 };
 
 export function DataTable({ data }: DataTableProps) {
-  const [sortColumn, setSortColumn] = useState<number | null>(null);
+  // By name, so a sort survives columns being added, removed or reordered
+  const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const [query, setQuery] = useState("");
   const deferredQuery = useDeferredValue(query);
-  const task = useMemo(
-    () => ({
-      data,
-      query: deferredQuery,
-      sort:
-        sortColumn === null || !data.headers[sortColumn]
-          ? null
-          : { column: data.headers[sortColumn]!, direction: sortDirection },
-    }),
-    [data, deferredQuery, sortColumn, sortDirection],
-  );
-  const useWorker =
-    data.rowCount >= 10000 && (!!deferredQuery || sortColumn !== null);
-  const asyncTask = useDataTask("table", useWorker ? task : null);
-  const sortedRows = useMemo(
+  const sort = useMemo(
     () =>
-      useWorker
-        ? (asyncTask.result ?? [])
-        : tableRows(data, deferredQuery, task.sort),
-    [useWorker, asyncTask.result, data, deferredQuery, task.sort],
+      sortColumn !== null && data.headers.includes(sortColumn)
+        ? { column: sortColumn, direction: sortDirection }
+        : null,
+    [data.headers, sortColumn, sortDirection],
   );
+  const asyncTask = useTableRows(data, deferredQuery, sort);
+  const sortedRows = asyncTask.rows;
   const totalPages = Math.max(1, Math.ceil(sortedRows.length / rowsPerPage));
   const currentPage = Math.min(page, totalPages - 1);
   const paginatedRows = sortedRows.slice(
@@ -59,11 +47,11 @@ export function DataTable({ data }: DataTableProps) {
     (currentPage + 1) * rowsPerPage,
   );
 
-  const handleSort = (columnIndex: number) => {
-    if (sortColumn === columnIndex) {
+  const handleSort = (column: string) => {
+    if (sortColumn === column) {
       setSortDirection((d) => (d === "asc" ? "desc" : "asc"));
     } else {
-      setSortColumn(columnIndex);
+      setSortColumn(column);
       setSortDirection("asc");
     }
     setPage(0);
@@ -117,7 +105,7 @@ export function DataTable({ data }: DataTableProps) {
               {data.headers.map((header, i) => (
                 <th
                   aria-sort={
-                    sortColumn === i
+                    sort?.column === header
                       ? sortDirection === "asc"
                         ? "ascending"
                         : "descending"
@@ -128,7 +116,7 @@ export function DataTable({ data }: DataTableProps) {
                 >
                   <button
                     type="button"
-                    onClick={() => handleSort(i)}
+                    onClick={() => handleSort(header)}
                     className="group flex items-center gap-2 transition-colors hover:text-white"
                   >
                     <span>{header}</span>
@@ -140,7 +128,7 @@ export function DataTable({ data }: DataTableProps) {
                     >
                       {data.columns[i]?.type ?? "string"}
                     </span>
-                    {sortColumn === i ? (
+                    {sort?.column === header ? (
                       sortDirection === "asc" ? (
                         <ChevronUp className="h-4 w-4" />
                       ) : (
