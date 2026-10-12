@@ -21,6 +21,18 @@ export function parseNumericValue(value: string): number | null {
   return Number.isFinite(result) ? result : null;
 }
 
+/**
+ * Round to 6 significant digits without losing integer digits, so tiny ratios
+ * keep their precision and large totals stay exact.
+ */
+export function roundSignificant(value: number, digits = 6): number {
+  if (!Number.isFinite(value) || Number.isInteger(value) || value === 0)
+    return value;
+  const magnitude = Math.floor(Math.log10(Math.abs(value))) + 1;
+  const decimals = Math.min(20, Math.max(0, digits - magnitude));
+  return Number(value.toFixed(decimals));
+}
+
 /** Order of day and month in local dates such as 03/04/2024. */
 export type DateOrder = "dmy" | "mdy";
 
