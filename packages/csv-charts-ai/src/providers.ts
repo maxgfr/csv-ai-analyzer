@@ -109,11 +109,23 @@ export function fromSDK(
       ...(config.baseURL && { baseURL: config.baseURL }),
       ...(config.headers && { headers: config.headers }),
     });
-    // OpenAI-compatible servers generally implement Chat Completions rather than Responses.
-    if (config.baseURL && typeof provider.chat === "function")
+    // OpenAI-compatible servers generally implement Chat Completions rather than Responses;
+    // the official OpenAI URL keeps the SDK default (Responses API).
+    if (
+      config.baseURL &&
+      !isOfficialOpenAIURL(config.baseURL) &&
+      typeof provider.chat === "function"
+    )
       return provider.chat(config.model) as LanguageModel;
     return provider(config.model) as LanguageModel;
   };
+}
+
+/** Default base URL of `@ai-sdk/openai`. */
+export const OPENAI_DEFAULT_BASE_URL = "https://api.openai.com/v1";
+
+function isOfficialOpenAIURL(url: string): boolean {
+  return url.trim().replace(/\/+$/, "") === OPENAI_DEFAULT_BASE_URL;
 }
 
 /** Get a provider by name, or `undefined` if not registered. */
