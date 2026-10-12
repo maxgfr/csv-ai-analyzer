@@ -1,4 +1,4 @@
-import { inferValuesType, uniqueHeaders } from "./values";
+import { inferColumnValuesType, uniqueHeaders } from "./values";
 import type { TabularData } from "./types";
 
 export interface ParseCSVOptions {
@@ -84,7 +84,7 @@ export function parseCSV(
 
   const columns = headers.map((name, index) => ({
     name: name.trim(),
-    type: inferColumnType(dataRows, index),
+    type: inferColumnValuesType(dataRows, index),
     index,
   }));
 
@@ -231,8 +231,4 @@ function parseRows(
   }
 
   return rows;
-}
-
-function inferColumnType(rows: string[][], colIndex: number) {
-  return inferValuesType(rows.slice(0, 100).map((row) => row[colIndex] ?? ""));
 }

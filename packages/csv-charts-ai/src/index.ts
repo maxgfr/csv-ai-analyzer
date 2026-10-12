@@ -98,6 +98,9 @@ export type { DataQualityResult } from "./data-quality";
 export {
   parseNumericValue,
   parseDateValue,
+  detectDateOrder,
   inferValuesType,
+  inferColumnValuesType,
   uniqueHeaders,
 } from "./values";
+export type { DateOrder } from "./values";

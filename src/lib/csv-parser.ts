@@ -1,6 +1,7 @@
 import Papa, { type ParseResult } from "papaparse";
 import {
   inferValuesType,
+  inferColumnValuesType,
   detectCSVDelimiter,
   uniqueHeaders,
   generateDataSummary as pkgGenerateDataSummary,
@@ -87,14 +88,11 @@ export const parseCSVWithDiagnostics = (
     headers.map((_, i) => row[i] ?? ""),
   );
 
-  const columns: CSVColumn[] = headers.map((name, index) => {
-    const columnValues = dataRows.slice(0, 100).map((row) => row[index] ?? "");
-    return {
-      name,
-      type: inferColumnType(columnValues),
-      index,
-    };
-  });
+  const columns: CSVColumn[] = headers.map((name, index) => ({
+    name,
+    type: inferColumnValuesType(dataRows, index),
+    index,
+  }));
 
   return {
     data: { headers, rows: dataRows, columns, rowCount: dataRows.length },

@@ -1,5 +1,10 @@
 import type { TabularData } from "./types";
-import { BOOLEAN_VALUES, isDateValue, parseNumericValue } from "./values";
+import {
+  BOOLEAN_VALUES,
+  detectDateOrder,
+  isDateValue,
+  parseNumericValue,
+} from "./values";
 
 export interface DataQualityResult {
   rowCount: number;
@@ -15,6 +20,11 @@ export function analyzeDataQuality(data: TabularData): DataQualityResult {
     missing: 0,
     invalid: 0,
   }));
+  const dateOrders = data.columns.map((c) =>
+    c.type === "date"
+      ? detectDateOrder(data.rows.map((row) => row[c.index] ?? ""))
+      : undefined,
+  );
   const seen = new Set<string>();
   let duplicateRows = 0;
   for (const row of data.rows) {
@@ -30,7 +40,7 @@ export function analyzeDataQuality(data: TabularData): DataQualityResult {
       }
       if (
         (col.type === "number" && parseNumericValue(value) === null) ||
-        (col.type === "date" && !isDateValue(value)) ||
+        (col.type === "date" && !isDateValue(value, dateOrders[i])) ||
         (col.type === "boolean" && !BOOLEAN_VALUES.has(value.toLowerCase()))
       )
         stat.invalid++;

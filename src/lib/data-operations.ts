@@ -1,4 +1,9 @@
-import { parseNumericValue, parseDateValue } from "csv-charts-ai";
+import {
+  parseNumericValue,
+  parseDateValue,
+  detectDateOrder,
+  type DateOrder,
+} from "csv-charts-ai";
 import type { CSVData } from "./csv-parser";
 
 export interface ColumnFilter {
@@ -16,7 +21,12 @@ export interface TransformOptions {
   sort: SortConfig | null;
 }
 
-export function compareCells(a: string, b: string, type: string): number {
+export function compareCells(
+  a: string,
+  b: string,
+  type: string,
+  dateOrder?: DateOrder,
+): number {
   if (!a.trim() || !b.trim())
     return !a.trim() === !b.trim() ? 0 : !a.trim() ? 1 : -1;
   if (type === "number") {
@@ -26,8 +36,8 @@ export function compareCells(a: string, b: string, type: string): number {
     if (x === null || y === null) return x === y ? 0 : x === null ? 1 : -1;
   }
   if (type === "date") {
-    const x = parseDateValue(a),
-      y = parseDateValue(b);
+    const x = parseDateValue(a, dateOrder),
+      y = parseDateValue(b, dateOrder);
     if (x !== null && y !== null) return x - y;
     if (x === null || y === null) return x === y ? 0 : x === null ? 1 : -1;
   }
@@ -79,18 +89,7 @@ export function transformData(
         }),
       )
     : data.rows;
-  if (options.sort) {
-    const column = data.columns.find((c) => c.name === options.sort!.column);
-    if (column)
-      rows = [...rows].sort(
-        (a, b) =>
-          compareCells(
-            a[column.index] ?? "",
-            b[column.index] ?? "",
-            column.type,
-          ) * (options.sort!.direction === "desc" ? -1 : 1),
-      );
-  }
+  if (options.sort) rows = sortRows(rows, data.columns, options.sort);
   const columns = data.columns.filter((c) => !excluded.has(c.name));
   if (excluded.size)
     rows = rows.map((row) => columns.map((c) => row[c.index] ?? ""));
@@ -113,13 +112,24 @@ export function tableRows(
         row.some((cell) => cell.toLowerCase().includes(needle)),
       )
     : data.rows;
-  if (!sort) return rows;
-  const col = data.columns.find((c) => c.name === sort.column);
-  return col
-    ? [...rows].sort(
-        (a, b) =>
-          compareCells(a[col.index] ?? "", b[col.index] ?? "", col.type) *
-          (sort.direction === "desc" ? -1 : 1),
-      )
-    : rows;
+  return sort ? sortRows(rows, data.columns, sort) : rows;
+}
+
+function sortRows(
+  rows: string[][],
+  columns: CSVData["columns"],
+  sort: SortConfig,
+): string[][] {
+  const col = columns.find((c) => c.name === sort.column);
+  if (!col) return rows;
+  const order =
+    col.type === "date"
+      ? detectDateOrder(rows.map((row) => row[col.index] ?? ""))
+      : undefined;
+  const sign = sort.direction === "desc" ? -1 : 1;
+  return [...rows].sort(
+    (a, b) =>
+      compareCells(a[col.index] ?? "", b[col.index] ?? "", col.type, order) *
+      sign,
+  );
 }
