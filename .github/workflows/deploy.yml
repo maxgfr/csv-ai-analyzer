@@ -26,8 +26,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
         with:
-          # Deploy the commit that was published, not whatever main points to now
-          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          # main includes the release commit, so the site shows the published version
+          ref: main
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
