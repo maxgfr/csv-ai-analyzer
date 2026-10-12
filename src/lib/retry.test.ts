@@ -55,3 +55,31 @@ it("replaces only the requested action", () => {
   scope.cancelAll();
   expect(summary.aborted).toBe(true);
 });
+it("does not retry network or CORS failures", async () => {
+  for (const message of ["Failed to fetch", "network error", "timeout"]) {
+    const fn = vi.fn().mockRejectedValue(new TypeError(message));
+    await expect(withRetry(fn, 2, 1)).rejects.toThrow(message);
+    expect(fn).toHaveBeenCalledTimes(1);
+  }
+});
+it("classifies on the status code kept in the cause", async () => {
+  const retryable = new Error("Rate limit exceeded", {
+    cause: { statusCode: 429 },
+  });
+  const fn = vi.fn().mockRejectedValueOnce(retryable).mockResolvedValue("ok");
+  expect(await withRetry(fn, 2, 1)).toBe("ok");
+  expect(fn).toHaveBeenCalledTimes(2);
+
+  const final = Object.assign(new Error("Server error 503"), {
+    statusCode: 503,
+    isRetryable: false,
+  });
+  const once = vi.fn().mockRejectedValue(final);
+  await expect(withRetry(once, 2, 1)).rejects.toBe(final);
+  expect(once).toHaveBeenCalledTimes(1);
+});
+it("does not read status codes inside identifiers", async () => {
+  const fn = vi.fn().mockRejectedValue(new Error("request id_5030 failed"));
+  await expect(withRetry(fn, 2, 1)).rejects.toThrow("id_5030");
+  expect(fn).toHaveBeenCalledTimes(1);
+});

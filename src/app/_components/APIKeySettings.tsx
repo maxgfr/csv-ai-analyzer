@@ -206,7 +206,7 @@ export function APIKeySettings({
     ? {
         providerId: selectedProvider.id,
         providerName: selectedProvider.name,
-        providerNpm: selectedProvider.npm ?? "",
+        providerNpm: selectedProvider.npm,
         providerApi:
           selectedProvider.api ?? KNOWN_PROVIDER_API[selectedProvider.id] ?? "",
       }
