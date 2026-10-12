@@ -160,23 +160,16 @@ export function AIAnalysis({
     }
   }, [customHistory, streamingResponse, expandedSections.custom]);
 
-  // Reset suggested questions when data changes (new file loaded)
-  useEffect(() => {
-    suggestionsLoadedRef.current = false;
-    setSuggestedQuestions([]);
-  }, [data]);
+  // A new dataset remounts this component (keyed by the parent), which resets
+  // the suggested questions; a sorted view of the same data keeps them.
 
-  // Sync with external results
+  // Mirror the parent's results, including when they are cleared
   useEffect(() => {
-    if (externalSummary) {
-      setSummaryResult(externalSummary);
-    }
+    setSummaryResult(externalSummary ?? null);
   }, [externalSummary]);
 
   useEffect(() => {
-    if (externalAnomalies) {
-      setAnomaliesResult(externalAnomalies);
-    }
+    setAnomaliesResult(externalAnomalies ?? null);
   }, [externalAnomalies]);
 
   // Compute effective errors: use external error (from page.tsx "Run All") if available,
@@ -358,7 +351,8 @@ export function AIAnalysis({
           ? err.message
           : "Unable to analyze data. Please try again.";
       setSummaryError(errorMessage);
-      onSummaryChange?.(null, errorMessage);
+      // Keep the previous summary on screen next to the error
+      onSummaryChange?.(summaryResult, errorMessage);
       console.error("Data summary failed:", err);
       toast.error("Summary Failed", {
         description: errorMessage,
@@ -410,7 +404,7 @@ export function AIAnalysis({
           ? err.message
           : "Unable to detect anomalies. Please try again.";
       setAnomaliesError(errorMessage);
-      onAnomaliesChange?.(null, errorMessage);
+      onAnomaliesChange?.(anomaliesResult, errorMessage);
       console.error("Anomaly detection failed:", err);
       toast.error("Detection Failed", {
         description: errorMessage,

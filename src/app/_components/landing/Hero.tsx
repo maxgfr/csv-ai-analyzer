@@ -17,7 +17,6 @@ interface HeroProps {
   showSampleDropdown: boolean;
   onSettingsChange: (settings: CSVSettings) => void;
   onApiSettingsChange: (settings: StoredSettings | null) => void;
-  onFileLoaded: (content: string, fileName: string) => void;
   onDataLoaded: (
     data: CSVData,
     fileName: string,
@@ -35,7 +34,6 @@ export function Hero({
   showSampleDropdown,
   onSettingsChange,
   onApiSettingsChange,
-  onFileLoaded,
   onDataLoaded,
   onClearFile,
   onLoadSample,
@@ -126,7 +124,6 @@ export function Hero({
         {/* Upload Section */}
         <div id="upload-section" className="mx-auto mb-12 max-w-4xl">
           <FileUpload
-            onFileLoaded={onFileLoaded}
             onDataLoaded={onDataLoaded}
             csvSettings={csvSettings}
             currentFileName={currentFileName}

@@ -16,7 +16,6 @@ import { useDataTask } from "~/lib/use-data-task";
 import type { ImportSource } from "~/lib/data-tasks";
 
 interface FileUploadProps {
-  onFileLoaded?: (content: string, fileName: string) => void;
   onDataLoaded: (
     data: CSVData,
     fileName: string,

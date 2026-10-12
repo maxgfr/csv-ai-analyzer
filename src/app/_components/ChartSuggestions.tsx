@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import {
   Sparkles,
@@ -33,6 +33,10 @@ interface ChartSuggestionsProps {
   onChartsGenerated: (charts: ChartSuggestion[]) => void;
   externalSuggestions?: ChartSuggestion[] | null;
   externalError?: string | null;
+  /** Called to clear the parent's error when a new generation starts. */
+  onErrorChange?: (error: string | null) => void;
+  /** Charts fixed by "Regenerate with AI", by id: they replace the broken ones. */
+  repairedCharts?: Record<string, ChartSuggestion>;
   disabled?: boolean;
 }
 
@@ -79,6 +83,8 @@ export function ChartSuggestions({
   onChartsGenerated,
   externalSuggestions,
   externalError,
+  onErrorChange,
+  repairedCharts,
   disabled = false,
 }: ChartSuggestionsProps) {
   const requests = useRequestScope(data, apiSettings);
@@ -114,18 +120,18 @@ export function ChartSuggestions({
     }
   }, [disabled, requests]);
 
-  const previousData = useRef(data);
-  // Reset only for a different dataset, including after Suspense reconnects.
+  // A new dataset remounts this component (keyed by the parent); a sorted
+  // view of the same data keeps the suggestions.
+
+  // A repaired chart replaces the broken one, so re-selecting does not bring it back
   useEffect(() => {
-    if (previousData.current === data) return;
-    previousData.current = data;
-    setSuggestions([]);
-    setSelectedCharts(new Set());
-    setError(null);
-    setShowCustomInput(false);
-    setShowManualCreate(false);
-    setCustomPrompt("");
-  }, [data]);
+    if (!repairedCharts) return;
+    setSuggestions((prev) =>
+      prev.some((c) => repairedCharts[c.id] && repairedCharts[c.id] !== c)
+        ? prev.map((c) => repairedCharts[c.id] ?? c)
+        : prev,
+    );
+  }, [repairedCharts]);
 
   // Sync with external suggestions
   useEffect(() => {
@@ -167,6 +173,7 @@ export function ChartSuggestions({
 
     setIsLoading(true);
     setError(null);
+    onErrorChange?.(null);
     toast.loading("Generating Charts", {
       description: "AI is creating chart suggestions...",
       id: "chart-gen-toast",
@@ -225,6 +232,7 @@ export function ChartSuggestions({
 
     setIsCustomLoading(true);
     setError(null);
+    onErrorChange?.(null);
     toast.loading("Creating Custom Chart", {
       description: "Generating chart from your description...",
       id: "custom-chart-toast",

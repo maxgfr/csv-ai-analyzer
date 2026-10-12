@@ -24,8 +24,18 @@ import type { CSVData } from "~/lib/csv-parser";
 interface DataTransformProps {
   data: CSVData;
   onPendingChange?: (pending: boolean) => void;
-  onTransformed?: (data: CSVData | null) => void;
+  /**
+   * Transformed data (null without transforms) and a key of what changes its
+   * content: filters and hidden columns, not the sort order.
+   */
+  onTransformed?: (data: CSVData | null, contentKey: string) => void;
 }
+
+/** Wait before applying filter edits, so typing does not recompute on each key. */
+const FILTER_DEBOUNCE_MS = 300;
+
+const isActiveFilter = (f: ColumnFilter) =>
+  !!f.value || f.operator === "empty" || f.operator === "not_empty";
 
 type Section = "columns" | "sort" | "filters";
 
@@ -90,22 +100,35 @@ export function DataTransform({
     setSortConfig(null);
   };
 
+  const [appliedFilters, setAppliedFilters] = useState(filters);
+  useEffect(() => {
+    const timer = setTimeout(
+      () => setAppliedFilters(filters),
+      FILTER_DEBOUNCE_MS,
+    );
+    return () => clearTimeout(timer);
+  }, [filters]);
+
   const hasTransforms =
-    filters.some(
-      (f) => f.value || f.operator === "empty" || f.operator === "not_empty",
-    ) ||
+    appliedFilters.some(isActiveFilter) ||
     excludedColumns.size > 0 ||
     sortConfig !== null;
+  const contentKey = useMemo(() => {
+    const active = appliedFilters.filter(isActiveFilter);
+    return active.length || excludedColumns.size
+      ? JSON.stringify([active, [...excludedColumns].sort()])
+      : "";
+  }, [appliedFilters, excludedColumns]);
   const task = useMemo(
     () => ({
       data,
       options: {
-        filters,
+        filters: appliedFilters,
         excludedColumns: [...excludedColumns],
         sort: sortConfig,
       },
     }),
-    [data, filters, excludedColumns, sortConfig],
+    [data, appliedFilters, excludedColumns, sortConfig],
   );
   const asyncTask = useDataTask(
     "transform",
@@ -126,8 +149,8 @@ export function DataTransform({
   // Auto-apply transforms to downstream analysis
   useEffect(() => {
     if (!onTransformed || !transformedData) return;
-    onTransformed(hasTransforms ? transformedData : null);
-  }, [transformedData, hasTransforms, onTransformed]);
+    onTransformed(hasTransforms ? transformedData : null, contentKey);
+  }, [transformedData, hasTransforms, contentKey, onTransformed]);
 
   const handleExport = useCallback(() => {
     if (!transformedData) return;
@@ -147,9 +170,7 @@ export function DataTransform({
     URL.revokeObjectURL(url);
   }, [transformedData]);
 
-  const activeFiltersCount = filters.filter(
-    (f) => f.value || f.operator === "empty" || f.operator === "not_empty",
-  ).length;
+  const activeFiltersCount = filters.filter(isActiveFilter).length;
 
   return (
     <div className="glass-card animate-fade-in flex flex-1 flex-col p-6">
