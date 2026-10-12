@@ -47,8 +47,8 @@ export function DataQuality({ data }: { data: CSVData }) {
             </table>
           </div>
           <p className="mt-2 text-xs text-gray-400">
-            Types are inferred from the first 100 rows. Mismatches are checked
-            across all rows.
+            Types are inferred from up to 1,000 values spread over the whole
+            file. Mismatches are checked across all rows.
           </p>
         </>
       )}

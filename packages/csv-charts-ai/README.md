@@ -350,6 +350,8 @@ try {
 }
 ```
 
+`generateDataSummary` gives the model exact figures computed on every row: per-column sums, date ranges, and group totals (sums of numeric columns per value of low-cardinality text columns, and per month or year of the first date column), so questions such as "which product sells the most" are answered from real totals rather than a few sample rows.
+
 Prompts stay bounded: cell values are cut at 200 characters, and chat history sends only the most recent successful turns that fit a character budget (`buildHistoryContext`). Chart suggestions whose columns do not exist in the data are dropped.
 
 React example:
@@ -613,7 +615,7 @@ reports all remaining rows as added/removed. Its optional `duplicateKeys` result
 contains repeated-occurrence counts for inputs `a` and `b`. Content matching uses
 unambiguous keys and consumes each occurrence once.
 
-Chart sorting considers all valid rows before limiting the result. When X and Y
+Chart sorting considers all valid rows before limiting the result. Without an explicit sort, line and area charts over dates or numbers keep the most recent points in x order; other charts keep the largest values ("Top N"). When X and Y
 have the same name, the numeric output gets a distinct key so it cannot overwrite
 the X label. Consumers rendering processed data should use
 `processChartDataMultiSeries(...).yKey`. Multi-series names that conflict with the
