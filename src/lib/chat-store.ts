@@ -2,7 +2,7 @@
 // Uses immutable updates and proper React 18 external store pattern
 // Everything is in-memory only — no localStorage persistence
 
-import { useSyncExternalStore, useCallback, useRef, useEffect } from "react";
+import { useSyncExternalStore, useCallback } from "react";
 import type { ChartSuggestion } from "./ai-service";
 
 type ChatMessage = {
@@ -55,6 +55,20 @@ function notifySubscribers() {
   });
 }
 
+// Streaming chunks arrive faster than the screen refreshes: render at most once per frame
+let frameRequest: number | null = null;
+function notifySubscribersOnNextFrame() {
+  if (frameRequest !== null) return;
+  if (typeof requestAnimationFrame === "undefined") {
+    notifySubscribers();
+    return;
+  }
+  frameRequest = requestAnimationFrame(() => {
+    frameRequest = null;
+    notifySubscribersSync();
+  });
+}
+
 // Immediate notification for critical updates (like streaming)
 function notifySubscribersSync() {
   subscribers.forEach((callback) => {
@@ -72,18 +86,16 @@ export function getChatStore(): ChatStore {
 
 function updateStore(
   updates: Partial<Omit<ChatStore, "version">>,
-  sync = false,
+  notify: "sync" | "frame" | "microtask" | boolean = false,
 ) {
   store = {
     ...store,
     ...updates,
     version: store.version + 1,
   };
-  if (sync) {
-    notifySubscribersSync();
-  } else {
-    notifySubscribers();
-  }
+  if (notify === "frame") notifySubscribersOnNextFrame();
+  else if (notify === true || notify === "sync") notifySubscribersSync();
+  else notifySubscribers();
 }
 
 export function addChatMessage(message: ChatMessage) {
@@ -100,7 +112,7 @@ export function setStreamingResponse(response: string) {
 }
 
 export function appendStreamingResponse(chunk: string) {
-  updateStore({ streamingResponse: store.streamingResponse + chunk }, true);
+  updateStore({ streamingResponse: store.streamingResponse + chunk }, "frame");
 }
 
 export function setCurrentPrompt(prompt: string) {
@@ -164,19 +176,11 @@ export function toModelHistory(history: ChatMessage[]) {
 
 // React hook to use the chat store
 export function useChatStore() {
-  // Keep a ref to the latest store for stable callbacks
-  const storeRef = useRef(store);
-
   const storeState = useSyncExternalStore(
     subscribeToChatStore,
     getChatStore,
     () => initialState, // Server snapshot - use initial state
   );
-
-  // Keep ref updated
-  useEffect(() => {
-    storeRef.current = storeState;
-  }, [storeState]);
 
   const addMessage = useCallback((message: ChatMessage) => {
     addChatMessage(message);

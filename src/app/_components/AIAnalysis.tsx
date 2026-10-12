@@ -1,6 +1,13 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  lazy,
+  Suspense,
+} from "react";
 import { toast } from "sonner";
 import {
   Brain,
@@ -39,7 +46,10 @@ import {
 } from "~/lib/ai-service";
 import type { StoredSettings } from "~/lib/storage";
 import { useChatStore, toModelHistory } from "~/lib/chat-store";
-import { ChartDisplay } from "./ChartDisplay";
+// Recharts is only downloaded when a chat answer has a chart
+const ChartDisplay = lazy(() =>
+  import("./ChartDisplay").then((m) => ({ default: m.ChartDisplay })),
+);
 import { useRequestScope } from "~/lib/use-request-scope";
 import { useAIConfig } from "~/lib/use-ai-config";
 import { downloadBlob } from "~/lib/download";
@@ -999,7 +1009,18 @@ export function AIAnalysis({
                                 <BarChart3 className="h-3.5 w-3.5" />
                                 Generated chart
                               </div>
-                              <ChartDisplay data={data} charts={[item.chart]} />
+                              <Suspense
+                                fallback={
+                                  <p className="text-xs text-gray-500">
+                                    Loading chart…
+                                  </p>
+                                }
+                              >
+                                <ChartDisplay
+                                  data={data}
+                                  charts={[item.chart]}
+                                />
+                              </Suspense>
                             </div>
                           )}
                         </div>
