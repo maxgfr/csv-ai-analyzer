@@ -484,4 +484,24 @@ describe("chart point selection", () => {
     );
     expect(result[0]?.["y"]).toBe(0.000123457);
   });
+
+  it("detects the date order on the whole column before the Top N cut", () => {
+    const data = series("date", [
+      ["01/02/2024", "100"],
+      ["02/01/2024", "90"],
+      ["03/01/2024", "80"],
+      ["01/20/2024", "1"],
+    ]);
+    const result = processChartData(
+      data,
+      makeChart({ type: "line", xAxis: "x", yAxis: "y", aggregation: "sum" }),
+      "none",
+      3,
+    );
+    expect(result.map((p) => p["x"])).toEqual([
+      "01/02/2024",
+      "02/01/2024",
+      "03/01/2024",
+    ]);
+  });
 });

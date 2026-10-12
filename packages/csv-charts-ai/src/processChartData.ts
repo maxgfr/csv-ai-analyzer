@@ -272,7 +272,11 @@ function selectPoints(
   if (!x.chronological) return kept;
 
   const labels = kept.map((p) => String(p[x.xCol] ?? ""));
-  const order = x.xColDef.type === "date" ? detectDateOrder(labels) : undefined;
+  // One day/month order for the whole column, not just the points kept
+  const order =
+    x.xColDef.type === "date"
+      ? detectDateOrder(points.map((p) => String(p[x.xCol] ?? "")))
+      : undefined;
   const keys = labels.map((label) =>
     x.xColDef.type === "date"
       ? parseDateValue(label, order)
