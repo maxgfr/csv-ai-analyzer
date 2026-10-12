@@ -2,7 +2,7 @@
  * React chart components entry point.
  *
  * Import from "csv-charts-ai/charts" to use these components.
- * Requires peer dependencies: react, recharts, lucide-react.
+ * Requires peer dependencies: react, recharts. Icons are built in (see ChartIconProvider).
  *
  * @example
  * ```tsx

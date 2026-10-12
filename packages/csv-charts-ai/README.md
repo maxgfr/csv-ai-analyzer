@@ -20,9 +20,9 @@ pnpm add @ai-sdk/google       # Google Generative AI
 pnpm add @ai-sdk/mistral      # Mistral
 ```
 
-Core dependencies (`ai`, `zod`, `read-excel-file`) are bundled. AI provider SDKs are **optional peer dependencies** — you only install what you use.
+Core dependencies (`ai`, `zod`, `read-excel-file`) are regular dependencies, installed automatically with the package. AI provider SDKs are **optional peer dependencies** — you only install what you use.
 
-**Optional peer dependencies** (only for React chart components): `react`, `recharts`, `lucide-react`.
+**Optional peer dependencies** (only for React chart components): `react`, `recharts`. Icons are built in; see [Custom Icons](#custom-icons).
 
 ## Quick Start
 
@@ -135,7 +135,7 @@ console.log(data.columns);   // [{ name: "name", type: "string", index: 0 }, ...
 
 ## XLSX Parsing
 
-Parse Excel (.xlsx) files into the same `TabularData` format. `read-excel-file` is bundled.
+Parse Excel (.xlsx) files into the same `TabularData` format. `read-excel-file` is a regular dependency, installed with the package.
 
 ### Browser
 
@@ -329,6 +329,29 @@ const charts = await suggestCharts({
 controller.abort();
 ```
 
+A cancelled call rejects with the original abort error (`name === "AbortError"`), untouched, so you can tell it apart from a failure with `isAbortError(error)`. `analyzeData` also cancels its sibling requests as soon as one of them fails.
+
+## Errors and retries
+
+Other failures reject with an `AIRequestError`: `message` is user-facing (rate limit, invalid key, quota, network/CORS…), `cause` holds the provider error, and `statusCode` / `isRetryable` are copied from it when the provider reported them. Classification uses the HTTP status first, then the message text.
+
+The AI SDK retries transient errors itself (2 retries by default). Every AI function accepts `maxRetries`; pass `0` when you run your own retry loop so requests are not retried twice:
+
+```ts
+import { AIRequestError, isAbortError, suggestCharts } from "csv-charts-ai";
+
+try {
+  await suggestCharts({ model, data, signal, maxRetries: 0 });
+} catch (error) {
+  if (isAbortError(error)) return; // cancelled by the user
+  if (error instanceof AIRequestError && error.isRetryable) {
+    // safe to try again later
+  }
+}
+```
+
+Prompts stay bounded: cell values are cut at 200 characters, and chat history sends only the most recent successful turns that fit a character budget (`buildHistoryContext`). Chart suggestions whose columns do not exist in the data are dropped.
+
 React example:
 
 ```tsx
@@ -501,6 +524,9 @@ console.log(result.summary.keyInsights);
 | `generateDataSummary(data)` | Detailed human-readable data summary with sample rows |
 | `summarizeTabularData(data)` | Compact data summary for AI prompt consumption |
 | `getAIErrorMessage(error)` | Extract user-friendly error messages |
+| `AIRequestError` / `toAIError(error)` | Error class thrown by the AI functions, and the wrapper that builds it |
+| `isAbortError(error)` | True for cancellations (abort or timeout) |
+| `buildHistoryContext(history)` | Bounded chat history text used by `askAboutData` |
 | `processChartData(data, chart)` | Process and aggregate chart data |
 | `processChartDataMultiSeries(data, chart)` | Multi-series data processing |
 | `COLORS` | Default 8-color palette |
@@ -541,6 +567,8 @@ diff.rows.forEach(r => {
 
 Match modes: `"index"` (positional), `"key"` (by column value), `"content"` (full row match).
 
+When the two datasets share no column name, nothing can be matched: every row of A is `removed`, every row of B is `added`, and the result has `noCommonColumns: true` so you can explain it to the user.
+
 ## Provider Support
 
 Install only the provider(s) you need and register them at startup (see [Provider Setup](#provider-setup)).
@@ -554,10 +582,6 @@ Install only the provider(s) you need and register them at startup (see [Provide
 | Ollama / vLLM / LM Studio | `@ai-sdk/openai` | `{ apiKey: "", model, baseURL }` |
 | Custom provider | — | `registerProvider("name", factory)` |
 | Any LanguageModel | — | Pass instance directly |
-
-## License
-
-MIT
 
 ## Import diagnostics and local quality
 
@@ -598,10 +622,18 @@ X key are also disambiguated. The React chart components handle these keys.
 Shared helpers `detectCSVDelimiter`, `inferValuesType`, `uniqueHeaders`,
 `parseNumericValue` and `parseDateValue` are available for adapters. Numeric parsing
 rejects partial strings and non-finite values, supports decimal commas, and treats
-commas followed by groups of three digits as thousands separators. Local dates
-use day/month/year when ambiguous; missing/invalid numeric and date values return
-`null`.
+commas followed by groups of three digits as thousands separators (`0,123` is a
+decimal). Dates accept ISO dates and datetimes (`T` or a space; no offset means
+UTC) and local dates; `detectDateOrder(values)` picks day/month or month/day once
+per column, and `parseDateValue(value, order)` applies it. Missing/invalid numeric
+and date values return `null`. Column types are inferred from up to 1,000 values
+spread over the whole file.
 
-`fromSDK` selects a provider's `.chat()` method when an explicit base URL is used
+`fromSDK` selects a provider's `.chat()` method when a custom base URL is used
 and that method exists, supporting OpenAI-compatible Chat Completions servers.
-Ordinary provider configurations retain their SDK's default model API.
+The official OpenAI URL (`https://api.openai.com/v1`) and ordinary provider
+configurations retain their SDK's default model API.
+
+## License
+
+MIT
