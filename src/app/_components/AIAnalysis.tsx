@@ -188,10 +188,24 @@ export function AIAnalysis({
   };
 
   const handleCopy = useCallback(async (text: string, index: number) => {
-    await navigator.clipboard.writeText(text);
-    setCopiedIndex(index);
-    toast.success("Copied to clipboard");
-    setTimeout(() => setCopiedIndex(null), 2000);
+    // navigator.clipboard is missing outside secure contexts (plain http)
+    if (!navigator.clipboard) {
+      toast.error("Copy unavailable", {
+        description:
+          "The clipboard needs a secure (https) page. Select the text to copy it.",
+      });
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedIndex(index);
+      toast.success("Copied to clipboard");
+      setTimeout(() => setCopiedIndex(null), 2000);
+    } catch {
+      toast.error("Copy failed", {
+        description: "The browser blocked clipboard access.",
+      });
+    }
   }, []);
 
   const handleExportReport = useCallback(() => {
