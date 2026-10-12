@@ -103,7 +103,8 @@ export function detectCSVDelimiter(csv: string): string {
   let quoted = false;
   let start = 0;
   for (let i = 0; i < csv.length && firstLines.length < 5; i++) {
-    if (csv[i] === '"') quoted = !quoted;
+    // A quote opens a quoted field only at the start of a field
+    if (csv[i] === '"' && (quoted || isFieldStart(csv, i))) quoted = !quoted;
     if (csv[i] === "\n" && !quoted) {
       firstLines.push(csv.slice(start, i));
       start = i + 1;
@@ -121,8 +122,9 @@ export function detectCSVDelimiter(csv: string): string {
   for (const line of firstLines) {
     let inQuotes = false;
     const counts: Record<string, number> = { ",": 0, ";": 0, "\t": 0, "|": 0 };
-    for (const char of line) {
-      if (char === '"') {
+    for (let i = 0; i < line.length; i++) {
+      const char = line[i]!;
+      if (char === '"' && (inQuotes || isFieldStart(line, i))) {
         inQuotes = !inQuotes;
       } else if (!inQuotes && char in counts) {
         counts[char]!++;
@@ -154,6 +156,19 @@ export function detectCSVDelimiter(csv: string): string {
   return best;
 }
 
+function isFieldStart(text: string, i: number): boolean {
+  if (i === 0) return true;
+  const prev = text[i - 1]!;
+  return prev === "\n" || prev in DELIMITER_CANDIDATES;
+}
+
+const DELIMITER_CANDIDATES: Record<string, true> = {
+  ",": true,
+  ";": true,
+  "\t": true,
+  "|": true,
+};
+
 // ============ Row Parsing (RFC 4180) ============
 
 function parseRows(
@@ -181,7 +196,8 @@ function parseRows(
         field += char;
       }
     } else {
-      if (char === '"') {
+      if (char === '"' && field === "") {
+        // Quotes only open a quoted field at its start; elsewhere they are literal (55" TV)
         inQuotes = true;
       } else if (char === delimiter) {
         current.push(field);
