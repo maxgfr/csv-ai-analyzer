@@ -485,7 +485,7 @@ describe("chart point selection", () => {
     expect(result[0]?.["y"]).toBe(0.000123457);
   });
 
-  it("keeps the most recent points of a time series, in order", () => {
+  it("groups a trend with more dates than the limit by month, in order", () => {
     const data = series("date", [
       ["01/02/2024", "100"],
       ["02/01/2024", "90"],
@@ -498,12 +498,64 @@ describe("chart point selection", () => {
       "none",
       3,
     );
-    // US order is detected on the whole column (01/20 cannot be day-first);
-    // a trend keeps consecutive recent dates, not the 3 largest values
-    expect(result.map((p) => p["x"])).toEqual([
-      "01/20/2024",
-      "02/01/2024",
-      "03/01/2024",
+    // US order is detected on the whole column (01/20 cannot be day-first), so
+    // 01/02 and 01/20 are both in January; no date is dropped
+    expect(result).toEqual([
+      { x: "2024-01", y: 101 },
+      { x: "2024-02", y: 90 },
+      { x: "2024-03", y: 80 },
     ]);
+  });
+
+  it("shows a whole year of daily rows as 12 months, not its last 20 days", () => {
+    const rows: [string, string][] = [];
+    for (let day = 0; day < 366; day += 3) {
+      const date = new Date(Date.UTC(2024, 0, 1 + day));
+      rows.push([date.toISOString().slice(0, 10), "10"]);
+    }
+    const result = processChartData(
+      series("date", rows),
+      makeChart({ type: "line", xAxis: "x", yAxis: "y", aggregation: "sum" }),
+    );
+    expect(result.map((p) => p["x"])).toEqual(
+      Array.from(
+        { length: 12 },
+        (_, m) => `2024-${String(m + 1).padStart(2, "0")}`,
+      ),
+    );
+    expect(result.reduce((sum, p) => sum + (p["y"] as number), 0)).toBe(
+      rows.length * 10,
+    );
+  });
+
+  it("groups by year when there are more months than the limit", () => {
+    const rows: [string, string][] = [];
+    for (let month = 0; month < 36; month++)
+      rows.push([
+        `${2022 + Math.floor(month / 12)}-${String((month % 12) + 1).padStart(2, "0")}-15`,
+        "1",
+      ]);
+    const result = processChartData(
+      series("date", rows),
+      makeChart({ type: "area", xAxis: "x", yAxis: "y", aggregation: "count" }),
+      "none",
+      20,
+    );
+    expect(result).toEqual([
+      { x: "2022", y: 12 },
+      { x: "2023", y: 12 },
+      { x: "2024", y: 12 },
+    ]);
+  });
+
+  it("keeps the dates themselves when they fit the limit", () => {
+    const result = processChartData(
+      series("date", [
+        ["2024-01-02", "1"],
+        ["2024-01-01", "2"],
+      ]),
+      makeChart({ type: "line", xAxis: "x", yAxis: "y", aggregation: "sum" }),
+    );
+    expect(result.map((p) => p["x"])).toEqual(["2024-01-01", "2024-01-02"]);
   });
 });
