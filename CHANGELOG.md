@@ -1,3 +1,10 @@
+## [1.17.1](https://github.com/maxgfr/csv-ai-analyzer/compare/v1.17.0...v1.17.1) (2026-10-16)
+
+
+### Bug Fixes
+
+* AI sees which rows it gets, and never guesses the others ([#13](https://github.com/maxgfr/csv-ai-analyzer/issues/13)) ([bd9a18b](https://github.com/maxgfr/csv-ai-analyzer/commit/bd9a18baa123b584f0316151a9f3c9fc6971c922)), closes [#12](https://github.com/maxgfr/csv-ai-analyzer/issues/12)
+
 # [1.17.0](https://github.com/maxgfr/csv-ai-analyzer/compare/v1.16.0...v1.17.0) (2026-10-16)
 
 
