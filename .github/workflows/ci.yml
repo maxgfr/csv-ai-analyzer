@@ -35,6 +35,10 @@ jobs:
       - name: Install browser
         run: pnpm exec playwright install --with-deps chromium
 
+      # Fallback of the catalog the settings build in the browser (the e2e runs before the build)
+      - name: Write models.json
+        run: pnpm fetch-models
+
       - name: Browser tests
         run: pnpm test:e2e
 
