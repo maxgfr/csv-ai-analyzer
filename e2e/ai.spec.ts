@@ -1,5 +1,8 @@
 import { test, expect, type Page, type Route } from "@playwright/test";
 import { readFileSync } from "node:fs";
+import { storageDump, useStaticCatalog } from "./storage-dump";
+// The catalog comes from public/models.json
+test.beforeEach(({ page }) => useStaticCatalog(page));
 async function configure(page: Page) {
   await page.goto("/");
   await page.getByRole("button", { name: "API settings", exact: true }).click();
@@ -583,4 +586,51 @@ test("requests cancelled by a sort release their spinners and keep the question"
   ).toBeVisible();
   await expect(page.getByText("Analyzing...", { exact: true })).toHaveCount(0);
   release();
+});
+
+test("a remembered key is stored encrypted and still sent after a reload", async ({
+  page,
+  context,
+}) => {
+  const auth: (string | undefined)[] = [];
+  await page.route("**/mock-ai/v1/**", async (route) => {
+    const schema = JSON.stringify(
+      route.request().postDataJSON().response_format,
+    );
+    if (!schema.includes("keyInsights")) return route.fulfill({ status: 500 });
+    auth.push(route.request().headers().authorization);
+    await objectResponse(route, {
+      summary: "Answered with the decrypted key",
+      keyInsights: ["One insight"],
+      dataQuality: "Complete",
+    });
+  });
+  await page.goto("/");
+  await page.getByRole("button", { name: "API settings", exact: true }).click();
+  await page.getByText("Use Custom Endpoint", { exact: true }).click();
+  await page
+    .getByLabel("API Base URL")
+    .fill("http://127.0.0.1:3100/mock-ai/v1");
+  await page.getByLabel("Model Name", { exact: true }).fill("test-model");
+  await page.getByLabel("API Key (optional)").fill("sk-e2e-secret");
+  await page.getByLabel("Remember on this device").check();
+  await page
+    .getByRole("button", { name: "Save Configuration", exact: true })
+    .click();
+  expect(await storageDump(page, context)).not.toContain("sk-e2e-secret");
+
+  await page.reload();
+  await page.getByLabel("Choose CSV or Excel file").setInputFiles({
+    name: "ai.csv",
+    mimeType: "text/csv",
+    buffer: Buffer.from("name,amount\nAlice,20\nBob,2"),
+  });
+  await page.getByRole("button", { name: "Import data", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Generate Summary", exact: true })
+    .click();
+  await expect(
+    page.getByText("Answered with the decrypted key", { exact: true }),
+  ).toBeVisible();
+  expect(auth).toContain("Bearer sk-e2e-secret");
 });

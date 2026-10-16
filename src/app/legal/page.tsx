@@ -139,16 +139,18 @@ export default function LegalPage() {
               <p>This site uses no cookies. What it stores in your browser:</p>
               <ul className="list-inside list-disc space-y-1 text-gray-400">
                 <li>
-                  Your API key: in{" "}
+                  Your API key, never in clear text: it is encrypted (AES-GCM)
+                  with a browser key that cannot be exported, kept in{" "}
+                  <code className="rounded bg-white/10 px-1 text-xs">
+                    IndexedDB
+                  </code>
+                  . The encrypted key stays in{" "}
                   <code className="rounded bg-white/10 px-1 text-xs">
                     sessionStorage
-                  </code>
-                  , for the current tab only, erased when you close it. If you
-                  tick &quot;Remember on this device&quot;, it goes to{" "}
-                  <code className="rounded bg-white/10 px-1 text-xs">
-                    localStorage
                   </code>{" "}
-                  instead and stays until you untick it or clear site data
+                  for the current tab only, erased when you close it. If you
+                  tick &quot;Remember on this device&quot;, it goes to IndexedDB
+                  instead and stays until you press Clear or clear site data
                 </li>
                 <li>
                   Preferences, in{" "}
@@ -160,11 +162,14 @@ export default function LegalPage() {
                 </li>
                 <li>
                   The key is never sent to this site: it only travels, over
-                  HTTPS, to the AI provider you selected
+                  HTTPS, to the AI provider you selected. A custom endpoint
+                  must use HTTPS, or plain HTTP on this computer (Ollama, LM
+                  Studio)
                 </li>
                 <li>
-                  Anyone with access to this browser profile, or a malicious
-                  browser extension, could read stored values: avoid
+                  A dump of the browser&apos;s storage only shows encrypted
+                  bytes, but code running in this page, or a malicious browser
+                  extension, can still have the browser decrypt the key: avoid
                   &quot;Remember&quot; on shared computers
                 </li>
               </ul>

@@ -1,5 +1,8 @@
 import { test, expect, type Page } from "@playwright/test";
 import { readFileSync } from "node:fs";
+import { storageDump, useStaticCatalog } from "./storage-dump";
+// The catalog comes from public/models.json unless a test serves models.dev
+test.beforeEach(({ page }) => useStaticCatalog(page));
 const csv = "name,amount,group\nAlice,20,A\nBob,2,B\nAlice,20,A\nEmpty,,B";
 async function importCSV(page: Page, content = csv) {
   await page.goto("/");
@@ -258,15 +261,17 @@ test("changing provider saves a model of that provider", async ({ page }) => {
   expect(Object.keys(catalog.anthropic!.models)).toContain(saved.model);
 });
 
-test("an API key is forgotten in a new tab unless remembered", async ({
+test("an API key is never stored in clear text, and forgotten in a new tab unless remembered", async ({
   page,
   context,
 }) => {
+  const openSettings = (tab: Page) =>
+    tab.getByRole("button", { name: "API settings", exact: true }).click();
+  const keyField = (tab: Page) =>
+    tab.getByLabel("Provider API Key", { exact: true });
   const saveKey = async (remember: boolean) => {
-    await page
-      .getByRole("button", { name: "API settings", exact: true })
-      .click();
-    await page.getByLabel("Provider API Key", { exact: true }).fill("sk-tab");
+    await openSettings(page);
+    await keyField(page).fill("sk-tab-secret");
     const box = page.getByLabel("Remember on this device");
     if (remember) await box.check();
     else await box.uncheck();
@@ -278,35 +283,45 @@ test("an API key is forgotten in a new tab unless remembered", async ({
       .getByRole("button", { name: "Save Configuration", exact: true })
       .click();
   };
+  /** The key the settings show in a fresh tab, once decrypted. */
   const keyInNewTab = async () => {
     const tab = await context.newPage();
+    await useStaticCatalog(tab);
     await tab.goto("/");
-    const key = await tab.evaluate(
-      () =>
-        sessionStorage.getItem("csv-ai-api-key") ??
-        localStorage.getItem("csv-ai-api-key"),
-    );
+    await expect(
+      tab.getByRole("button", { name: "API settings", exact: true }),
+    ).toBeVisible();
+    await tab.waitForLoadState("networkidle");
+    await openSettings(tab);
+    const key = await keyField(tab).inputValue();
     await tab.close();
     return key;
   };
   await page.goto("/");
   await saveKey(false);
-  expect(
-    await page.evaluate(() => sessionStorage.getItem("csv-ai-api-key")),
-  ).toBe("sk-tab");
-  expect(await keyInNewTab()).toBeNull();
+  expect(await storageDump(page, context)).not.toContain("sk-tab-secret");
+  expect(await keyInNewTab()).toBe("");
   // Reloading the same tab keeps it
   await page.reload();
-  expect(
-    await page.evaluate(() => sessionStorage.getItem("csv-ai-api-key")),
-  ).toBe("sk-tab");
+  await openSettings(page);
+  await expect(keyField(page)).toHaveValue("sk-tab-secret");
+  await page.keyboard.press("Escape");
 
   await saveKey(true);
-  expect(await keyInNewTab()).toBe("sk-tab");
+  const dump = await storageDump(page, context);
+  expect(dump).not.toContain("sk-tab-secret");
+  expect(dump).toContain("CryptoKey extractable=false");
+  expect(await keyInNewTab()).toBe("sk-tab-secret");
   expect(await context.cookies()).toEqual([]);
+
+  // Clear forgets everything
+  await openSettings(page);
+  await page.getByRole("button", { name: "Clear", exact: true }).click();
+  await expect(page.getByText("Settings cleared")).toBeVisible();
+  expect(await keyInNewTab()).toBe("");
 });
 
-test("settings saved in cookies by older versions are migrated", async ({
+test("settings saved in cookies by older versions are migrated, encrypted", async ({
   page,
   context,
 }) => {
@@ -320,19 +335,145 @@ test("settings saved in cookies by older versions are migrated", async ({
   await page.goto("/");
   await expect(page.locator("html")).toHaveClass(/light/);
   await expect
-    .poll(() => page.evaluate(() => localStorage.getItem("csv-ai-api-key")))
-    .toBe("sk-legacy");
-  const saved = await page.evaluate(() =>
-    JSON.parse(localStorage.getItem("csv-ai-settings") ?? "{}"),
-  );
-  expect(saved).toMatchObject({
-    providerId: "anthropic",
-    model: "claude-legacy",
-    rememberKey: true,
-  });
+    .poll(() =>
+      page.evaluate(() =>
+        JSON.parse(localStorage.getItem("csv-ai-settings") ?? "{}"),
+      ),
+    )
+    .toMatchObject({
+      providerId: "anthropic",
+      model: "claude-legacy",
+      rememberKey: true,
+    });
   await expect
     .poll(async () =>
       (await context.cookies()).filter((c) => c.name.startsWith("csv-ai")),
     )
     .toEqual([]);
+  expect(await storageDump(page, context)).not.toContain("sk-legacy");
+  await page.getByRole("button", { name: "API settings", exact: true }).click();
+  await expect(
+    page.getByLabel("Provider API Key", { exact: true }),
+  ).toHaveValue("sk-legacy");
+});
+
+test("a key v1.16 kept in clear text is re-encrypted", async ({
+  page,
+  context,
+}) => {
+  await page.addInitScript(() => {
+    if (sessionStorage.getItem("seeded")) return;
+    sessionStorage.setItem("seeded", "1");
+    localStorage.setItem(
+      "csv-ai-settings",
+      JSON.stringify({
+        model: "gpt-x",
+        providerId: "openai",
+        rememberKey: true,
+      }),
+    );
+    localStorage.setItem("csv-ai-api-key", "sk-clear-text");
+  });
+  await page.goto("/");
+  await expect
+    .poll(() => page.evaluate(() => localStorage.getItem("csv-ai-api-key")))
+    .toBeNull();
+  expect(await storageDump(page, context)).not.toContain("sk-clear-text");
+  await page.getByRole("button", { name: "API settings", exact: true }).click();
+  await expect(
+    page.getByLabel("Provider API Key", { exact: true }),
+  ).toHaveValue("sk-clear-text");
+});
+
+const liveModel = (id: string, name: string) => ({
+  id,
+  name,
+  attachment: false,
+  reasoning: false,
+  tool_call: true,
+  open_weights: false,
+  release_date: "2026-01-01",
+  last_updated: "2026-01-01",
+  modalities: { input: ["text"], output: ["text"] },
+  limit: { context: 200000, output: 8192 },
+});
+const liveProvider = (
+  id: string,
+  name: string,
+  npm: string,
+  model: string,
+) => ({
+  id,
+  name,
+  npm,
+  doc: "",
+  env: [],
+  models: { [model]: liveModel(model, `${name} Live`) },
+});
+
+test("the model catalog is built live from models.dev, with models.json as fallback", async ({
+  page,
+}) => {
+  const requests: string[] = [];
+  await page.route("**/models.json", (route) => {
+    requests.push("models.json");
+    return route.continue();
+  });
+  await page.route("https://openrouter.ai/**", (route) =>
+    route.fulfill({ status: 503, body: "down" }),
+  );
+  await page.route("https://models.dev/**", (route) => {
+    requests.push(route.request().url());
+    return route.fulfill({
+      json: {
+        openai: liveProvider("openai", "OpenAI", "@ai-sdk/openai", "gpt-live"),
+        anthropic: liveProvider(
+          "anthropic",
+          "Anthropic",
+          "@ai-sdk/anthropic",
+          "claude-live",
+        ),
+        google: liveProvider(
+          "google",
+          "Google",
+          "@ai-sdk/google",
+          "gemini-live",
+        ),
+        mistral: liveProvider(
+          "mistral",
+          "Mistral",
+          "@ai-sdk/mistral",
+          "mistral-live",
+        ),
+      },
+    });
+  });
+  await page.goto("/");
+  await page.getByRole("button", { name: "API settings", exact: true }).click();
+  await page.getByLabel("Provider", { exact: true }).selectOption("anthropic");
+  await expect(
+    page.getByRole("button", { name: /Anthropic Live/ }).first(),
+  ).toBeVisible();
+  expect(requests).toEqual(["https://models.dev/api.json"]);
+});
+
+test("a remote plain-http endpoint is refused, a local one is saved", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "API settings", exact: true }).click();
+  await page.getByText("Use Custom Endpoint", { exact: true }).click();
+  await page.getByLabel("API Base URL").fill("http://192.168.1.10/v1");
+  await page.getByLabel("Model Name", { exact: true }).fill("llama3.2");
+  await page
+    .getByRole("button", { name: "Save Configuration", exact: true })
+    .click();
+  await expect(
+    page.getByText("Plain http is only allowed to this computer"),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Ollama", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Save Configuration", exact: true })
+    .click();
+  await expect(page.getByText("Settings Saved")).toBeVisible();
 });

@@ -4,14 +4,13 @@ import type { AIServiceConfig } from "./ai-service";
 import type { StoredSettings } from "./storage";
 
 /**
- * The one rule for "AI features are usable": llm-connect's (an API key, or a
- * custom endpoint, whose key is optional), plus a model name for the endpoint.
+ * The one rule for "AI features are usable": llm-connect's (a provider key, or
+ * a custom endpoint with a model name, whose key is optional).
  */
 export function isAIConfigured(
   settings: StoredSettings | null | undefined,
 ): settings is StoredSettings {
-  if (!settings || !isConfigured(settings)) return false;
-  return !settings.customEndpoint?.trim() || !!settings.customModel?.trim();
+  return isConfigured(settings);
 }
 
 /** Settings as the AI service expects them, for one request. */

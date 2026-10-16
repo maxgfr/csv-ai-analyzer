@@ -1,13 +1,12 @@
 /**
  * Bridge between the app's configuration system and the csv-charts-ai package.
  * All AI logic lives in the package — this file only handles:
- * - Registering AI providers (openai, anthropic, google, mistral, openai-compatible) from llm-connect
- * - Converting app settings (AIServiceConfig) to a LanguageModel via createAppModel
+ * - Converting app settings (AIServiceConfig) to a LanguageModel with llm-connect's
+ *   loadModel, which imports the one SDK the settings need on first use
  * - Re-exporting types for backwards compatibility
  */
 
 import {
-  createAppModel,
   suggestCharts,
   suggestCustomChart,
   repairChart,
@@ -23,17 +22,9 @@ import type {
   AnomalyResult,
   SuggestedQuestion,
 } from "csv-charts-ai";
-import { register as registerProviders } from "llm-connect/providers/all";
+import { languageName, loadModel } from "llm-connect";
 import { withRetry } from "./retry";
-import { type ModelId, type LanguageCode } from "./ai-models";
-
-// ============ Register AI providers ============
-// OpenAI, Anthropic, Google, Mistral and the generic OpenAI-compatible SDK, in
-// llm-connect's registry (the one csv-charts-ai reads). Anthropic gets the
-// browser-access header and keeps a compatible provider's own URL; the generic
-// SDK needs the catalog URL and turns json_schema output into json_object.
-
-registerProviders();
+import { type ModelId } from "./ai-models";
 
 // ============ Re-exports from package ============
 
@@ -59,37 +50,26 @@ export interface AIServiceConfig {
   providerId?: string;
   providerNpm?: string;
   providerApi?: string;
-  language?: LanguageCode;
+  /** Code of the response language, e.g. "fr". */
+  language?: string;
   customEndpoint?: string;
   customModel?: string;
 }
 
-// ============ Language mapping ============
-
-const LANGUAGE_NAMES: Record<LanguageCode, string> = {
-  en: "English",
-  fr: "French",
-  de: "German",
-  es: "Spanish",
-  it: "Italian",
-  pt: "Portuguese",
-  nl: "Dutch",
-  ja: "Japanese",
-  zh: "Chinese",
-};
-
 // ============ Model Resolution ============
 
 /**
- * Converts the app's AIServiceConfig to a LanguageModel
- * using the package's createAppModel.
+ * Converts the app's AIServiceConfig to a LanguageModel. Only the SDK the
+ * settings need is imported, on first use: Anthropic gets the browser-access
+ * header and keeps a compatible provider's own URL; the generic SDK needs the
+ * catalog URL and turns json_schema output into json_object.
  * Custom endpoints (Ollama, LM Studio, etc.) are called directly —
  * the user must enable CORS in the local server settings.
  */
 export function getModel(config: AIServiceConfig) {
-  return createAppModel({
+  return loadModel({
     apiKey: config.apiKey,
-    model: config.model,
+    model: config.model ?? "",
     // A provider without an npm package uses the default (OpenAI) SDK
     providerNpm: config.providerNpm || undefined,
     providerApi: config.providerApi || undefined,
@@ -108,7 +88,7 @@ export const generateChartSuggestions = async (
   dataSummary: string,
   columns: string[],
 ): Promise<ChartConfig[]> => {
-  const model = getModel(config);
+  const model = await getModel(config);
   return withRetry(
     () =>
       suggestCharts({
@@ -125,7 +105,7 @@ export const generateChartSuggestions = async (
         },
         dataSummary,
         signal: config.signal,
-        language: LANGUAGE_NAMES[config.language ?? "en"],
+        language: languageName(config.language),
         ...SDK_RETRIES,
       }),
     2,
@@ -140,7 +120,7 @@ export const generateCustomChart = async (
   userPrompt: string,
   columns: string[],
 ): Promise<ChartConfig | null> => {
-  const model = getModel(config);
+  const model = await getModel(config);
   return withRetry(
     () =>
       suggestCustomChart({
@@ -158,7 +138,7 @@ export const generateCustomChart = async (
         dataSummary,
         prompt: userPrompt,
         signal: config.signal,
-        language: LANGUAGE_NAMES[config.language ?? "en"],
+        language: languageName(config.language),
         ...SDK_RETRIES,
       }),
     2,
@@ -173,7 +153,7 @@ export const repairChartSuggestion = async (
   columns: string[],
   errorContext: string,
 ): Promise<ChartConfig | null> => {
-  const model = getModel(config);
+  const model = await getModel(config);
   return withRetry(
     () =>
       repairChart({
@@ -182,7 +162,7 @@ export const repairChartSuggestion = async (
         columns,
         errorContext,
         signal: config.signal,
-        language: LANGUAGE_NAMES[config.language ?? "en"],
+        language: languageName(config.language),
         ...SDK_RETRIES,
       }),
     2,
@@ -195,7 +175,7 @@ export const generateDataSummary = async (
   config: AIServiceConfig,
   dataSummary: string,
 ): Promise<DataSummaryResult> => {
-  const model = getModel(config);
+  const model = await getModel(config);
   return withRetry(
     () =>
       summarizeData({
@@ -208,7 +188,7 @@ export const generateDataSummary = async (
         },
         dataSummary,
         signal: config.signal,
-        language: LANGUAGE_NAMES[config.language ?? "en"],
+        language: languageName(config.language),
         ...SDK_RETRIES,
       }),
     2,
@@ -225,7 +205,7 @@ export const detectAnomalies = async (
   dataSummary: string,
   data: TabularData,
 ): Promise<AnomalyResult[]> => {
-  const model = getModel(config);
+  const model = await getModel(config);
   return withRetry(
     () =>
       pkgDetectAnomalies({
@@ -234,7 +214,7 @@ export const detectAnomalies = async (
         dataSummary,
         maxRows: ANOMALY_SAMPLE_ROWS,
         signal: config.signal,
-        language: LANGUAGE_NAMES[config.language ?? "en"],
+        language: languageName(config.language),
         ...SDK_RETRIES,
       }),
     2,
@@ -251,7 +231,7 @@ export const streamCustomAnalysis = async (
   onComplete: (fullText: string) => void,
   conversationHistory: Array<{ prompt: string; response: string }> = [],
 ): Promise<void> => {
-  const model = getModel(config);
+  const model = await getModel(config);
   config.signal?.throwIfAborted();
   await streamAskAboutData({
     signal: config.signal,
@@ -265,7 +245,7 @@ export const streamCustomAnalysis = async (
     question: customPrompt,
     dataSummary,
     history: conversationHistory,
-    language: LANGUAGE_NAMES[config.language ?? "en"],
+    language: languageName(config.language),
     ...SDK_RETRIES,
     onChunk: (chunk) => {
       if (!config.signal?.aborted) onChunk(chunk);
@@ -281,7 +261,7 @@ export const fetchSuggestedQuestions = async (
   config: AIServiceConfig,
   dataSummary: string,
 ): Promise<SuggestedQuestion[]> => {
-  const model = getModel(config);
+  const model = await getModel(config);
   return withRetry(
     () =>
       pkgSuggestQuestions({
@@ -294,7 +274,7 @@ export const fetchSuggestedQuestions = async (
         },
         dataSummary,
         signal: config.signal,
-        language: LANGUAGE_NAMES[config.language ?? "en"],
+        language: languageName(config.language),
         ...SDK_RETRIES,
         count: 6,
       }),

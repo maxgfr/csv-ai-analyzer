@@ -5,22 +5,25 @@ import { generateDataSummary, getModel } from "./ai-service";
 
 afterEach(() => vi.unstubAllGlobals());
 
-it("registers the providers in the registry csv-charts-ai reads", () => {
-  for (const name of [
-    "openai",
-    "anthropic",
-    "google",
-    "mistral",
-    "@ai-sdk/openai-compatible",
-  ]) {
-    expect(charts.hasProvider(name)).toBe(true);
-    // One llm-connect copy: the app and csv-charts-ai share its registry
-    expect(charts.getProvider(name)).toBe(llmConnect.getProvider(name));
-  }
+it("loads only the SDK the settings need, in the registry csv-charts-ai reads", async () => {
+  llmConnect.clearProviders();
+  await getModel({
+    apiKey: "k",
+    providerNpm: "@ai-sdk/anthropic",
+    providerApi: "https://api.anthropic.com/v1",
+    model: "claude-x",
+  });
+  expect(charts.hasProvider("anthropic")).toBe(true);
+  // One llm-connect copy: the app and csv-charts-ai share its registry
+  expect(charts.getProvider("anthropic")).toBe(
+    llmConnect.getProvider("anthropic"),
+  );
+  for (const name of ["openai", "google", "mistral", "openai-compatible"])
+    expect(llmConnect.hasProvider(name)).toBe(false);
 });
 
-it("resolves a GLM model selected from the OpenAI-compatible catalog", () => {
-  const model = getModel({
+it("resolves a GLM model selected from the OpenAI-compatible catalog", async () => {
+  const model = await getModel({
     apiKey: "test-placeholder",
     providerId: "zai",
     providerNpm: "@ai-sdk/openai-compatible",
@@ -30,14 +33,14 @@ it("resolves a GLM model selected from the OpenAI-compatible catalog", () => {
   expect(model).toHaveProperty("modelId", "glm-4.7");
 });
 
-it("requires the compatible provider URL rather than sending its key elsewhere", () => {
-  expect(() =>
+it("requires the compatible provider URL rather than sending its key elsewhere", async () => {
+  await expect(
     getModel({
       apiKey: "test-placeholder",
       providerNpm: "@ai-sdk/openai-compatible",
       model: "glm-4.7",
     }),
-  ).toThrow("This provider has no API URL");
+  ).rejects.toThrow("This provider has no API URL");
 });
 
 it.each([
@@ -136,8 +139,12 @@ it("sends Anthropic-compatible keys to the provider's own URL", async () => {
   ).toBe("true");
 });
 
-it("falls back to the default SDK when the provider has no npm package", () => {
-  const model = getModel({ apiKey: "k", providerNpm: "", model: "gpt-4o" });
+it("falls back to the default SDK when the provider has no npm package", async () => {
+  const model = await getModel({
+    apiKey: "k",
+    providerNpm: "",
+    model: "gpt-4o",
+  });
   expect(model).toHaveProperty("modelId", "gpt-4o");
 });
 

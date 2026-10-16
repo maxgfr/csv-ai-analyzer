@@ -107,7 +107,8 @@ const CSP = [
   "default-src 'self'",
   `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline'",
-  "connect-src *",
+  // AI calls go straight to the provider (https) or to a local server
+  "connect-src 'self' https: http://localhost:* http://127.0.0.1:*",
   "img-src 'self' data: blob:",
   "font-src 'self' data:",
   "form-action 'self'",
