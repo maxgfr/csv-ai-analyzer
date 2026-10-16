@@ -164,11 +164,108 @@ describe("analyze module", () => {
       const callArgs = mockedGenerate.mock.calls[0]?.[0] as { prompt: string };
       const prompt = callArgs.prompt;
       // Prompt should contain the CSV section with proper escaping
-      expect(prompt).toContain("Data to analyze (CSV format):");
+      expect(prompt).toContain("Data to analyze (CSV format): all 3 rows.");
       // "New York, NY" contains a comma, must be quoted in CSV
       expect(prompt).toContain('"New York, NY"');
       // Charlie "The Great" contains quotes, must be double-escaped
       expect(prompt).toContain('"Charlie ""The Great"""');
+    });
+  });
+
+  describe("detectAnomalies on a sample", () => {
+    it("says the rows are a sample of a larger dataset, not truncated data", async () => {
+      const { generateObject } = await import("ai");
+      const mockedGenerate = vi.mocked(generateObject);
+      mockedGenerate.mockResolvedValueOnce({
+        object: { anomalies: [] },
+      } as never);
+      const rows = Array.from({ length: 80 }, (_, i) => [
+        `EMP${1000 + i}`,
+        String(i * 10),
+        "Paris",
+      ]);
+      const { detectAnomalies } = await import("./analyze");
+      await detectAnomalies({
+        model: { apiKey: "sk-test", model: "gpt-4o" },
+        data: { ...sampleData, rows, rowCount: 80 },
+      });
+
+      const { prompt, system } = mockedGenerate.mock.calls[0]?.[0] as {
+        prompt: string;
+        system: string;
+      };
+      expect(prompt).toContain(
+        "Data to analyze (CSV format): rows 1 to 50 of 80. The other 30 rows are left out on purpose; the summary above covers all 80.",
+      );
+      expect(prompt).toContain("EMP1049");
+      expect(prompt).not.toContain("EMP1050,");
+      expect(system).toContain("Never report the number of rows");
+    });
+  });
+
+  describe("chat rows", () => {
+    const employees = (count: number): TabularData => ({
+      ...sampleData,
+      rows: Array.from({ length: count }, (_, i) => [
+        `EMP${1000 + i}`,
+        String(40000 + i),
+        "Paris",
+      ]),
+      rowCount: count,
+    });
+
+    it("sends every row of a small file, and forbids guessing unseen values", async () => {
+      const { generateText } = await import("ai");
+      const mocked = vi.mocked(generateText);
+      mocked.mockResolvedValueOnce({ text: "ok" } as never);
+      const { askAboutData } = await import("./analyze");
+      await askAboutData({
+        model: { apiKey: "sk-test", model: "gpt-4o" },
+        data: employees(80),
+        question: "Salary of EMP1060?",
+      });
+      const { prompt, system } = mocked.mock.calls[0]?.[0] as {
+        prompt: string;
+        system: string;
+      };
+      expect(prompt).toContain("Data to analyze (CSV format): all 80 rows.");
+      expect(prompt).toContain("EMP1060,40060,Paris");
+      expect(system).toContain("Never infer, extrapolate or guess");
+    });
+
+    it("sends the first rows that fit the budget, labelled as such", async () => {
+      const { generateText } = await import("ai");
+      const mocked = vi.mocked(generateText);
+      mocked.mockResolvedValueOnce({ text: "ok" } as never);
+      const { askAboutData } = await import("./analyze");
+      await askAboutData({
+        model: { apiKey: "sk-test", model: "gpt-4o" },
+        data: employees(5000),
+        question: "Anything?",
+      });
+      const { prompt } = mocked.mock.calls[0]?.[0] as { prompt: string };
+      const heading = prompt.match(/rows 1 to (\d+) of 5000\./);
+      expect(heading).not.toBeNull();
+      const shown = Number(heading![1]);
+      expect(shown).toBeGreaterThan(100);
+      expect(prompt).toContain(`EMP${1000 + shown - 1},`);
+      expect(prompt).not.toContain(`EMP${1000 + shown},`);
+      expect(prompt.length).toBeLessThan(40_000);
+    });
+
+    it("sends no rows when asked not to, or when there are none", async () => {
+      const { generateText } = await import("ai");
+      const mocked = vi.mocked(generateText);
+      mocked.mockResolvedValue({ text: "ok" } as never);
+      const { askAboutData } = await import("./analyze");
+      await askAboutData({
+        model: { apiKey: "sk-test", model: "gpt-4o" },
+        data: employees(80),
+        question: "?",
+        maxRowChars: 0,
+      });
+      const { prompt } = mocked.mock.calls[0]?.[0] as { prompt: string };
+      expect(prompt).not.toContain("Data to analyze");
     });
   });
 

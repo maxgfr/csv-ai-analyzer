@@ -84,10 +84,25 @@ Look for:
 - Inconsistent formatting
 - Invalid dates or formats
 
-Analyze ALL rows provided. Return empty array if no anomalies found.`;
+Analyze ALL rows provided. Return empty array if no anomalies found.
+
+The rows provided may be only the first rows of a larger dataset: the others are
+left out on purpose, and the summary statistics and group totals cover every row.
+Never report the number of rows, missing or truncated rows, or totals that the
+rows provided do not add up to: report only problems in the values you see.`;
 
 const questionSystemPrompt = (language?: string) =>
-  `You are a data analysis expert.${language ? ` Respond in ${language}.` : ""}\n\nThe user will ask questions about a CSV dataset. Respond clearly and precisely.`;
+  `You are a data analysis expert.${language ? ` Respond in ${language}.` : ""}
+
+The user will ask questions about a CSV dataset. Respond clearly and precisely.
+
+You receive a summary computed on every row (column statistics, group totals)
+and the rows themselves, all of them or the first ones when the file is large.
+- Totals, averages and counts over the whole dataset: take them from the summary.
+- Individual rows and values: use only the rows provided. When a question needs
+  a row or a value you were not given, say that it is not in the rows you
+  received. Never infer, extrapolate or guess a value you cannot see.
+- Rows left out of a large file are left out on purpose: the data is not truncated.`;
 
 // ============ Helper ============
 
@@ -111,6 +126,40 @@ function buildSampleCSV(data: TabularData, maxRows = 50): string {
     .map((row) => row.map(cell).join(","))
     .join("\n");
   return `${header}\n${rows}`;
+}
+
+/** Character budget of the rows sent with a chat question. */
+export const CHAT_ROWS_MAX_CHARS = 20_000;
+
+/**
+ * The rows sent with a chat question, as CSV under a heading saying which
+ * ones: all of them, or the first rows that fit `maxChars`. Empty without rows.
+ */
+function rowsForChat(data: TabularData, maxChars: number): string {
+  if (data.rows.length === 0 || maxChars <= 0) return "";
+  const cell = (value: string) => escapeCSVField(clipCell(value));
+  const lines = [data.headers.map(cell).join(",")];
+  let size = lines[0]!.length;
+  for (const row of data.rows) {
+    const line = row.map(cell).join(",");
+    if (size + line.length + 1 > maxChars && lines.length > 1) break;
+    lines.push(line);
+    size += line.length + 1;
+  }
+  return `${sampleHeading(data, lines.length - 1)}\n${lines.join("\n")}\n\n`;
+}
+
+/**
+ * The heading of the rows sent to the model. When they are a sample,
+ * it says so: otherwise the model, told the dataset has more rows, reports the
+ * sample itself as truncated data.
+ */
+function sampleHeading(data: TabularData, maxRows: number): string {
+  const total = Math.max(data.rowCount, data.rows.length);
+  const shown = Math.min(maxRows, data.rows.length);
+  return shown < total
+    ? `Data to analyze (CSV format): rows 1 to ${shown} of ${total}. The other ${total - shown} rows are left out on purpose; the summary above covers all ${total}.`
+    : `Data to analyze (CSV format): all ${total} rows.`;
 }
 
 /** One question/answer pair of a chat about the data. */
@@ -256,7 +305,7 @@ export async function detectAnomalies(
       model,
       schema: AnomaliesResponseSchema,
       system: anomalySystemPrompt(language),
-      prompt: `Data summary:\n${dataSummary}\n\nData to analyze (CSV format):\n${sampleCSV}`,
+      prompt: `Data summary:\n${dataSummary}\n\n${sampleHeading(data, maxRows)}\n${sampleCSV}`,
       temperature,
       ...(signal && { abortSignal: signal }),
       ...(maxRetries !== undefined && { maxRetries }),
@@ -275,6 +324,8 @@ export interface AskAboutDataOptions {
   dataSummary?: string;
   /** Previous conversation messages for context (the latest turns that fit a budget are sent) */
   history?: ChatHistoryItem[];
+  /** Characters of rows sent with the question, as CSV (default {@link CHAT_ROWS_MAX_CHARS}, 0 for none). */
+  maxRowChars?: number;
   language?: string;
   temperature?: number;
   /** AbortSignal to cancel the request */
@@ -314,11 +365,12 @@ export async function askAboutData(
     const dataSummary = options.dataSummary ?? summarizeTabularData(data);
     const model = resolveModel(options.model);
     const contextPrompt = buildHistoryContext(history);
+    const rows = rowsForChat(data, options.maxRowChars ?? CHAT_ROWS_MAX_CHARS);
 
     const { text } = await generateText({
       model,
       system: questionSystemPrompt(language),
-      prompt: `Here is the data:\n\n${dataSummary}\n\n${contextPrompt}User question: ${question}`,
+      prompt: `Here is the data:\n\n${dataSummary}\n\n${rows}${contextPrompt}User question: ${question}`,
       temperature,
       ...(signal && { abortSignal: signal }),
       ...(maxRetries !== undefined && { maxRetries }),
@@ -374,13 +426,14 @@ export async function streamAskAboutData(
     const dataSummary = options.dataSummary ?? summarizeTabularData(data);
     const model = resolveModel(options.model);
     const contextPrompt = buildHistoryContext(history);
+    const rows = rowsForChat(data, options.maxRowChars ?? CHAT_ROWS_MAX_CHARS);
 
     let streamError: Error | null = null;
 
     const result = streamText({
       model,
       system: questionSystemPrompt(language),
-      prompt: `Here is the data:\n\n${dataSummary}\n\n${contextPrompt}User question: ${question}`,
+      prompt: `Here is the data:\n\n${dataSummary}\n\n${rows}${contextPrompt}User question: ${question}`,
       temperature,
       ...(signal && { abortSignal: signal }),
       ...(maxRetries !== undefined && { maxRetries }),

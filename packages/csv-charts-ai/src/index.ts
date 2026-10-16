@@ -89,6 +89,7 @@ export {
   buildHistoryContext,
   MAX_HISTORY_TURNS,
   MAX_HISTORY_CHARS,
+  CHAT_ROWS_MAX_CHARS,
 } from "./analyze";
 export type {
   DataSummaryResult,
