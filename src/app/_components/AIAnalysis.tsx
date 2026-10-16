@@ -491,6 +491,7 @@ export function AIAnalysis({
           }
         },
         toModelHistory(customHistory),
+        data,
       );
     } catch (err) {
       if (config.signal?.aborted) {

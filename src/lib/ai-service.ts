@@ -230,13 +230,15 @@ export const streamCustomAnalysis = async (
   onChunk: (chunk: string) => void,
   onComplete: (fullText: string) => void,
   conversationHistory: Array<{ prompt: string; response: string }> = [],
+  /** The rows the question is about: sent within a budget, so the model reads values instead of guessing them. */
+  data?: TabularData,
 ): Promise<void> => {
   const model = await getModel(config);
   config.signal?.throwIfAborted();
   await streamAskAboutData({
     signal: config.signal,
     model,
-    data: {
+    data: data ?? {
       headers: ["_"],
       rows: [],
       columns: [{ name: "_", type: "string", index: 0 }],
