@@ -1,3 +1,10 @@
+# [1.16.0](https://github.com/maxgfr/csv-ai-analyzer/compare/v1.15.5...v1.16.0) (2026-10-16)
+
+
+### Features
+
+* AI settings on llm-connect, catalog from llm-models ([#9](https://github.com/maxgfr/csv-ai-analyzer/issues/9)) ([b7a8327](https://github.com/maxgfr/csv-ai-analyzer/commit/b7a8327cbdb8ce1fbbcc17cae7f57374371eb53c)), closes [#8](https://github.com/maxgfr/csv-ai-analyzer/issues/8)
+
 ## [1.15.5](https://github.com/maxgfr/csv-ai-analyzer/compare/v1.15.4...v1.15.5) (2026-10-12)
 
 
