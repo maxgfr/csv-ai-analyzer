@@ -7,6 +7,10 @@ import {
 import { generateObject, type LanguageModel } from "ai";
 import { z } from "zod";
 import type { ChartConfig, TabularData } from "./types";
+import {
+  createModel as createSettingsModel,
+  type LlmSettings,
+} from "llm-connect";
 import { requireProvider } from "./providers";
 
 // ============ Input Validation Schemas ============
@@ -42,23 +46,14 @@ export const TabularDataSchema = z.object({
 });
 
 /**
- * Extended config for multi-provider apps.
+ * Extended config for multi-provider apps: llm-connect's `LlmSettings`, with
+ * `model` optional (a custom endpoint names its model in `customModel`).
  * Supports provider selection via npm package name (e.g. "@ai-sdk/anthropic").
  */
-export interface AppModelConfig {
-  apiKey: string;
+export type AppModelConfig = Omit<LlmSettings, "model"> & {
+  /** Model id of the catalog provider */
   model?: string;
-  /** Provider npm package name (e.g. "@ai-sdk/anthropic", "@ai-sdk/google") */
-  providerNpm?: string;
-  /** Provider base API URL (for OpenAI-compatible endpoints) */
-  providerApi?: string;
-  /** Custom endpoint URL (takes priority over providerNpm) */
-  customEndpoint?: string;
-  /** Custom model name (takes priority over model) */
-  customModel?: string;
-  /** Custom headers to pass to the provider (e.g. Anthropic browser access header) */
-  headers?: Record<string, string>;
-}
+};
 
 /** Model input: either a simple config object, an app config, or a pre-built LanguageModel */
 export type ModelInput = AIConfig | AppModelConfig | LanguageModel;
@@ -548,12 +543,13 @@ export function createModel(config: AIConfig): LanguageModel {
 }
 
 /**
- * Create a LanguageModel from an AppModelConfig.
- * Handles multi-provider apps with providerNpm-based routing and
- * custom endpoints.
+ * Create a LanguageModel from an AppModelConfig, through llm-connect's
+ * `createModel`: a custom endpoint goes through the "openai" provider with
+ * Chat Completions; otherwise the provider identified by `providerNpm`
+ * (`"openai"` when missing) is called at `providerApi`.
  *
- * The provider identified by `providerNpm` (or `"openai"` by default)
- * must be registered beforehand via {@link registerProvider}.
+ * That provider must be registered beforehand via {@link registerProvider}
+ * (or `register()` from `llm-connect/providers/*`).
  *
  * @example
  * ```ts
@@ -565,26 +561,7 @@ export function createModel(config: AIConfig): LanguageModel {
  * ```
  */
 export function createAppModel(config: AppModelConfig): LanguageModel {
-  const modelName = config.customModel ?? config.model ?? "";
-
-  if (config.customEndpoint) {
-    const factory = requireProvider("openai");
-    return factory({
-      apiKey: config.apiKey || "",
-      model: config.customModel ?? modelName,
-      baseURL: config.customEndpoint,
-      ...(config.headers && { headers: config.headers }),
-    });
-  }
-
-  const providerName = config.providerNpm ?? "openai";
-  const factory = requireProvider(providerName);
-  return factory({
-    apiKey: config.apiKey,
-    model: modelName,
-    ...(config.providerApi && { baseURL: config.providerApi }),
-    ...(config.headers && { headers: config.headers }),
-  });
+  return createSettingsModel({ ...config, model: config.model ?? "" });
 }
 
 function isAppModelConfig(input: unknown): input is AppModelConfig {
