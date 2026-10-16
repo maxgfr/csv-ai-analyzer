@@ -1,81 +1,59 @@
 import Cookies from "js-cookie";
-import type { SettingsStorage } from "llm-connect";
 import {
-  DEFAULT_MODEL,
-  DEFAULT_PROVIDER_ID,
-  SUPPORTED_LANGUAGES,
-  getBrowserLanguage,
-  type ModelId,
-  type ProviderId,
-  type LanguageCode,
-} from "./ai-models";
+  browserLanguage,
+  secureStorage,
+  toLanguageCode,
+  type LlmSettings,
+  type SettingsStorage,
+} from "llm-connect";
+import { DEFAULT_MODEL, DEFAULT_PROVIDER_ID } from "./ai-models";
 
-export interface StoredSettings {
-  apiKey: string;
-  model: ModelId;
-  providerId?: ProviderId;
-  providerName?: string;
-  providerNpm?: string;
-  providerApi?: string;
-  language: LanguageCode;
-  customEndpoint?: string;
-  customModel?: string;
+export interface StoredSettings extends LlmSettings {
   /**
-   * Keep the API key on this device (localStorage). Otherwise it lives in
-   * sessionStorage and is forgotten when the tab closes.
+   * Keep the API key on this device (encrypted in IndexedDB). Otherwise it is
+   * kept encrypted in sessionStorage and forgotten when the tab closes.
    */
   rememberKey?: boolean;
 }
 
 /** Non-secret preferences, in localStorage. */
 const SETTINGS_KEY = "csv-ai-settings";
-/** The API key: sessionStorage by default, localStorage when remembered. */
-const API_KEY_KEY = "csv-ai-api-key";
+/** IndexedDB database of the encryption key and a remembered API key. */
+const DB_NAME = "csv-ai-secrets";
+/** Where v1.16 kept the API key in clear text (sessionStorage, or localStorage when remembered). */
+const CLEAR_KEY_KEY = "csv-ai-api-key";
+
+// The API key is never stored in clear text: AES-GCM under a non-extractable
+// CryptoKey kept in IndexedDB (see llm-connect's secureStorage)
+const createStorage = () =>
+  secureStorage({ prefsKey: SETTINGS_KEY, dbName: DB_NAME });
+let storage = createStorage();
+
+/** Drops the decrypted key kept in memory, as a page reload would. */
+export function resetSettingsCacheForTests() {
+  storage = createStorage();
+}
 
 // ============ Safe Web Storage access ============
 // Storage can be missing or throw (private mode, blocked site data, quota).
 
-function getStorage(kind: "localStorage" | "sessionStorage"): Storage | null {
+type Kind = "localStorage" | "sessionStorage";
+
+function read(kind: Kind, key: string) {
   try {
-    return typeof window === "undefined" ? null : window[kind];
+    return typeof window === "undefined" ? null : window[kind].getItem(key);
   } catch {
     return null;
   }
 }
 
-function read(kind: "localStorage" | "sessionStorage", key: string) {
+function remove(kind: Kind, key: string) {
   try {
-    return getStorage(kind)?.getItem(key) ?? null;
-  } catch {
-    return null;
-  }
-}
-
-function write(
-  kind: "localStorage" | "sessionStorage",
-  key: string,
-  value: string,
-) {
-  try {
-    getStorage(kind)?.setItem(key, value);
-  } catch {
-    // Storage full or blocked: the settings only last for this page
-  }
-}
-
-function remove(kind: "localStorage" | "sessionStorage", key: string) {
-  try {
-    getStorage(kind)?.removeItem(key);
+    if (typeof window !== "undefined") window[kind].removeItem(key);
   } catch {
     // Nothing to clean up
   }
 }
-
-const isLanguage = (value: unknown): value is LanguageCode =>
-  SUPPORTED_LANGUAGES.some((l) => l.code === value);
-
-const optionalString = (value: unknown) =>
-  typeof value === "string" && value ? value : undefined;
 
 // ============ Legacy cookies (before v1.16) ============
 // Cookies were sent to the host with every request: migrate them once, then delete them.
@@ -108,7 +86,7 @@ export function removeLegacyCookie(name: string) {
   }
 }
 
-function migrateLegacyCookies() {
+async function migrateLegacyCookies() {
   let values: Partial<Record<keyof typeof LEGACY_COOKIES, string>>;
   try {
     values = Object.fromEntries(
@@ -123,16 +101,14 @@ function migrateLegacyCookies() {
   // Only fill what the new storage does not already hold
   if (!read("localStorage", SETTINGS_KEY)) {
     const apiKey = values.apiKey ?? "";
-    saveApiSettings({
+    await saveApiSettings({
       apiKey,
       model: values.model ?? DEFAULT_MODEL,
       providerId: values.providerId ?? DEFAULT_PROVIDER_ID,
       providerName: values.providerName,
       providerNpm: values.providerNpm,
       providerApi: values.providerApi,
-      language: isLanguage(values.language)
-        ? values.language
-        : getBrowserLanguage(),
+      language: values.language,
       customEndpoint: values.customEndpoint,
       customModel: values.customModel,
       // People who already saved a key stay signed in after the upgrade
@@ -142,78 +118,64 @@ function migrateLegacyCookies() {
   for (const name of Object.values(LEGACY_COOKIES)) removeLegacyCookie(name);
 }
 
+// ============ Clear-text key (v1.16) ============
+// Re-encrypt it with the same "remember" choice, then delete the clear copy.
+
+async function migrateClearTextKey() {
+  const session = read("sessionStorage", CLEAR_KEY_KEY);
+  const local = read("localStorage", CLEAR_KEY_KEY);
+  const apiKey = session ?? local;
+  if (apiKey === null) return;
+  const saved = await storage.loadDraft?.();
+  await saveApiSettings({
+    ...(saved ?? { model: DEFAULT_MODEL, providerId: DEFAULT_PROVIDER_ID }),
+    apiKey,
+    rememberKey: session === null,
+  });
+  remove("sessionStorage", CLEAR_KEY_KEY);
+  remove("localStorage", CLEAR_KEY_KEY);
+}
+
 // ============ Public API ============
 
-export const saveApiSettings = (settings: StoredSettings): void => {
+export const saveApiSettings = async (
+  settings: StoredSettings,
+): Promise<void> => {
   if (typeof window === "undefined") return;
-  const { apiKey, ...preferences } = settings;
-  write(
-    "localStorage",
-    SETTINGS_KEY,
-    JSON.stringify({ ...preferences, rememberKey: !!settings.rememberKey }),
-  );
-  remove("localStorage", API_KEY_KEY);
-  remove("sessionStorage", API_KEY_KEY);
-  if (apiKey)
-    write(
-      settings.rememberKey ? "localStorage" : "sessionStorage",
-      API_KEY_KEY,
-      apiKey,
-    );
+  const { rememberKey, ...rest } = settings;
+  const language = rest.language ? toLanguageCode(rest.language) : undefined;
+  await storage.save({ ...rest, language }, { rememberKey: !!rememberKey });
 };
 
-export const loadApiSettings = (): StoredSettings | null => {
+/** Saved settings that can call a model, or null. */
+export const loadApiSettings = async (): Promise<StoredSettings | null> => {
   if (typeof window === "undefined") return null;
-  migrateLegacyCookies();
-
-  let preferences: Record<string, unknown> = {};
-  try {
-    const parsed: unknown = JSON.parse(
-      read("localStorage", SETTINGS_KEY) ?? "{}",
-    );
-    if (parsed && typeof parsed === "object")
-      preferences = parsed as Record<string, unknown>;
-  } catch {
-    // Corrupted preferences: start from the defaults
-  }
-  const apiKey =
-    read("sessionStorage", API_KEY_KEY) ??
-    read("localStorage", API_KEY_KEY) ??
-    "";
-  const customEndpoint = optionalString(preferences.customEndpoint);
-  if (!apiKey && !customEndpoint) return null;
-
+  await migrateLegacyCookies();
+  await migrateClearTextKey();
+  const saved = await storage.load();
+  if (!saved) return null;
   return {
-    apiKey,
-    model: optionalString(preferences.model) ?? DEFAULT_MODEL,
-    providerId: optionalString(preferences.providerId) ?? DEFAULT_PROVIDER_ID,
-    providerName: optionalString(preferences.providerName),
-    providerNpm: optionalString(preferences.providerNpm),
-    providerApi: optionalString(preferences.providerApi),
-    language: isLanguage(preferences.language)
-      ? preferences.language
-      : getBrowserLanguage(),
-    customEndpoint,
-    customModel: optionalString(preferences.customModel),
-    rememberKey: preferences.rememberKey === true,
+    ...saved,
+    providerId: saved.providerId ?? DEFAULT_PROVIDER_ID,
+    language: saved.language
+      ? toLanguageCode(saved.language)
+      : browserLanguage(),
+    rememberKey: saved.rememberKey === true,
   };
 };
 
-export const clearApiSettings = (): void => {
+export const clearApiSettings = async (): Promise<void> => {
   if (typeof window === "undefined") return;
-  remove("localStorage", SETTINGS_KEY);
-  remove("localStorage", API_KEY_KEY);
-  remove("sessionStorage", API_KEY_KEY);
+  remove("sessionStorage", CLEAR_KEY_KEY);
+  remove("localStorage", CLEAR_KEY_KEY);
   for (const name of Object.values(LEGACY_COOKIES)) removeLegacyCookie(name);
+  await storage.clear();
 };
 
-/**
- * These settings as llm-connect's settings storage: the same keys, the legacy
- * cookie migration, and the response language kept with the AI settings.
- */
-export const apiSettingsStorage: SettingsStorage<{ language: LanguageCode }> = {
-  load: async () => loadApiSettings(),
-  save: async (settings, { rememberKey }) =>
+/** These settings as llm-connect's settings storage: same keys, migrations included. */
+export const apiSettingsStorage: SettingsStorage = {
+  load: loadApiSettings,
+  save: (settings, { rememberKey }) =>
     saveApiSettings({ ...settings, rememberKey }),
-  clear: async () => clearApiSettings(),
+  clear: clearApiSettings,
 };

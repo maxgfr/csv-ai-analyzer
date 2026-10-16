@@ -39,7 +39,7 @@ A modern, elegant application to analyze your CSV and Excel (.xlsx) files with A
 
 ### 🔒 Privacy
 - **Local or direct-to-provider**: the app does not store your data. Processing can happen in your browser when using a self-hosted/custom endpoint; otherwise API calls go directly to the chosen AI provider.
-- **API keys stored locally** in your browser
+- **API keys stored locally and encrypted** in your browser (AES-GCM, non-extractable key), never in clear text
 - **No tracking** or third-party cookies
 
 ### 🐳 Self-Hostable
@@ -65,22 +65,15 @@ pnpm dev
 
 The application will be accessible at [http://localhost:3000](http://localhost:3000)
 
-### Auto-updating the models catalog
+### The models catalog
 
-This project ships a static `public/models.json`: the providers the app can call and their non-deprecated models, with a recommended model per provider. `llm-models catalog` builds it from [models.dev](https://models.dev).
+The settings build the catalog in the browser when they open, from [models.dev](https://models.dev) and OpenRouter: the providers the app can call and their non-deprecated models, with a recommended model per provider ([`llm-models`](https://www.npmjs.com/package/llm-models), loaded on demand by llm-connect's `liveCatalog`). Nothing to commit or schedule.
 
-- You can regenerate the file locally with:
+`public/models.json` is the offline fallback. It is not committed: `pnpm build` writes it first (`prebuild`), and a failure there does not stop the build. To write it by hand:
 
 ```bash
 pnpm run fetch-models
 ```
-
-- A GitHub Action is configured to run this command once per day and automatically commit `public/models.json` if it changes.
-
-  - Workflow: `.github/workflows/update-models.yml`
-  - Runs daily (UTC 06:00) and is also triggerable manually with `workflow_dispatch`.
-
-If you'd like the file to be refreshed more/less often you can update the cron schedule in the workflow file.
 
 ### Option 2: Docker (Self-Hosting)
 

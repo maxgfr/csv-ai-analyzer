@@ -56,3 +56,6 @@ yarn-error.log*
 # Browser tests
 /test-results/
 /playwright-report/
+
+# model catalog fallback, written at build time (pnpm fetch-models)
+/public/models.json

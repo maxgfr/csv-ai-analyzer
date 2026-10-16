@@ -16,31 +16,35 @@ import {
   Loader2,
   Zap,
 } from "lucide-react";
-import { ENDPOINT_PRESETS, isConfigured } from "llm-connect";
+import {
+  ENDPOINT_PRESETS,
+  isConfigured,
+  liveCatalog,
+  RESPONSE_LANGUAGES,
+} from "llm-connect";
 import { useLlmStore } from "llm-connect/react";
-import {
-  apiSettingsStorage,
-  loadApiSettings,
-  type StoredSettings,
-} from "~/lib/storage";
-import {
-  DEFAULT_MODEL,
-  DEFAULT_PROVIDER_ID,
-  SUPPORTED_LANGUAGES,
-  getBrowserLanguage,
-  type LanguageCode,
-} from "~/lib/ai-models";
-
-/** Providers listed first in the selector, and marked as recommended. */
-const RECOMMENDED_PROVIDERS = ["google", "anthropic", "mistral", "openai"];
+import { apiSettingsStorage, type StoredSettings } from "~/lib/storage";
 
 /** Local OpenAI-compatible servers offered as quick setups. */
 const LOCAL_PRESETS = [ENDPOINT_PRESETS.ollama, ENDPOINT_PRESETS.lmstudio];
 
+// Built in the browser from models.dev on first open, shared by every dialog;
+// the models.json written at build time is the fallback.
+const catalog = liveCatalog({
+  fallbackUrl: `${process.env.NEXT_PUBLIC_BASE_PATH || ""}/models.json`,
+});
+
+const INSECURE_ENDPOINT = {
+  title: "Plain http is only allowed to this computer",
+  description:
+    "Use an https URL for a remote server, so your key never travels in clear text. http://localhost works for Ollama and LM Studio.",
+};
+
 interface APIKeySettingsProps {
   isOpen: boolean;
   onClose: () => void;
-  onSettingsChange: (settings: StoredSettings) => void;
+  /** New settings, or null once cleared. */
+  onSettingsChange: (settings: StoredSettings | null) => void;
   currentSettings: StoredSettings | null;
 }
 
@@ -50,23 +54,13 @@ export function APIKeySettings({
   onSettingsChange,
   currentSettings,
 }: APIKeySettingsProps) {
-  const { state, store } = useLlmStore<{ language: LanguageCode }>({
-    catalogUrl: `${process.env.NEXT_PUBLIC_BASE_PATH || ""}/models.json`,
+  const { state, store } = useLlmStore({
+    catalog,
     storage: apiSettingsStorage,
-    recommended: RECOMMENDED_PROVIDERS,
-    testMode: "models",
-    defaults: {
-      providerId: DEFAULT_PROVIDER_ID,
-      model: DEFAULT_MODEL,
-      rememberKey: false,
-    },
   });
-  const { draft, catalog } = state;
+  const { draft } = state;
   const useCustomEndpoint = draft.custom;
 
-  const [language, setLanguage] = useState<LanguageCode>(
-    currentSettings?.language ?? getBrowserLanguage(),
-  );
   const [showKey, setShowKey] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -79,7 +73,6 @@ export function APIKeySettings({
   // and the catalog is downloaded (once)
   useEffect(() => {
     if (!isOpen) return;
-    setLanguage(currentSettings?.language ?? getBrowserLanguage());
     setShowKey(false);
     store.reset(currentSettings);
     store.open();
@@ -108,6 +101,13 @@ export function APIKeySettings({
     const { providerName } = store.settings();
     const result = await store.test();
 
+    if (!result.ok && result.reason === "insecure") {
+      toast.error(INSECURE_ENDPOINT.title, {
+        description: INSECURE_ENDPOINT.description,
+      });
+      return;
+    }
+
     if (useCustomEndpoint) {
       if (result.ok) {
         toast.success("Connection successful!", {
@@ -135,7 +135,9 @@ export function APIKeySettings({
         description: `Connected to ${providerName}`,
       });
     } else if (result.reason === "config") {
-      toast.error("No API URL for this provider");
+      toast.error("Could not call this model", {
+        description: result.message,
+      });
     } else if (result.reason === "auth") {
       toast.error("Invalid API key", {
         description: "The provider rejected your API key.",
@@ -153,12 +155,16 @@ export function APIKeySettings({
   };
 
   const handleSave = async () => {
-    const result = await store.save({ language });
+    const result = await store.save();
     if (!result.ok) {
       if (result.reason === "invalid-endpoint")
         toast.error("Invalid endpoint URL", {
           description:
             "Please enter a valid URL (e.g., http://localhost:11434/v1).",
+        });
+      else if (result.reason === "insecure-endpoint")
+        toast.error(INSECURE_ENDPOINT.title, {
+          description: INSECURE_ENDPOINT.description,
         });
       return;
     }
@@ -170,6 +176,22 @@ export function APIKeySettings({
         : `Using ${settings.providerName} with ${settings.model.split("/").pop() ?? settings.model}`,
     });
     onClose();
+  };
+
+  const handleClear = async () => {
+    try {
+      await store.clear();
+    } catch (error) {
+      toast.error("Could not clear the settings", {
+        description: error instanceof Error ? error.message : String(error),
+      });
+      return;
+    }
+    onSettingsChange(null);
+    toast.success("Settings cleared", {
+      description:
+        "The API key and preferences were removed from this browser.",
+    });
   };
 
   const modalContent = (
@@ -246,8 +268,8 @@ export function APIKeySettings({
                           return currentSettings.customModel;
                         }
                         // Otherwise, try to find the model name from the catalog
-                        const currentModel = catalog
-                          ? Object.values(catalog)
+                        const currentModel = state.catalog
+                          ? Object.values(state.catalog)
                               .flatMap((provider) =>
                                 Object.values(provider.models),
                               )
@@ -438,10 +460,10 @@ export function APIKeySettings({
                 id="api-key-storage-hint"
                 className="mt-2 text-xs text-gray-500"
               >
-                🔒{" "}
+                🔒 Encrypted with a browser key that cannot be exported,{" "}
                 {draft.rememberKey
-                  ? "Kept in this browser's local storage until you clear it. "
-                  : "Kept in this tab only and forgotten when you close it. "}
+                  ? "and kept on this device until you clear it. "
+                  : "for this tab only: forgotten when you close it. "}
                 It is sent only to the AI provider you choose, never to this
                 site.
               </p>
@@ -676,13 +698,13 @@ export function APIKeySettings({
               </label>
               <select
                 id="language-select"
-                value={language}
-                onChange={(e) => setLanguage(e.target.value as LanguageCode)}
+                value={draft.language}
+                onChange={(e) => store.setLanguage(e.target.value)}
                 className="w-full rounded-xl border-2 border-gray-700 bg-gray-800 px-4 py-3 text-white transition-all focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none"
               >
-                {SUPPORTED_LANGUAGES.map((lang) => (
+                {RESPONSE_LANGUAGES.map((lang) => (
                   <option key={lang.code} value={lang.code}>
-                    {lang.name}
+                    {lang.label}
                   </option>
                 ))}
               </select>
@@ -694,6 +716,13 @@ export function APIKeySettings({
 
           {/* Footer */}
           <div className="flex gap-3 border-t border-white/10 px-6 py-4">
+            <button
+              type="button"
+              onClick={handleClear}
+              className="rounded-xl border border-gray-700 px-4 py-3 text-sm font-medium text-gray-300 transition-colors hover:bg-white/5"
+            >
+              Clear
+            </button>
             <button
               type="button"
               onClick={handleTestApiKey}
@@ -733,7 +762,8 @@ export function APIKeySettings({
 }
 
 interface APIKeyButtonProps {
-  onSettingsChange: (settings: StoredSettings) => void;
+  onSettingsChange: (settings: StoredSettings | null) => void;
+  /** Loaded by the page (see loadApiSettings). */
   currentSettings: StoredSettings | null;
 }
 
@@ -742,13 +772,6 @@ export function APIKeyButton({
   currentSettings,
 }: APIKeyButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
-
-  useEffect(() => {
-    const stored = loadApiSettings();
-    if (stored) {
-      onSettingsChange(stored);
-    }
-  }, [onSettingsChange]);
 
   const hasKey = isConfigured(currentSettings);
 

@@ -2,7 +2,6 @@ name: Deploy to GitHub Pages
 
 on:
   workflow_run:
-    # The daily catalog update dispatches this workflow itself when models.json changes
     workflows: ["Publish"]
     types:
       - completed

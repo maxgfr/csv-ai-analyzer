@@ -108,11 +108,19 @@ export default function HomePage() {
   // A complete analysis would replace results while a chat answer streams
   const isChatStreaming = useChatIsLoading();
 
+  // The key is decrypted asynchronously (see storage.ts)
   useEffect(() => {
-    const settings = loadApiSettings();
-    if (settings) {
-      setApiSettings(settings);
-    }
+    let cancelled = false;
+    loadApiSettings()
+      .then((settings) => {
+        if (!cancelled && settings) setApiSettings(settings);
+      })
+      .catch((error: unknown) => {
+        console.error("Failed to load AI settings:", error);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   // Data used for analysis — transformed data if available, otherwise raw
