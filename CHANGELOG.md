@@ -1,3 +1,10 @@
+# [1.17.0](https://github.com/maxgfr/csv-ai-analyzer/compare/v1.16.0...v1.17.0) (2026-10-16)
+
+
+### Features
+
+* encrypted API key, live model catalog and AI settings shared with db-schema-viewer ([#11](https://github.com/maxgfr/csv-ai-analyzer/issues/11)) ([cbea642](https://github.com/maxgfr/csv-ai-analyzer/commit/cbea642c022ad2d9da162d6b22f8eb0f390a17f4)), closes [#10](https://github.com/maxgfr/csv-ai-analyzer/issues/10)
+
 # [1.16.0](https://github.com/maxgfr/csv-ai-analyzer/compare/v1.15.5...v1.16.0) (2026-10-16)
 
 
