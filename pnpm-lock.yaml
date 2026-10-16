@@ -44,6 +44,9 @@ importers:
       katex:
         specifier: ^0.16.43
         version: 0.16.43
+      llm-connect:
+        specifier: ^1.0.1
+        version: 1.0.1(@ai-sdk/anthropic@3.0.63(zod@4.3.6))(@ai-sdk/google@3.0.52(zod@4.3.6))(@ai-sdk/mistral@3.0.27(zod@4.3.6))(@ai-sdk/openai-compatible@2.0.74(zod@4.3.6))(@ai-sdk/openai@3.0.47(zod@4.3.6))(ai@6.0.134(zod@4.3.6))(react@19.2.4)
       lucide-react:
         specifier: ^0.577.0
         version: 0.577.0(react@19.2.4)
@@ -160,8 +163,8 @@ importers:
         specifier: ^30.0.1
         version: 30.0.1
       llm-models:
-        specifier: ^1.4.0
-        version: 1.4.0
+        specifier: ^1.9.0
+        version: 1.9.0
       postcss:
         specifier: ^8.5.23
         version: 8.5.29
@@ -204,6 +207,9 @@ importers:
       ai:
         specifier: ^6.0.134
         version: 6.0.134(zod@4.1.13)
+      llm-connect:
+        specifier: ^1.0.1
+        version: 1.0.1(@ai-sdk/anthropic@3.0.63(zod@4.1.13))(@ai-sdk/google@3.0.52(zod@4.1.13))(@ai-sdk/mistral@3.0.27(zod@4.1.13))(@ai-sdk/openai-compatible@2.0.74(zod@4.1.13))(@ai-sdk/openai@3.0.47(zod@4.1.13))(ai@6.0.134(zod@4.1.13))(react@19.2.4)
       read-excel-file:
         specifier: ^7.0.2
         version: 7.0.2
@@ -3450,8 +3456,34 @@ packages:
   lines-and-columns@1.2.4:
     resolution: {integrity: sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==}
 
-  llm-models@1.4.0:
-    resolution: {integrity: sha512-qvZpPh+ml65yUXrKBFq+fFUvUSvmpKhPsaBOMNIRFp5k52YstIxWvALzGyOBKcsmdC8CrSy117uiK56ekB/fWw==}
+  llm-connect@1.0.1:
+    resolution: {integrity: sha512-AosMHuFaX1qusPTQD0bFMRQGjvje5kR51rybrPdfM7Z2hFVx0Gt7DMYjcisr4DNUqjFLRJWBVgEbVNQxED9s4A==}
+    peerDependencies:
+      '@ai-sdk/anthropic': ^3.0.0
+      '@ai-sdk/google': ^3.0.0
+      '@ai-sdk/mistral': ^3.0.0
+      '@ai-sdk/openai': ^3.0.0
+      '@ai-sdk/openai-compatible': ^2.0.0
+      ai: ^6.0.0
+      react: '>=18'
+    peerDependenciesMeta:
+      '@ai-sdk/anthropic':
+        optional: true
+      '@ai-sdk/google':
+        optional: true
+      '@ai-sdk/mistral':
+        optional: true
+      '@ai-sdk/openai':
+        optional: true
+      '@ai-sdk/openai-compatible':
+        optional: true
+      ai:
+        optional: true
+      react:
+        optional: true
+
+  llm-models@1.9.0:
+    resolution: {integrity: sha512-OrOVrj2l9qay7NiuIQxhaG/86EDnIl/oBP8s6YGitisBTBowXsOl1r745DlLMfLEmBJw67EZaxMUxFZkFyArcA==}
     engines: {node: '>=22.12.0'}
     hasBin: true
 
@@ -5370,6 +5402,14 @@ snapshots:
       '@vercel/oidc': 3.1.0
       zod: 4.1.13
 
+  '@ai-sdk/gateway@3.0.77(zod@4.3.6)':
+    dependencies:
+      '@ai-sdk/provider': 3.0.8
+      '@ai-sdk/provider-utils': 4.0.21(zod@4.3.6)
+      '@vercel/oidc': 3.1.0
+      zod: 4.3.6
+    optional: true
+
   '@ai-sdk/google@3.0.52(zod@4.1.13)':
     dependencies:
       '@ai-sdk/provider': 3.0.8
@@ -5393,6 +5433,13 @@ snapshots:
       '@ai-sdk/provider': 3.0.8
       '@ai-sdk/provider-utils': 4.0.21(zod@4.3.6)
       zod: 4.3.6
+
+  '@ai-sdk/openai-compatible@2.0.74(zod@4.1.13)':
+    dependencies:
+      '@ai-sdk/provider': 3.0.15
+      '@ai-sdk/provider-utils': 4.0.50(zod@4.1.13)
+      zod: 4.1.13
+    optional: true
 
   '@ai-sdk/openai-compatible@2.0.74(zod@4.3.6)':
     dependencies:
@@ -5425,6 +5472,15 @@ snapshots:
       '@standard-schema/spec': 1.1.0
       eventsource-parser: 3.0.6
       zod: 4.3.6
+
+  '@ai-sdk/provider-utils@4.0.50(zod@4.1.13)':
+    dependencies:
+      '@ai-sdk/provider': 3.0.15
+      '@standard-schema/spec': 1.1.0
+      eventsource-parser: 3.1.1
+      undici: 6.28.1
+      zod: 4.1.13
+    optional: true
 
   '@ai-sdk/provider-utils@4.0.50(zod@4.3.6)':
     dependencies:
@@ -6756,6 +6812,15 @@ snapshots:
       '@ai-sdk/provider-utils': 4.0.21(zod@4.1.13)
       '@opentelemetry/api': 1.9.0
       zod: 4.1.13
+
+  ai@6.0.134(zod@4.3.6):
+    dependencies:
+      '@ai-sdk/gateway': 3.0.77(zod@4.3.6)
+      '@ai-sdk/provider': 3.0.8
+      '@ai-sdk/provider-utils': 4.0.21(zod@4.3.6)
+      '@opentelemetry/api': 1.9.0
+      zod: 4.3.6
+    optional: true
 
   ajv-formats@3.0.1(ajv@8.20.0):
     optionalDependencies:
@@ -8607,7 +8672,37 @@ snapshots:
 
   lines-and-columns@1.2.4: {}
 
-  llm-models@1.4.0:
+  llm-connect@1.0.1(@ai-sdk/anthropic@3.0.63(zod@4.1.13))(@ai-sdk/google@3.0.52(zod@4.1.13))(@ai-sdk/mistral@3.0.27(zod@4.1.13))(@ai-sdk/openai-compatible@2.0.74(zod@4.1.13))(@ai-sdk/openai@3.0.47(zod@4.1.13))(ai@6.0.134(zod@4.1.13))(react@19.2.4):
+    dependencies:
+      llm-models: 1.9.0
+    optionalDependencies:
+      '@ai-sdk/anthropic': 3.0.63(zod@4.1.13)
+      '@ai-sdk/google': 3.0.52(zod@4.1.13)
+      '@ai-sdk/mistral': 3.0.27(zod@4.1.13)
+      '@ai-sdk/openai': 3.0.47(zod@4.1.13)
+      '@ai-sdk/openai-compatible': 2.0.74(zod@4.1.13)
+      ai: 6.0.134(zod@4.1.13)
+      react: 19.2.4
+    transitivePeerDependencies:
+      - '@cfworker/json-schema'
+      - supports-color
+
+  llm-connect@1.0.1(@ai-sdk/anthropic@3.0.63(zod@4.3.6))(@ai-sdk/google@3.0.52(zod@4.3.6))(@ai-sdk/mistral@3.0.27(zod@4.3.6))(@ai-sdk/openai-compatible@2.0.74(zod@4.3.6))(@ai-sdk/openai@3.0.47(zod@4.3.6))(ai@6.0.134(zod@4.3.6))(react@19.2.4):
+    dependencies:
+      llm-models: 1.9.0
+    optionalDependencies:
+      '@ai-sdk/anthropic': 3.0.63(zod@4.3.6)
+      '@ai-sdk/google': 3.0.52(zod@4.3.6)
+      '@ai-sdk/mistral': 3.0.27(zod@4.3.6)
+      '@ai-sdk/openai': 3.0.47(zod@4.3.6)
+      '@ai-sdk/openai-compatible': 2.0.74(zod@4.3.6)
+      ai: 6.0.134(zod@4.3.6)
+      react: 19.2.4
+    transitivePeerDependencies:
+      - '@cfworker/json-schema'
+      - supports-color
+
+  llm-models@1.9.0:
     dependencies:
       '@modelcontextprotocol/sdk': 1.32.1(zod@4.6.6)
       commander: 15.0.0

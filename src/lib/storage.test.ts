@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
+  apiSettingsStorage,
   clearApiSettings,
   loadApiSettings,
   saveApiSettings,
@@ -99,5 +100,24 @@ describe("API settings storage", () => {
     });
     expect(() => saveApiSettings(base)).not.toThrow();
     expect(loadApiSettings()).toBeNull();
+  });
+});
+
+describe("llm-connect storage adapter", () => {
+  it("saves with the dialog's remember choice under the same keys", async () => {
+    await apiSettingsStorage.save(base, { rememberKey: true });
+    expect(localStorage.getItem("csv-ai-api-key")).toBe("sk-test");
+    expect(JSON.parse(localStorage.getItem("csv-ai-settings")!)).toMatchObject({
+      language: "fr",
+      rememberKey: true,
+    });
+    expect(await apiSettingsStorage.load()).toMatchObject({
+      ...base,
+      rememberKey: true,
+    });
+
+    await apiSettingsStorage.clear();
+    expect(localStorage.getItem("csv-ai-settings")).toBeNull();
+    expect(await apiSettingsStorage.load()).toBeNull();
   });
 });

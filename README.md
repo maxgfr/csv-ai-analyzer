@@ -67,7 +67,7 @@ The application will be accessible at [http://localhost:3000](http://localhost:3
 
 ### Auto-updating the models catalog
 
-This project ships a static `public/models.json` that contains the models catalog fetched from `https://models.dev/api.json`.
+This project ships a static `public/models.json`: the providers the app can call and their non-deprecated models, with a recommended model per provider. `llm-models catalog` builds it from [models.dev](https://models.dev).
 
 - You can regenerate the file locally with:
 
@@ -75,7 +75,7 @@ This project ships a static `public/models.json` that contains the models catalo
 pnpm run fetch-models
 ```
 
-- A GitHub Action is configured to run this script once per day and automatically commit `public/models.json` if it changes.
+- A GitHub Action is configured to run this command once per day and automatically commit `public/models.json` if it changes.
 
   - Workflow: `.github/workflows/update-models.yml`
   - Runs daily (UTC 06:00) and is also triggerable manually with `workflow_dispatch`.

@@ -1,4 +1,5 @@
 import Cookies from "js-cookie";
+import type { SettingsStorage } from "llm-connect";
 import {
   DEFAULT_MODEL,
   DEFAULT_PROVIDER_ID,
@@ -204,4 +205,15 @@ export const clearApiSettings = (): void => {
   remove("localStorage", API_KEY_KEY);
   remove("sessionStorage", API_KEY_KEY);
   for (const name of Object.values(LEGACY_COOKIES)) removeLegacyCookie(name);
+};
+
+/**
+ * These settings as llm-connect's settings storage: the same keys, the legacy
+ * cookie migration, and the response language kept with the AI settings.
+ */
+export const apiSettingsStorage: SettingsStorage<{ language: LanguageCode }> = {
+  load: async () => loadApiSettings(),
+  save: async (settings, { rememberKey }) =>
+    saveApiSettings({ ...settings, rememberKey }),
+  clear: async () => clearApiSettings(),
 };

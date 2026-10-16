@@ -1,17 +1,17 @@
 import { useMemo } from "react";
+import { isConfigured } from "llm-connect";
 import type { AIServiceConfig } from "./ai-service";
 import type { StoredSettings } from "./storage";
 
 /**
- * The one rule for "AI features are usable": a custom endpoint needs a model
- * name (its key is optional); a cloud provider needs an API key.
+ * The one rule for "AI features are usable": llm-connect's (an API key, or a
+ * custom endpoint, whose key is optional), plus a model name for the endpoint.
  */
 export function isAIConfigured(
   settings: StoredSettings | null | undefined,
 ): settings is StoredSettings {
-  if (!settings) return false;
-  if (settings.customEndpoint?.trim()) return !!settings.customModel?.trim();
-  return !!settings.apiKey.trim();
+  if (!settings || !isConfigured(settings)) return false;
+  return !settings.customEndpoint?.trim() || !!settings.customModel?.trim();
 }
 
 /** Settings as the AI service expects them, for one request. */

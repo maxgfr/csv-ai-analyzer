@@ -80,6 +80,7 @@
   },
   "dependencies": {
     "ai": "^6.0.134",
+    "llm-connect": "^1.0.1",
     "zod": "^4.1.13",
     "read-excel-file": "^7.0.2"
   },

@@ -20,7 +20,7 @@ pnpm add @ai-sdk/google       # Google Generative AI
 pnpm add @ai-sdk/mistral      # Mistral
 ```
 
-Core dependencies (`ai`, `zod`, `read-excel-file`) are regular dependencies, installed automatically with the package. AI provider SDKs are **optional peer dependencies** — you only install what you use.
+Core dependencies (`ai`, `zod`, `read-excel-file`, `llm-connect`) are regular dependencies, installed automatically with the package. AI provider SDKs are **optional peer dependencies** — you only install what you use.
 
 **Optional peer dependencies** (only for React chart components): `react`, `recharts`. Icons are built in; see [Custom Icons](#custom-icons).
 
@@ -105,7 +105,20 @@ registerProviders({
 
 ### Aliases
 
-npm package names are resolved automatically — `"@ai-sdk/openai"` and `"openai"` map to the same slot. So `createModel({ provider: "openai" })` and `createAppModel({ providerNpm: "@ai-sdk/openai" })` both work after a single registration.
+npm package names are resolved automatically — `"@ai-sdk/openai"` and `"openai"` map to the same slot (likewise for `@ai-sdk/anthropic`, `@ai-sdk/google`, `@ai-sdk/mistral` and `@ai-sdk/openai-compatible`). So `createModel({ provider: "openai" })` and `createAppModel({ providerNpm: "@ai-sdk/openai" })` both work after a single registration.
+
+### Shared with llm-connect
+
+The registry is [llm-connect](https://www.npmjs.com/package/llm-connect)'s, re-exported: a provider registered through either package serves both. Its ready-made providers register in one call, with the browser details handled (Anthropic's direct-browser-access header, Chat Completions for OpenAI-compatible URLs, JSON-object output for the generic `@ai-sdk/openai-compatible` SDK):
+
+```ts
+import { register as registerAnthropic } from "llm-connect/providers/anthropic";
+import { register as registerAll } from "llm-connect/providers/all"; // the five built-in providers
+
+registerAnthropic();
+```
+
+`createAppModel(config)` is llm-connect's `createModel`: `AppModelConfig` is its `LlmSettings` with `model` optional, so the settings an llm-connect settings store saves can be passed as they are.
 
 ## CSV Parsing
 
