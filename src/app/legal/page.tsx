@@ -162,9 +162,8 @@ export default function LegalPage() {
                 </li>
                 <li>
                   The key is never sent to this site: it only travels, over
-                  HTTPS, to the AI provider you selected. A custom endpoint
-                  must use HTTPS, or plain HTTP on this computer (Ollama, LM
-                  Studio)
+                  HTTPS, to the AI provider you selected. A custom endpoint must
+                  use HTTPS, or plain HTTP on this computer (Ollama, LM Studio)
                 </li>
                 <li>
                   A dump of the browser&apos;s storage only shows encrypted
