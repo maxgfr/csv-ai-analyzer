@@ -3,17 +3,9 @@ export type ProviderId = string;
 // Allow arbitrary model IDs (including vendor-specific names) — keep typed known IDs but accept custom strings
 export type ModelId = string;
 
-// Default provider when nothing is selected yet (no default model - user must select one)
+// Default provider when nothing is selected yet; its model comes from the catalog's defaultModel
 export const DEFAULT_PROVIDER_ID: ProviderId = "openai";
-export const DEFAULT_MODEL: ModelId = ""; // Empty - user must select a model
-
-// Per-provider default models (prefer the canonical model id from the live catalog)
-export const DEFAULT_MODEL_BY_PROVIDER: Record<string, string> = {
-  google: "gemini-2.5-flash",
-  anthropic: "claude-haiku-4-5",
-  mistral: "mistral-small-latest",
-  openai: "gpt-5-mini",
-};
+export const DEFAULT_MODEL: ModelId = ""; // Empty - filled with the provider's recommended model
 
 // Supported languages for LLM output
 export const SUPPORTED_LANGUAGES = [

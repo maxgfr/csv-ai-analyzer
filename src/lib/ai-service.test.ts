@@ -1,7 +1,23 @@
 import { afterEach, expect, it, vi } from "vitest";
+import * as charts from "csv-charts-ai";
+import * as llmConnect from "llm-connect";
 import { generateDataSummary, getModel } from "./ai-service";
 
 afterEach(() => vi.unstubAllGlobals());
+
+it("registers the providers in the registry csv-charts-ai reads", () => {
+  for (const name of [
+    "openai",
+    "anthropic",
+    "google",
+    "mistral",
+    "@ai-sdk/openai-compatible",
+  ]) {
+    expect(charts.hasProvider(name)).toBe(true);
+    // One llm-connect copy: the app and csv-charts-ai share its registry
+    expect(charts.getProvider(name)).toBe(llmConnect.getProvider(name));
+  }
+});
 
 it("resolves a GLM model selected from the OpenAI-compatible catalog", () => {
   const model = getModel({
@@ -108,8 +124,16 @@ it("sends Anthropic-compatible keys to the provider's own URL", async () => {
       "amount\n1",
     ),
   ).rejects.toMatchObject({ statusCode: 401 });
-  const [url] = fetch.mock.calls[0] as unknown as [string];
+  const [url, options] = fetch.mock.calls[0] as unknown as [
+    string,
+    RequestInit,
+  ];
   expect(url).toBe("https://api.minimax.io/anthropic/v1/messages");
+  expect(
+    new Headers(options.headers).get(
+      "anthropic-dangerous-direct-browser-access",
+    ),
+  ).toBe("true");
 });
 
 it("falls back to the default SDK when the provider has no npm package", () => {

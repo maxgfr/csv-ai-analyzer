@@ -1,15 +1,13 @@
 /**
  * Bridge between the app's configuration system and the csv-charts-ai package.
  * All AI logic lives in the package — this file only handles:
- * - Registering AI providers (openai, anthropic, google, mistral, openai-compatible)
+ * - Registering AI providers (openai, anthropic, google, mistral, openai-compatible) from llm-connect
  * - Converting app settings (AIServiceConfig) to a LanguageModel via createAppModel
  * - Re-exporting types for backwards compatibility
  */
 
 import {
   createAppModel,
-  registerProvider,
-  fromSDK,
   suggestCharts,
   suggestCustomChart,
   repairChart,
@@ -25,63 +23,17 @@ import type {
   AnomalyResult,
   SuggestedQuestion,
 } from "csv-charts-ai";
+import { register as registerProviders } from "llm-connect/providers/all";
 import { withRetry } from "./retry";
-import { createOpenAI } from "@ai-sdk/openai";
-import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
-import { createAnthropic } from "@ai-sdk/anthropic";
-import { createGoogleGenerativeAI } from "@ai-sdk/google";
-import { createMistral } from "@ai-sdk/mistral";
 import { type ModelId, type LanguageCode } from "./ai-models";
 
 // ============ Register AI providers ============
+// OpenAI, Anthropic, Google, Mistral and the generic OpenAI-compatible SDK, in
+// llm-connect's registry (the one csv-charts-ai reads). Anthropic gets the
+// browser-access header and keeps a compatible provider's own URL; the generic
+// SDK needs the catalog URL and turns json_schema output into json_object.
 
-registerProvider("openai", fromSDK(createOpenAI));
-registerProvider("anthropic", (config) => {
-  const anthropic = createAnthropic({
-    apiKey: config.apiKey,
-    // Anthropic-compatible providers (MiniMax, …) have their own URL: never send their key to Anthropic
-    ...(config.baseURL && { baseURL: config.baseURL }),
-    headers: {
-      ...config.headers,
-      "anthropic-dangerous-direct-browser-access": "true",
-    },
-  });
-  return anthropic(config.model);
-});
-registerProvider("google", fromSDK(createGoogleGenerativeAI));
-registerProvider("mistral", fromSDK(createMistral));
-registerProvider("@ai-sdk/openai-compatible", (config) => {
-  if (!config.baseURL)
-    throw new Error(
-      "This provider has no API URL. Select it again in API settings or configure a custom endpoint.",
-    );
-  return createOpenAICompatible({
-    name: "openai-compatible",
-    baseURL: config.baseURL,
-    apiKey: config.apiKey,
-    headers: config.headers,
-    // Retain the SDK's schema, then translate it for JSON-object APIs such as GLM.
-    // Validation remains in generateObject; the server need not implement json_schema.
-    supportsStructuredOutputs: true,
-    transformRequestBody: (body) => {
-      const format = body.response_format as
-        | { type: string; json_schema?: { schema: unknown } }
-        | undefined;
-      if (format?.type !== "json_schema" || !format.json_schema) return body;
-      return {
-        ...body,
-        response_format: { type: "json_object" },
-        messages: [
-          {
-            role: "system",
-            content: `Return only a JSON object matching this JSON schema: ${JSON.stringify(format.json_schema.schema)}`,
-          },
-          ...body.messages,
-        ],
-      };
-    },
-  }).chatModel(config.model);
-});
+registerProviders();
 
 // ============ Re-exports from package ============
 
