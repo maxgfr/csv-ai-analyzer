@@ -583,7 +583,7 @@ export function AIAnalysis({
           </p>
         </div>
         {(summaryResult || anomaliesResult || customHistory.length > 0) && (
-          <div className="flex items-center gap-2">
+          <div data-card-actions className="flex items-center gap-2">
             <button
               type="button"
               onClick={handleExportPDF}

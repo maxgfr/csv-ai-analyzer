@@ -93,6 +93,7 @@ export function ChartDisplay({
         </div>
         <button
           type="button"
+          data-card-actions
           onClick={handleExportChartsPDF}
           className="flex items-center gap-2 rounded-lg bg-violet-500/10 px-3 py-2 text-sm text-violet-400 transition-colors hover:bg-violet-500/20 hover:text-violet-300"
           title="Export charts as PDF"
