@@ -110,6 +110,8 @@ export const processChartDataMultiSeries = (
   const chronological =
     (chart.type === "line" || chart.type === "area") &&
     (xColDef.type === "date" || xColDef.type === "number");
+  const xKeyOf = dateBuckets(data, xColDef, chronological && aggregated, limit);
+  const bucketed = xKeyOf !== plainKey;
 
   // GroupBy mode: create multi-series data (not supported for pie/scatter)
   const supportsGroupBy = chart.type !== "pie" && chart.type !== "scatter";
@@ -121,7 +123,7 @@ export const processChartDataMultiSeries = (
     const grouped = new Map<string, Map<string, Stats>>();
 
     for (const row of data.rows) {
-      const xVal = String(row[xIdx] ?? "").trim();
+      const xVal = xKeyOf(String(row[xIdx] ?? ""));
       const groupVal = String(row[groupIdx] ?? "").trim();
       if (!xVal || !groupVal) continue;
       const yVal = isCountMode ? null : parseNumericValue(row[yIdx] ?? "");
@@ -179,6 +181,7 @@ export const processChartDataMultiSeries = (
     return {
       data: selectPoints(points, (p) => totals.get(p) ?? 0, sortOrder, limit, {
         chronological,
+        bucketed,
         xCol,
         xColDef,
       }),
@@ -191,7 +194,7 @@ export const processChartDataMultiSeries = (
   if (aggregated) {
     const groups = new Map<string, Stats>();
     for (const row of data.rows) {
-      const xVal = String(row[xIdx] ?? "").trim();
+      const xVal = xKeyOf(String(row[xIdx] ?? ""));
       if (!xVal) continue;
       const yVal = isCountMode ? null : parseNumericValue(row[yIdx] ?? "");
       if (!isCountMode && yVal === null) continue;
@@ -223,6 +226,7 @@ export const processChartDataMultiSeries = (
   const valueOf = (p: ChartDataPoint) => (p[yCol] as number | null) ?? 0;
   let selected = selectPoints(points, valueOf, sortOrder, limit, {
     chronological,
+    bucketed,
     xCol,
     xColDef,
   });
@@ -242,6 +246,37 @@ export const processChartDataMultiSeries = (
   return { data: selected, seriesKeys: [], yKey: yCol };
 };
 
+const plainKey = (raw: string) => raw.trim();
+
+/**
+ * The x value an aggregated trend over dates groups rows by: the date itself,
+ * or its month ("2024-03") when there are more dates than `limit`, or its year
+ * when there are still more months. Without it a year of daily rows would be
+ * cut to its last `limit` days.
+ */
+function dateBuckets(
+  data: TabularData,
+  xColDef: ColumnInfo,
+  enabled: boolean,
+  limit: number,
+): (raw: string) => string {
+  if (!enabled || xColDef.type !== "date") return plainKey;
+  const raws = data.rows.map((row) => String(row[xColDef.index] ?? "").trim());
+  if (new Set(raws.filter(Boolean)).size <= limit) return plainKey;
+  const order = detectDateOrder(raws);
+  const isoOf = (raw: string) => {
+    const time = parseDateValue(raw, order);
+    return time === null ? null : new Date(time).toISOString();
+  };
+  const months = new Set<string>();
+  for (const raw of raws) {
+    const iso = isoOf(raw);
+    if (iso) months.add(iso.slice(0, 7));
+  }
+  const length = months.size <= limit ? 7 : 4;
+  return (raw) => isoOf(raw.trim())?.slice(0, length) ?? raw.trim();
+}
+
 /**
  * Sort by value when asked. Otherwise line/area charts over dates or numbers
  * keep the `limit` most recent points in x order (a trend needs consecutive
@@ -253,7 +288,13 @@ function selectPoints(
   valueOf: (point: ChartDataPoint) => number,
   sortOrder: SortOrder,
   limit: number,
-  x: { chronological: boolean; xCol: string; xColDef: ColumnInfo },
+  x: {
+    chronological: boolean;
+    /** x values are months or years ("2024-03", "2024"): their text order is chronological. */
+    bucketed?: boolean;
+    xCol: string;
+    xColDef: ColumnInfo;
+  },
 ): ChartDataPoint[] {
   if (sortOrder !== "none")
     return [...points]
@@ -263,6 +304,11 @@ function selectPoints(
           : valueOf(a) - valueOf(b),
       )
       .slice(0, limit);
+
+  if (x.chronological && x.bucketed)
+    return [...points]
+      .sort((a, b) => String(a[x.xCol]).localeCompare(String(b[x.xCol])))
+      .slice(-limit);
 
   if (x.chronological) {
     const labels = points.map((p) => String(p[x.xCol] ?? ""));
