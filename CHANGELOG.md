@@ -1,3 +1,10 @@
+## [1.17.4](https://github.com/maxgfr/csv-ai-analyzer/compare/v1.17.3...v1.17.4) (2026-10-17)
+
+
+### Bug Fixes
+
+* keep the fullscreen button off the section actions ([#19](https://github.com/maxgfr/csv-ai-analyzer/issues/19)) ([32a0c83](https://github.com/maxgfr/csv-ai-analyzer/commit/32a0c838bf7d1046041a77483caad6c8ed64dd52)), closes [#18](https://github.com/maxgfr/csv-ai-analyzer/issues/18)
+
 ## [1.17.3](https://github.com/maxgfr/csv-ai-analyzer/compare/v1.17.2...v1.17.3) (2026-10-17)
 
 
