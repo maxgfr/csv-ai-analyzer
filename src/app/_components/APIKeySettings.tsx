@@ -212,11 +212,13 @@ export function APIKeySettings({
       >
         <div
           ref={modalRef}
-          className="animate-scale-in pointer-events-auto max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl border-2 border-violet-500/60 bg-gray-900 shadow-[0_0_60px_rgba(139,92,246,0.3)]"
+          // Fixed height: only the content scrolls, so the footer buttons never
+          // move when the model list arrives
+          className="animate-scale-in pointer-events-auto flex h-[min(90vh,56rem)] w-full max-w-md flex-col overflow-hidden rounded-2xl border-2 border-violet-500/60 bg-gray-900 shadow-[0_0_60px_rgba(139,92,246,0.3)]"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="border-b border-white/10 px-6 py-4">
+          <div className="shrink-0 border-b border-white/10 px-6 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="rounded-xl border border-violet-500/40 bg-violet-500/20 p-2.5">
@@ -301,7 +303,7 @@ export function APIKeySettings({
           </div>
 
           {/* Content */}
-          <div className="space-y-6 p-6">
+          <div className="min-h-0 flex-1 space-y-6 overflow-y-auto p-6">
             {/* Custom Endpoint Toggle */}
             <div>
               <label className="flex cursor-pointer items-center gap-3">
@@ -715,7 +717,7 @@ export function APIKeySettings({
           </div>
 
           {/* Footer */}
-          <div className="flex gap-3 border-t border-white/10 px-6 py-4">
+          <div className="flex shrink-0 gap-3 border-t border-white/10 px-6 py-4">
             <button
               type="button"
               onClick={handleClear}
