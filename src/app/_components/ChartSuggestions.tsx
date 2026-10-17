@@ -431,6 +431,7 @@ export function ChartSuggestions({
         {suggestions.length === 0 && (
           <button
             type="button"
+            data-card-actions
             onClick={handleGenerate}
             disabled={disabled || isLoading || !ai.ready}
             className="btn-primary inline-flex items-center gap-2 disabled:opacity-50"

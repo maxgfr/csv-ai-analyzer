@@ -55,7 +55,8 @@ export function FullscreenCard({
       className={
         isFullscreen
           ? "fixed inset-0 z-[99999] flex flex-col overflow-auto"
-          : `group relative ${className}`
+          : // Header actions marked data-card-actions leave room for the button
+            `group relative [&_[data-card-actions]]:mr-12 ${className}`
       }
       style={
         isFullscreen ? { backgroundColor: "var(--bg-body-start)" } : undefined
@@ -66,7 +67,8 @@ export function FullscreenCard({
         className={
           isFullscreen
             ? "fixed top-4 right-4 z-[100000] flex gap-2"
-            : "absolute top-4 right-4 z-50 opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100"
+            : // Not clickable while invisible; always shown on touch screens (no hover)
+              "pointer-events-none absolute top-4 right-4 z-50 opacity-0 transition-opacity group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-hover:pointer-events-auto group-hover:opacity-100 [@media(hover:none)]:pointer-events-auto [@media(hover:none)]:opacity-100"
         }
       >
         {isMounted &&
