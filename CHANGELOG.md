@@ -1,3 +1,10 @@
+## [1.17.3](https://github.com/maxgfr/csv-ai-analyzer/compare/v1.17.2...v1.17.3) (2026-10-17)
+
+
+### Bug Fixes
+
+* keep the whole range of a raw time series ([#17](https://github.com/maxgfr/csv-ai-analyzer/issues/17)) ([9212ac0](https://github.com/maxgfr/csv-ai-analyzer/commit/9212ac0c895465edaf60ad52b2c48683a7fb52d4)), closes [#16](https://github.com/maxgfr/csv-ai-analyzer/issues/16)
+
 ## [1.17.2](https://github.com/maxgfr/csv-ai-analyzer/compare/v1.17.1...v1.17.2) (2026-10-17)
 
 
