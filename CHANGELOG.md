@@ -1,3 +1,11 @@
+## [1.17.5](https://github.com/maxgfr/csv-ai-analyzer/compare/v1.17.4...v1.17.5) (2026-10-17)
+
+
+### Bug Fixes
+
+* **deps:** llm-models 1.10.0, so the model picker only lists chat models ([#23](https://github.com/maxgfr/csv-ai-analyzer/issues/23)) ([2e9e66e](https://github.com/maxgfr/csv-ai-analyzer/commit/2e9e66e3dbeb225cf3d16192f810d4b02c219e0c)), closes [#22](https://github.com/maxgfr/csv-ai-analyzer/issues/22)
+* keep the API settings footer in place while the model list loads ([#21](https://github.com/maxgfr/csv-ai-analyzer/issues/21)) ([a89e32a](https://github.com/maxgfr/csv-ai-analyzer/commit/a89e32a647dc46f1ea1945facf54fb1b86e85675)), closes [#20](https://github.com/maxgfr/csv-ai-analyzer/issues/20)
+
 ## [1.17.4](https://github.com/maxgfr/csv-ai-analyzer/compare/v1.17.3...v1.17.4) (2026-10-17)
 
 
