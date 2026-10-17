@@ -1,3 +1,10 @@
+## [1.17.2](https://github.com/maxgfr/csv-ai-analyzer/compare/v1.17.1...v1.17.2) (2026-10-17)
+
+
+### Bug Fixes
+
+* group long date trends by month instead of keeping the last 20 days ([#15](https://github.com/maxgfr/csv-ai-analyzer/issues/15)) ([ed6d7dc](https://github.com/maxgfr/csv-ai-analyzer/commit/ed6d7dc77c292ff9b16a5208cae187748280fae1)), closes [#14](https://github.com/maxgfr/csv-ai-analyzer/issues/14)
+
 ## [1.17.1](https://github.com/maxgfr/csv-ai-analyzer/compare/v1.17.0...v1.17.1) (2026-10-16)
 
 
