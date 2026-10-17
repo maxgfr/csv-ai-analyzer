@@ -182,6 +182,7 @@ export const processChartDataMultiSeries = (
       data: selectPoints(points, (p) => totals.get(p) ?? 0, sortOrder, limit, {
         chronological,
         bucketed,
+        aggregated,
         xCol,
         xColDef,
       }),
@@ -227,6 +228,7 @@ export const processChartDataMultiSeries = (
   let selected = selectPoints(points, valueOf, sortOrder, limit, {
     chronological,
     bucketed,
+    aggregated,
     xCol,
     xColDef,
   });
@@ -279,9 +281,10 @@ function dateBuckets(
 
 /**
  * Sort by value when asked. Otherwise line/area charts over dates or numbers
- * keep the `limit` most recent points in x order (a trend needs consecutive
- * points), and other charts keep the `limit` largest points ("Top N") in their
- * original order.
+ * are in x order: an aggregated one keeps its `limit` most recent points (a
+ * trend needs consecutive points; long date ranges are grouped by month before),
+ * a raw one keeps its whole range. Other charts keep the `limit` largest points
+ * ("Top N") in their original order.
  */
 function selectPoints(
   points: ChartDataPoint[],
@@ -292,6 +295,8 @@ function selectPoints(
     chronological: boolean;
     /** x values are months or years ("2024-03", "2024"): their text order is chronological. */
     bucketed?: boolean;
+    /** Points are aggregates (one per x) rather than raw rows. */
+    aggregated?: boolean;
     xCol: string;
     xColDef: ColumnInfo;
   },
@@ -323,14 +328,18 @@ function selectPoints(
           : parseNumericValue(labels[i]!),
     }));
     // Unreadable x values first, so the kept tail holds the latest valid points
-    return keyed
+    const ordered = keyed
       .sort((a, b) =>
         a.key === null || b.key === null
           ? (a.key === null ? 0 : 1) - (b.key === null ? 0 : 1)
           : a.key - b.key,
       )
-      .slice(-limit)
       .map(({ point }) => point);
+    // A raw series keeps its whole range (spread evenly when very long):
+    // keeping only the last `limit` rows would hide most of the period
+    return x.aggregated
+      ? ordered.slice(-limit)
+      : sampleEvenly(ordered, SCATTER_POINT_LIMIT);
   }
 
   if (points.length <= limit) return points;

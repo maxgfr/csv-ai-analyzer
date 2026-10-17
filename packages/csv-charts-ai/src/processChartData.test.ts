@@ -548,6 +548,22 @@ describe("chart point selection", () => {
     ]);
   });
 
+  it("keeps the whole range of a raw time series, in order", () => {
+    const rows: [string, string][] = Array.from({ length: 100 }, (_, i) => {
+      const date = new Date(Date.UTC(2024, 0, 1 + ((i * 37) % 365)));
+      return [date.toISOString().slice(0, 10), String(i)];
+    });
+    const result = processChartData(
+      series("date", rows),
+      makeChart({ type: "line", xAxis: "x", yAxis: "y", aggregation: "none" }),
+    );
+    expect(result).toHaveLength(100);
+    const dates = result.map((p) => String(p["x"]));
+    expect(dates).toEqual([...dates].sort());
+    expect(dates[0]!.startsWith("2024-01")).toBe(true);
+    expect(dates.at(-1)!.startsWith("2024-12")).toBe(true);
+  });
+
   it("keeps the dates themselves when they fit the limit", () => {
     const result = processChartData(
       series("date", [
