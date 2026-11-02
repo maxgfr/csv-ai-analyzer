@@ -8,8 +8,10 @@ import {
   loadApiSettings,
   resetSettingsCacheForTests,
   saveApiSettings,
+  wereSettingsKept,
   type StoredSettings,
 } from "./storage";
+import { secureStorage } from "llm-connect";
 
 const base: StoredSettings = {
   apiKey: "sk-test",
@@ -25,9 +27,9 @@ const cookieNames = () =>
     .filter(Boolean);
 
 /** Everything IndexedDB holds for the app. */
-function readSecrets(): Promise<unknown[]> {
+function readSecrets(dbName = "csv-ai-analyzer-secrets"): Promise<unknown[]> {
   return new Promise((resolve, reject) => {
-    const open = indexedDB.open("csv-ai-secrets");
+    const open = indexedDB.open(dbName);
     open.onerror = () => reject(open.error);
     open.onsuccess = () => {
       const db = open.result;
@@ -90,7 +92,7 @@ describe("API settings storage", () => {
   it("keeps the key encrypted for the tab unless remembered", async () => {
     await saveApiSettings(base);
     expect(await keyInClear("sk-test")).toBe(false);
-    expect(sessionStorage.getItem("csv-ai-settings-key")).toContain(
+    expect(sessionStorage.getItem("csv-ai-analyzer:settings-key")).toContain(
       "ciphertext",
     );
     reload();
@@ -176,9 +178,9 @@ describe("API settings storage", () => {
 
   it("falls back to a known language and ignores corrupted preferences", async () => {
     await saveApiSettings(base);
-    const prefs = JSON.parse(localStorage.getItem("csv-ai-settings")!);
+    const prefs = JSON.parse(localStorage.getItem("csv-ai-analyzer:settings")!);
     localStorage.setItem(
-      "csv-ai-settings",
+      "csv-ai-analyzer:settings",
       JSON.stringify({ ...prefs, language: "xx", model: 42 }),
     );
     reload();
@@ -202,16 +204,83 @@ describe("API settings storage", () => {
     vi.spyOn(Storage.prototype, "getItem").mockImplementation(() => {
       throw new Error("SecurityError");
     });
-    await expect(saveApiSettings(base)).resolves.toBeUndefined();
+    await expect(saveApiSettings(base)).resolves.toBe(false);
     reload();
     expect(await loadApiSettings()).toBeNull();
+  });
+});
+
+describe("names older versions used", () => {
+  const legacy = () =>
+    secureStorage({ prefsKey: "csv-ai-settings", dbName: "csv-ai-secrets" });
+
+  it("moves settings and a remembered key to the app-named keys, then erases the old copy", async () => {
+    await legacy().save(base, { rememberKey: true });
+    expect(await loadApiSettings()).toMatchObject({
+      ...base,
+      rememberKey: true,
+    });
+    expect(localStorage.getItem("csv-ai-settings")).toBeNull();
+    expect((await indexedDB.databases()).map((db) => db.name)).not.toContain(
+      "csv-ai-secrets",
+    );
+    expect(await keyInClear("sk-test")).toBe(false);
+    reload();
+    expect(await loadApiSettings()).toMatchObject({ apiKey: "sk-test" });
+  });
+
+  it("moves a key kept for the tab", async () => {
+    await legacy().save(base, { rememberKey: false });
+    expect(await loadApiSettings()).toMatchObject({
+      apiKey: "sk-test",
+      rememberKey: false,
+    });
+    expect(sessionStorage.getItem("csv-ai-settings-key")).toBeNull();
+    expect(sessionStorage.getItem("csv-ai-analyzer:settings-key")).toContain(
+      "ciphertext",
+    );
+  });
+
+  it("keeps the old copy when the new one cannot be stored", async () => {
+    await legacy().save(base, { rememberKey: true });
+    const original = Storage.prototype.setItem;
+    vi.spyOn(Storage.prototype, "setItem").mockImplementation(function (
+      this: Storage,
+      key: string,
+      value: string,
+    ) {
+      if (key === "csv-ai-analyzer:settings")
+        throw new DOMException("Full", "QuotaExceededError");
+      original.call(this, key, value);
+    });
+    await loadApiSettings();
+    expect(localStorage.getItem("csv-ai-settings")).not.toBeNull();
+    expect(localStorage.getItem("csv-ai-analyzer:settings")).toBeNull();
+    vi.restoreAllMocks();
+    reload();
+    expect(await loadApiSettings()).toMatchObject({ apiKey: "sk-test" });
+    expect(localStorage.getItem("csv-ai-settings")).toBeNull();
+  });
+});
+
+describe("a save the browser refuses", () => {
+  it("is reported, not taken as saved", async () => {
+    expect(await saveApiSettings(base)).toBe(true);
+    expect(wereSettingsKept()).toBe(true);
+    vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
+      throw new DOMException("Full", "QuotaExceededError");
+    });
+    expect(await saveApiSettings({ ...base, model: "gpt-5" })).toBe(false);
+    expect(wereSettingsKept()).toBe(false);
   });
 });
 
 describe("llm-connect storage adapter", () => {
   it("saves with the dialog's remember choice under the same keys", async () => {
     await apiSettingsStorage.save(base, { rememberKey: true });
-    expect(JSON.parse(localStorage.getItem("csv-ai-settings")!)).toMatchObject({
+    expect(
+      JSON.parse(localStorage.getItem("csv-ai-analyzer:settings")!),
+    ).toMatchObject({
       language: "fr",
       rememberKey: true,
     });
@@ -221,7 +290,7 @@ describe("llm-connect storage adapter", () => {
     });
 
     await apiSettingsStorage.clear();
-    expect(localStorage.getItem("csv-ai-settings")).toBeNull();
+    expect(localStorage.getItem("csv-ai-analyzer:settings")).toBeNull();
     expect(await apiSettingsStorage.load()).toBeNull();
   });
 });

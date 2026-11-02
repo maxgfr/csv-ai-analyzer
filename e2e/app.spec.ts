@@ -255,7 +255,7 @@ test("changing provider saves a model of that provider", async ({ page }) => {
     .getByRole("button", { name: "Save Configuration", exact: true })
     .click();
   const saved = await page.evaluate(() =>
-    JSON.parse(localStorage.getItem("csv-ai-settings") ?? "{}"),
+    JSON.parse(localStorage.getItem("csv-ai-analyzer:settings") ?? "{}"),
   );
   expect(saved.providerId).toBe("anthropic");
   expect(Object.keys(catalog.anthropic!.models)).toContain(saved.model);
@@ -337,7 +337,7 @@ test("settings saved in cookies by older versions are migrated, encrypted", asyn
   await expect
     .poll(() =>
       page.evaluate(() =>
-        JSON.parse(localStorage.getItem("csv-ai-settings") ?? "{}"),
+        JSON.parse(localStorage.getItem("csv-ai-analyzer:settings") ?? "{}"),
       ),
     )
     .toMatchObject({

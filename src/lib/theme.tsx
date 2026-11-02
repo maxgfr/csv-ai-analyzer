@@ -23,21 +23,32 @@ interface ThemeContextValue {
   setMode: (mode: ThemeMode) => void;
 }
 
-/** localStorage key; the anti-flash script in layout.tsx reads the same key. */
-export const THEME_STORAGE_KEY = "csv-ai-theme";
+/**
+ * localStorage key, named after the app: maxgfr.github.io is one origin for
+ * all the account's project pages. The anti-flash script in layout.tsx reads
+ * the same key, then the legacy one.
+ */
+export const THEME_STORAGE_KEY = "csv-ai-analyzer:theme";
+/** The key (localStorage, and before that a cookie) older versions used. */
+export const LEGACY_THEME_KEY = "csv-ai-theme";
 
-/** Saved theme, migrating the cookie used by older versions. */
+/** Saved theme, migrating the key and the cookie used by older versions. */
 function loadThemeMode(): ThemeMode {
   try {
     const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
     if (isThemeMode(stored)) return stored;
-    const legacy = Cookies.get(THEME_STORAGE_KEY);
-    if (legacy !== undefined) {
-      removeLegacyCookie(THEME_STORAGE_KEY);
-      if (isThemeMode(legacy)) {
+    const cookie = Cookies.get(LEGACY_THEME_KEY);
+    if (cookie !== undefined) removeLegacyCookie(LEGACY_THEME_KEY);
+    const previous = window.localStorage.getItem(LEGACY_THEME_KEY);
+    const legacy = isThemeMode(previous) ? previous : cookie;
+    if (isThemeMode(legacy)) {
+      try {
         window.localStorage.setItem(THEME_STORAGE_KEY, legacy);
-        return legacy;
+        window.localStorage.removeItem(LEGACY_THEME_KEY);
+      } catch {
+        // Full: the old key keeps the choice until the move succeeds
       }
+      return legacy;
     }
   } catch {
     // Storage blocked: follow the system preference
