@@ -1,3 +1,10 @@
+## [1.17.8](https://github.com/maxgfr/csv-ai-analyzer/compare/v1.17.7...v1.17.8) (2026-11-02)
+
+
+### Bug Fixes
+
+* bump katex from 0.16.43 to 0.18.2 in the npm_and_yarn group across 1 directory ([#7](https://github.com/maxgfr/csv-ai-analyzer/issues/7)) ([2233b72](https://github.com/maxgfr/csv-ai-analyzer/commit/2233b72add1dd6a81c2539592ab348fa014901ab))
+
 ## [1.17.7](https://github.com/maxgfr/csv-ai-analyzer/compare/v1.17.6...v1.17.7) (2026-11-02)
 
 
