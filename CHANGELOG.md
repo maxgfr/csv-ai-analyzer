@@ -1,3 +1,10 @@
+## [1.17.7](https://github.com/maxgfr/csv-ai-analyzer/compare/v1.17.6...v1.17.7) (2026-11-02)
+
+
+### Bug Fixes
+
+* **deps:** update Next.js to 16.4.3 and the packages pnpm audit flags high or critical ([#26](https://github.com/maxgfr/csv-ai-analyzer/issues/26)) ([ac4a381](https://github.com/maxgfr/csv-ai-analyzer/commit/ac4a3815cc63dc56488597791d83e90522385003))
+
 ## [1.17.6](https://github.com/maxgfr/csv-ai-analyzer/compare/v1.17.5...v1.17.6) (2026-11-02)
 
 
