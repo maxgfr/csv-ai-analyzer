@@ -133,7 +133,7 @@ export default function RootLayout({
         {/* Anti-flash: apply theme class before first paint */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var m=localStorage.getItem("csv-ai-theme")||(document.cookie.match(/csv-ai-theme=(\\w+)/)||[])[1]||"auto";var d=m==="dark"||(m==="auto"&&window.matchMedia("(prefers-color-scheme:dark)").matches);document.documentElement.classList.remove("dark","light");document.documentElement.classList.add(d?"dark":"light")}catch(e){}})();`,
+            __html: `(function(){try{var m=localStorage.getItem("csv-ai-analyzer:theme")||localStorage.getItem("csv-ai-theme")||"auto";var d=m==="dark"||(m==="auto"&&window.matchMedia("(prefers-color-scheme:dark)").matches);document.documentElement.classList.remove("dark","light");document.documentElement.classList.add(d?"dark":"light")}catch(e){}})();`,
           }}
         />
       </head>

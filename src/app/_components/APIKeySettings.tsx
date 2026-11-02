@@ -23,7 +23,11 @@ import {
   RESPONSE_LANGUAGES,
 } from "llm-connect";
 import { useLlmStore } from "llm-connect/react";
-import { apiSettingsStorage, type StoredSettings } from "~/lib/storage";
+import {
+  apiSettingsStorage,
+  wereSettingsKept,
+  type StoredSettings,
+} from "~/lib/storage";
 
 /** Local OpenAI-compatible servers offered as quick setups. */
 const LOCAL_PRESETS = [ENDPOINT_PRESETS.ollama, ENDPOINT_PRESETS.lmstudio];
@@ -170,6 +174,15 @@ export function APIKeySettings({
     }
     const settings = result.settings;
     onSettingsChange(settings);
+    // They apply to this page either way; say so when the browser did not keep them
+    if (!wereSettingsKept()) {
+      toast.warning("Settings not saved on this device", {
+        description:
+          "Storage for this site is full or blocked: these settings work until you reload, then they are lost.",
+      });
+      onClose();
+      return;
+    }
     toast.success("Settings Saved", {
       description: settings.customEndpoint
         ? `Using ${settings.customModel} at ${settings.customEndpoint}`

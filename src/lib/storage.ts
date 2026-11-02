@@ -16,10 +16,17 @@ export interface StoredSettings extends LlmSettings {
   rememberKey?: boolean;
 }
 
+// maxgfr.github.io is one origin for every project page of the account, so
+// they share localStorage, sessionStorage and IndexedDB: every name carries
+// the app's name.
+
 /** Non-secret preferences, in localStorage. */
-const SETTINGS_KEY = "csv-ai-settings";
+const SETTINGS_KEY = "csv-ai-analyzer:settings";
 /** IndexedDB database of the encryption key and a remembered API key. */
-const DB_NAME = "csv-ai-secrets";
+const DB_NAME = "csv-ai-analyzer-secrets";
+/** Where older versions kept the settings and the encryption key; moved once. */
+const LEGACY_SETTINGS_KEY = "csv-ai-settings";
+const LEGACY_DB_NAME = "csv-ai-secrets";
 /** Where v1.16 kept the API key in clear text (sessionStorage, or localStorage when remembered). */
 const CLEAR_KEY_KEY = "csv-ai-api-key";
 
@@ -28,10 +35,13 @@ const CLEAR_KEY_KEY = "csv-ai-api-key";
 const createStorage = () =>
   secureStorage({ prefsKey: SETTINGS_KEY, dbName: DB_NAME });
 let storage = createStorage();
+/** Whether the last save could be read back from storage. */
+let lastSaveKept = true;
 
 /** Drops the decrypted key kept in memory, as a page reload would. */
 export function resetSettingsCacheForTests() {
   storage = createStorage();
+  lastSaveKept = true;
 }
 
 // ============ Safe Web Storage access ============
@@ -52,6 +62,52 @@ function remove(kind: Kind, key: string) {
     if (typeof window !== "undefined") window[kind].removeItem(key);
   } catch {
     // Nothing to clean up
+  }
+}
+
+function write(kind: Kind, key: string, value: string) {
+  try {
+    if (typeof window !== "undefined") window[kind].setItem(key, value);
+  } catch {
+    // Full or blocked
+  }
+}
+
+function deleteDatabase(name: string): Promise<void> {
+  return new Promise((resolve) => {
+    try {
+      const request = indexedDB.deleteDatabase(name);
+      request.onsuccess = request.onerror = request.onblocked = () => resolve();
+    } catch {
+      resolve();
+    }
+  });
+}
+
+// ============ Older names ============
+// Decrypt with the old key, save again (encrypted) under the new names, and
+// erase the old copy once the new one reads back. The old preferences are
+// removed first so a nearly full localStorage has room for the new ones, and
+// put back if the new copy was not kept: the move is retried on the next load.
+
+const legacyStorage = () =>
+  secureStorage({ prefsKey: LEGACY_SETTINGS_KEY, dbName: LEGACY_DB_NAME });
+
+async function migrateLegacyNames() {
+  const raw = read("localStorage", LEGACY_SETTINGS_KEY);
+  if (raw === null || read("localStorage", SETTINGS_KEY) !== null) return;
+  const legacy = legacyStorage();
+  const saved = (await legacy.loadDraft?.()) as StoredSettings | null;
+  if (!saved) return;
+  remove("localStorage", LEGACY_SETTINGS_KEY);
+  if (
+    await saveApiSettings({ ...saved, rememberKey: saved.rememberKey === true })
+  ) {
+    await legacy.clear();
+    await deleteDatabase(LEGACY_DB_NAME);
+  } else {
+    remove("localStorage", SETTINGS_KEY);
+    write("localStorage", LEGACY_SETTINGS_KEY, raw);
   }
 }
 
@@ -99,7 +155,10 @@ async function migrateLegacyCookies() {
   }
   if (Object.keys(values).length === 0) return;
   // Only fill what the new storage does not already hold
-  if (!read("localStorage", SETTINGS_KEY)) {
+  if (
+    !read("localStorage", SETTINGS_KEY) &&
+    !read("localStorage", LEGACY_SETTINGS_KEY)
+  ) {
     const apiKey = values.apiKey ?? "";
     await saveApiSettings({
       apiKey,
@@ -138,19 +197,35 @@ async function migrateClearTextKey() {
 
 // ============ Public API ============
 
+/** Saves the settings; false when the browser did not keep them (storage full or blocked). */
 export const saveApiSettings = async (
   settings: StoredSettings,
-): Promise<void> => {
-  if (typeof window === "undefined") return;
+): Promise<boolean> => {
+  if (typeof window === "undefined") return false;
   const { rememberKey, ...rest } = settings;
   const language = rest.language ? toLanguageCode(rest.language) : undefined;
-  await storage.save({ ...rest, language }, { rememberKey: !!rememberKey });
+  const next = { ...rest, language };
+  await storage.save(next, { rememberKey: !!rememberKey });
+  // llm-connect 1.x ignores a refused write: read it back, the key included.
+  const stored = await createStorage()
+    .loadDraft?.()
+    .catch(() => null);
+  const { apiKey, ...prefs } = next;
+  lastSaveKept =
+    stored?.apiKey === apiKey &&
+    read("localStorage", SETTINGS_KEY) ===
+      JSON.stringify({ ...prefs, rememberKey: !!rememberKey });
+  return lastSaveKept;
 };
+
+/** Whether the last save was kept; when false the settings only last for this page. */
+export const wereSettingsKept = () => lastSaveKept;
 
 /** Saved settings that can call a model, or null. */
 export const loadApiSettings = async (): Promise<StoredSettings | null> => {
   if (typeof window === "undefined") return null;
   await migrateLegacyCookies();
+  await migrateLegacyNames();
   await migrateClearTextKey();
   const saved = await storage.load();
   if (!saved) return null;
@@ -170,12 +245,18 @@ export const clearApiSettings = async (): Promise<void> => {
   remove("localStorage", CLEAR_KEY_KEY);
   for (const name of Object.values(LEGACY_COOKIES)) removeLegacyCookie(name);
   await storage.clear();
+  // A copy under the old names, if moving it never succeeded
+  if (read("localStorage", LEGACY_SETTINGS_KEY) !== null) {
+    await legacyStorage().clear();
+    await deleteDatabase(LEGACY_DB_NAME);
+  }
 };
 
 /** These settings as llm-connect's settings storage: same keys, migrations included. */
 export const apiSettingsStorage: SettingsStorage = {
   load: loadApiSettings,
-  save: (settings, { rememberKey }) =>
-    saveApiSettings({ ...settings, rememberKey }),
+  save: async (settings, { rememberKey }) => {
+    await saveApiSettings({ ...settings, rememberKey });
+  },
   clear: clearApiSettings,
 };
