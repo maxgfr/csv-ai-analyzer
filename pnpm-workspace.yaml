@@ -1,2 +1,5 @@
 packages:
   - 'packages/*'
+
+overrides:
+  katex: ^0.18.2
