@@ -1,3 +1,10 @@
+## [1.17.9](https://github.com/maxgfr/csv-ai-analyzer/compare/v1.17.8...v1.17.9) (2026-11-02)
+
+
+### Bug Fixes
+
+* **deps:** render math with the patched katex everywhere ([#28](https://github.com/maxgfr/csv-ai-analyzer/issues/28)) ([9e0a6a8](https://github.com/maxgfr/csv-ai-analyzer/commit/9e0a6a86f46a3b8acb587a3d98730c14d3fdf9cc))
+
 ## [1.17.8](https://github.com/maxgfr/csv-ai-analyzer/compare/v1.17.7...v1.17.8) (2026-11-02)
 
 
