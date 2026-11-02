@@ -1,3 +1,10 @@
+## [1.17.6](https://github.com/maxgfr/csv-ai-analyzer/compare/v1.17.5...v1.17.6) (2026-11-02)
+
+
+### Bug Fixes
+
+* **storage:** name settings and theme after the app, say when settings are not kept ([#25](https://github.com/maxgfr/csv-ai-analyzer/issues/25)) ([7ac6d4a](https://github.com/maxgfr/csv-ai-analyzer/commit/7ac6d4aa22a4b6eaaffbebfa6e2b6f3f509164e5))
+
 ## [1.17.5](https://github.com/maxgfr/csv-ai-analyzer/compare/v1.17.4...v1.17.5) (2026-10-17)
 
 
